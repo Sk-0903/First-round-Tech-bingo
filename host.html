@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Leaderboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>🏆 Leaderboard</h1>
+
+<table border="1">
+<thead>
+<tr>
+<th>Team</th>
+<th>Score</th>
+</tr>
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+<script>
+
+let data=JSON.parse(localStorage.getItem("scores")) || [];
+
+data.sort((a,b)=>b.score-a.score);
+
+let table=document.getElementById("table");
+
+data.forEach(team=>{
+
+let row=`
+<tr>
+<td>${team.name}</td>
+<td>${team.score}</td>
+</tr>
+`;
+
+table.innerHTML+=row;
+
+});
+
+</script>
+
+</body>
+</html>
