@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>Tech Bingo Leaderboard</title>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#0f172a;
+color:white;
+}
+
+table{
+margin:auto;
+border-collapse:collapse;
+width:50%;
+}
+
+td,th{
+border:1px solid white;
+padding:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🏆 Live Leaderboard</h1>
+
+<table>
+
+<thead>
+<tr>
+<th>Team</th>
+<th>Score</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody id="leaderboard"></tbody>
+
+</table>
+
+<script>
+
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+
+fetch(sheetURL)
+.then(response => response.text())
+.then(data => {
+
+let rows=data.split("\n");
+
+let table=document.getElementById("leaderboard");
+
+for(let i=1;i<rows.length;i++){
+
+let cols=rows[i].split(",");
+
+if(cols.length>1){
+
+let row=`
+<tr>
+<td>${cols[0]}</td>
+<td>${cols[1]}</td>
+<td>${cols[2]}</td>
+</tr>
+`;
+
+table.innerHTML+=row;
+
+}
+
+}
+
+});
+
+</script>
+
+</body>
+
+</html>
