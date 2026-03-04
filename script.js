@@ -49,7 +49,7 @@ let ans=document.getElementById("answer").value.toLowerCase();
 
 if(ans==questions[current].a){
 
-document.getElementById(ans).classList.add("active");
+document.getElementById("cell"+questions[current].cell).classList.add("active");
 
 score++;
 
