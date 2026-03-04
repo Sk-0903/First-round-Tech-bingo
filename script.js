@@ -2,21 +2,31 @@ let team=localStorage.getItem("team");
 
 document.getElementById("teamName").innerText="Team: "+team;
 
-const boardWords=[
-"recursion","api","cloud","debug","python",
-"stack","git","binary","html","css",
-"algorithm","loop","ai","compiler","linux",
-"java","sql","iot","cache","kernel",
-"encryption","data","network","array","pointer"
-];
+let board=document.getElementById("board");
+
+for(let i=1;i<=25;i++){
+
+let div=document.createElement("div");
+
+div.className="cell";
+
+div.innerText=i;
+
+div.id="cell"+i;
+
+board.appendChild(div);
+
+}
+
 
 const questions=[
-{q:"Function calling itself",a:"recursion"},
-{q:"Rules for communication between systems",a:"api"},
-{q:"Internet based storage service",a:"cloud"},
-{q:"Process of fixing errors",a:"debug"},
-{q:"Programming language named after snake",a:"python"}
+{q:"Function calling itself",a:"recursion",cell:1},
+{q:"Rules for communication between systems",a:"api",cell:2},
+{q:"Internet based storage service",a:"cloud",cell:3},
+{q:"Process of fixing errors",a:"debug",cell:4},
+{q:"Programming language named after snake",a:"python",cell:5}
 ];
+
 
 let current=0;
 let score=0;
