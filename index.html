@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tech Bingo</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:#0f172a;
+color:white;
+}
+
+.board{
+display:grid;
+grid-template-columns:repeat(5,110px);
+gap:10px;
+justify-content:center;
+margin:30px;
+}
+
+.cell{
+background:#1e293b;
+padding:15px;
+border-radius:10px;
+}
+
+.active{
+background:#22c55e;
+}
+
+input{
+padding:10px;
+font-size:16px;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>💻 Tech Bingo</h1>
+
+<h3 id="question"></h3>
+
+<input type="text" id="answer" placeholder="Type your answer">
+<button onclick="checkAnswer()">Submit</button>
+
+<div class="board" id="board"></div>
+
+<h2 id="result"></h2>
+
+<script>
+
+const boardWords=[
+"recursion","api","cloud","debug","python",
+"stack","git","binary","html","css",
+"algorithm","loop","ai","compiler","linux",
+"java","sql","iot","cache","kernel",
+"encryption","data","network","array","pointer"
+];
+
+const questions=[
+{q:"Function calling itself",a:"recursion"},
+{q:"Set of rules for communication",a:"api"},
+{q:"Internet storage service",a:"cloud"},
+{q:"Process of finding errors",a:"debug"},
+{q:"Popular programming language named after snake",a:"python"}
+];
+
+let current=0;
+
+document.getElementById("question").innerText=questions[current].q;
+
+let board=document.getElementById("board");
+
+boardWords.forEach(word=>{
+let div=document.createElement("div");
+div.className="cell";
+div.innerText=word;
+div.id=word;
+board.appendChild(div);
+});
+
+function checkAnswer(){
+
+let ans=document.getElementById("answer").value.toLowerCase();
+
+if(ans==questions[current].a){
+
+document.getElementById(ans).classList.add("active");
+
+current++;
+
+if(current<questions.length){
+document.getElementById("question").innerText=questions[current].q;
+}
+
+checkBingo();
+
+}
+
+document.getElementById("answer").value="";
+}
+
+function checkBingo(){
+
+let cells=document.querySelectorAll(".cell");
+
+let active=[];
+
+cells.forEach((c,i)=>{
+if(c.classList.contains("active")) active.push(i);
+});
+
+let wins=[
+[0,1,2,3,4],
+[5,6,7,8,9],
+[10,11,12,13,14],
+[15,16,17,18,19],
+[20,21,22,23,24],
+
+[0,5,10,15,20],
+[1,6,11,16,21],
+[2,7,12,17,22],
+[3,8,13,18,23],
+[4,9,14,19,24],
+
+[0,6,12,18,24],
+[4,8,12,16,20]
+];
+
+wins.forEach(p=>{
+if(p.every(i=>active.includes(i))){
+document.getElementById("result").innerText="🎉 BINGO!";
+}
+});
+
+}
+
+</script>
+
+</body>
+</html>
