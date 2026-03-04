@@ -63,12 +63,19 @@ document.getElementById("answer").value="";
 
 function finish(){
 
-document.getElementById("result").innerText="Game Finished";
+let data={
+team:team,
+score:score
+};
 
-let data=JSON.parse(localStorage.getItem("scores")) || [];
+fetch("https://script.google.com/macros/s/AKfycbwVhd9teGAy6-SlULEFTNtK5pKeIF_14U2sS3Ck6Z2QazwLqRApiGEUg_j-pE7GGfbXmw/exec",{
 
-data.push({name:team,score:score});
+method:"POST",
 
-localStorage.setItem("scores",JSON.stringify(data));
+body:JSON.stringify(data)
+
+});
+
+document.getElementById("result").innerText="Score Submitted!";
 
 }
