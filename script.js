@@ -68,7 +68,7 @@ team:team,
 score:score
 };
 
-fetch("https://script.google.com/macros/s/AKfycbwVhd9teGAy6-SlULEFTNtK5pKeIF_14U2sS3Ck6Z2QazwLqRApiGEUg_j-pE7GGfbXmw/exec",{
+fetch("https://script.google.com/macros/s/AKfycbwsaD9xHPt_DwKhFwJ8fdtJde0iHezFcXVi5mx8XLnw4TVRKRBYnYsqMblp0isB71GqCA/exec",{
 
 method:"POST",
 
