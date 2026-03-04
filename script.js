@@ -1,10 +1,12 @@
+document.addEventListener("DOMContentLoaded", function(){
+
 let team=localStorage.getItem("team");
 
 document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-// create hidden bingo grid
+// create bingo grid
 for(let i=1;i<=25;i++){
 
 let div=document.createElement("div");
@@ -33,11 +35,10 @@ let score=0;
 // show first question
 document.getElementById("question").innerText=questions[current].q;
 
-function submitAnswer(){
+window.submitAnswer=function(){
 
 let ans=document.getElementById("answer").value.toLowerCase().trim();
 
-// check if answer is correct
 if(ans==questions[current].a){
 
 document.getElementById("cell"+questions[current].cell).classList.add("active");
@@ -46,7 +47,6 @@ score++;
 
 }
 
-// move to next question
 current++;
 
 if(current<questions.length){
@@ -81,4 +81,7 @@ body:JSON.stringify(data)
 document.getElementById("result").innerText="Score Submitted!";
 
 }
+
+});
+
 
