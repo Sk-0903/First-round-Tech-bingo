@@ -33,16 +33,6 @@ let score=0;
 
 document.getElementById("question").innerText=questions[current].q;
 
-let board=document.getElementById("board");
-
-boardWords.forEach(word=>{
-let div=document.createElement("div");
-div.className="cell";
-div.innerText=word;
-div.id=word;
-board.appendChild(div);
-});
-
 function submitAnswer(){
 
 let ans=document.getElementById("answer").value.toLowerCase().trim();
