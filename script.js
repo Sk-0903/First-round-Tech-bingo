@@ -45,14 +45,18 @@ board.appendChild(div);
 
 function submitAnswer(){
 
-let ans=document.getElementById("answer").value.toLowerCase();
+let ans=document.getElementById("answer").value.toLowerCase().trim();
 
+// check if answer is correct
 if(ans==questions[current].a){
 
 document.getElementById("cell"+questions[current].cell).classList.add("active");
 
 score++;
 
+}
+
+// move to next question whether correct or wrong
 current++;
 
 if(current<questions.length){
@@ -65,11 +69,10 @@ finish();
 
 }
 
-}
-
 document.getElementById("answer").value="";
 
 }
+
 
 function finish(){
 
