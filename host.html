@@ -16,7 +16,7 @@ color:white;
 table{
 margin:auto;
 border-collapse:collapse;
-width:50%;
+width:60%;
 }
 
 td,th{
@@ -47,15 +47,19 @@ padding:10px;
 
 <script>
 
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+
+function loadLeaderboard(){
 
 fetch(sheetURL)
-.then(response => response.text())
-.then(data => {
+.then(res=>res.text())
+.then(data=>{
 
 let rows=data.split("\n");
 
 let table=document.getElementById("leaderboard");
+
+table.innerHTML="";
 
 for(let i=1;i<rows.length;i++){
 
@@ -78,6 +82,14 @@ table.innerHTML+=row;
 }
 
 });
+
+}
+
+// load first time
+loadLeaderboard();
+
+// refresh every 5 seconds
+setInterval(loadLeaderboard,5000);
 
 </script>
 
