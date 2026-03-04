@@ -4,6 +4,7 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
+// create hidden bingo grid
 for(let i=1;i<=25;i++){
 
 let div=document.createElement("div");
@@ -18,7 +19,6 @@ board.appendChild(div);
 
 }
 
-
 const questions=[
 {q:"Function calling itself",a:"recursion",cell:1},
 {q:"Rules for communication between systems",a:"api",cell:2},
@@ -27,10 +27,10 @@ const questions=[
 {q:"Programming language named after snake",a:"python",cell:5}
 ];
 
-
 let current=0;
 let score=0;
 
+// show first question
 document.getElementById("question").innerText=questions[current].q;
 
 function submitAnswer(){
@@ -46,7 +46,7 @@ score++;
 
 }
 
-// move to next question whether correct or wrong
+// move to next question
 current++;
 
 if(current<questions.length){
@@ -62,7 +62,6 @@ finish();
 document.getElementById("answer").value="";
 
 }
-
 
 function finish(){
 
@@ -82,3 +81,4 @@ body:JSON.stringify(data)
 document.getElementById("result").innerText="Score Submitted!";
 
 }
+
