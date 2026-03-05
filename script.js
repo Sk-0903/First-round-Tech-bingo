@@ -1,19 +1,15 @@
-// HOST START CODE
 const GAME_CODE = "keshav";
 
-// EVENT TIMER VARIABLES
 let totalEventTime = 30 * 60;
 let timerInterval;
 
-// GAME TIMER
 let startTime;
-
-// GAME VARIABLES
 let current = 0;
 let score = 0;
-let answers = new Array(20).fill("");
 
-// QUESTIONS
+let answers = new Array(20).fill("");
+let answeredCorrect = new Array(20).fill(false);
+
 const questions=[
 
 {q:"Function calling itself",a:"recursion",cell:1},
@@ -42,7 +38,6 @@ const questions=[
 
 ];
 
-// SHUFFLE QUESTIONS
 function shuffle(array){
 
 for(let i=array.length-1;i>0;i--){
@@ -58,20 +53,42 @@ return array;
 
 let shuffledQuestions = shuffle([...questions]);
 
-// TIMER FUNCTION
+async function checkTeamExists(team){
+
+const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+
+let res = await fetch(sheetURL);
+let data = await res.text();
+
+let rows = data.split("\n");
+
+for(let i=1;i<rows.length;i++){
+
+let cols = rows[i].split(",");
+
+if(cols[1] && cols[1].toLowerCase() === team.toLowerCase()){
+return true;
+}
+
+}
+
+return false;
+
+}
+
 function startEventTimer(){
 
-timerInterval = setInterval(function(){
+timerInterval=setInterval(function(){
 
-let minutes = Math.floor(totalEventTime / 60);
-let seconds = totalEventTime % 60;
+let minutes=Math.floor(totalEventTime/60);
+let seconds=totalEventTime%60;
 
 document.getElementById("eventTimer").innerText =
-minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+minutes+":"+(seconds<10?"0"+seconds:seconds);
 
 totalEventTime--;
 
-if(totalEventTime < 0){
+if(totalEventTime<0){
 
 clearInterval(timerInterval);
 finish();
@@ -82,21 +99,33 @@ finish();
 
 }
 
-// START GAME AFTER CODE
-function checkCode(){
+async function checkCode(){
 
-let code = document.getElementById("startCode").value.trim().toLowerCase();
+let code=document.getElementById("startCode").value.trim().toLowerCase();
 
-if(code === GAME_CODE){
+if(code!==GAME_CODE){
 
-document.getElementById("startScreen").style.display = "none";
-document.getElementById("gameArea").style.display = "block";
+alert("Wrong start code");
+return;
+
+}
+
+let team=localStorage.getItem("team");
+
+let exists=await checkTeamExists(team);
+
+if(exists){
+
+alert("Team name already used. Choose another team name.");
+return;
+
+}
+
+document.getElementById("startScreen").style.display="none";
+document.getElementById("gameArea").style.display="block";
 
 document.documentElement.requestFullscreen();
 
-let team = localStorage.getItem("team");
-
-// SEND TEAM NAME TO LEADERBOARD
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
 body:JSON.stringify({
@@ -106,58 +135,47 @@ time:0
 })
 });
 
-// SHOW FIRST QUESTION
-document.getElementById("question").innerText =
+document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
 updateProgress();
 
 startEventTimer();
 
-startTime = Date.now();
-
-}
-else{
-
-alert("Wrong start code");
+startTime=Date.now();
 
 }
 
-}
+document.addEventListener("DOMContentLoaded",function(){
 
-document.addEventListener("DOMContentLoaded", function(){
+let team=localStorage.getItem("team");
 
-let team = localStorage.getItem("team");
+document.getElementById("teamName").innerText="Team: "+team;
 
-document.getElementById("teamName").innerText = "Team: " + team;
+let board=document.getElementById("board");
 
-let board = document.getElementById("board");
-
-// TAB SWITCH DETECTION
-document.addEventListener("visibilitychange", function(){
+document.addEventListener("visibilitychange",function(){
 
 if(document.hidden){
 
-alert("You left the game tab. Game will be submitted.");
+alert("You left the game tab. Game submitted.");
 finish();
 
 }
 
 });
 
-// FULLSCREEN EXIT DETECTION
-document.addEventListener("fullscreenchange", function(){
+document.addEventListener("fullscreenchange",function(){
 
 if(!document.fullscreenElement){
 
-alert("Fullscreen exited. Game will be submitted.");
+alert("Fullscreen exited. Game submitted.");
 finish();
 
 }
 
 });
 
-// CREATE BINGO BOARD
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
@@ -172,32 +190,32 @@ board.appendChild(div);
 
 });
 
-// UPDATE QUESTION COUNTER
 function updateProgress(){
 
-document.getElementById("questionNumber").innerText =
-"Question " + (current + 1) + " / 20";
+document.getElementById("questionNumber").innerText=
+"Question "+(current+1)+" / 20";
 
-let answered = answers.filter(a => a !== "").length;
+let answered=answers.filter(a=>a!=="").length;
 
-document.getElementById("progress").innerText =
-"Answered " + answered + " / 20";
+document.getElementById("progress").innerText=
+"Answered "+answered+" / 20";
 
 }
 
-// SAVE ANSWER
 function saveAnswer(){
 
 let ans=document.getElementById("answer").value.toLowerCase().trim();
 
 answers[current]=ans;
 
-if(ans===shuffledQuestions[current].a){
+if(ans===shuffledQuestions[current].a && !answeredCorrect[current]){
 
 document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
 
 score++;
+
+answeredCorrect[current]=true;
 
 checkBingo();
 
@@ -209,17 +227,16 @@ updateProgress();
 
 }
 
-// NEXT QUESTION
 function nextQuestion(){
 
 if(current<19){
 
 current++;
 
-document.getElementById("question").innerText =
+document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
-document.getElementById("answer").value =
+document.getElementById("answer").value=
 answers[current];
 
 updateProgress();
@@ -228,17 +245,16 @@ updateProgress();
 
 }
 
-// PREVIOUS QUESTION
 function prevQuestion(){
 
 if(current>0){
 
 current--;
 
-document.getElementById("question").innerText =
+document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
-document.getElementById("answer").value =
+document.getElementById("answer").value=
 answers[current];
 
 updateProgress();
@@ -247,7 +263,6 @@ updateProgress();
 
 }
 
-// SHOW SUBMIT BUTTON
 function checkAllAnswered(){
 
 let done=answers.every(a=>a!=="");
@@ -260,7 +275,6 @@ document.getElementById("submitGame").style.display="block";
 
 }
 
-// CHECK BINGO
 function checkBingo(){
 
 let active=[];
@@ -278,8 +292,8 @@ let cols=[[1,6,11,16],[2,7,12,17],[3,8,13,18],[4,9,14,19],[5,10,15,20]];
 
 let bingo=false;
 
-rows.forEach(r=>{ if(r.every(x=>active.includes(x))) bingo=true; });
-cols.forEach(c=>{ if(c.every(x=>active.includes(x))) bingo=true; });
+rows.forEach(r=>{if(r.every(x=>active.includes(x)))bingo=true});
+cols.forEach(c=>{if(c.every(x=>active.includes(x)))bingo=true});
 
 if(bingo){
 
@@ -289,24 +303,21 @@ document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
 
 }
 
-// FINISH GAME
 function finish(){
 
-let team = localStorage.getItem("team");
+let team=localStorage.getItem("team");
 
 let endTime=Date.now();
 
 let totalTime=Math.floor((endTime-startTime)/1000);
 
-let data={
+fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
+method:"POST",
+body:JSON.stringify({
 team:team,
 score:score,
 time:totalTime
-};
-
-fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
-method:"POST",
-body:JSON.stringify(data)
+})
 });
 
 document.getElementById("result").innerText=
