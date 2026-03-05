@@ -3,7 +3,7 @@ const GAME_CODE = "keshav";
 
 function checkCode(){
 
-let code = document.getElementById("startCode").value.trim();
+let code = document.getElementById("startCode").value.trim().toLowerCase();
 
 if(code === GAME_CODE){
 
@@ -209,6 +209,7 @@ document.getElementById("result").innerText=
 }
 
 });
+
 
 
 
