@@ -1,3 +1,25 @@
+// HOST START CODE
+const GAME_CODE = "TECH2026";
+
+function checkCode(){
+
+let code = document.getElementById("startCode").value.trim();
+
+if(code === GAME_CODE){
+
+document.getElementById("startScreen").style.display = "none";
+
+document.getElementById("gameArea").style.display = "block";
+
+}
+else{
+
+alert("Wrong start code");
+
+}
+
+}
+
 document.addEventListener("DOMContentLoaded", function(){
 
 let team = localStorage.getItem("team");
@@ -77,7 +99,7 @@ let score=0;
 // SHOW FIRST QUESTION
 document.getElementById("question").innerText=shuffledQuestions[current].q;
 
-// CHECK BINGO FUNCTION
+// CHECK BINGO
 function checkBingo(){
 
 let active=[];
@@ -111,12 +133,10 @@ let cols=[
 
 let bingo=false;
 
-// CHECK ROWS
 rows.forEach(r=>{
 if(r.every(x=>active.includes(x))) bingo=true;
 });
 
-// CHECK COLUMNS
 cols.forEach(c=>{
 if(c.every(x=>active.includes(x))) bingo=true;
 });
