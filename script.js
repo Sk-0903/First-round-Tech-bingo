@@ -1,5 +1,5 @@
 // HOST START CODE
-const GAME_CODE = "TECH2026";
+const GAME_CODE = "keshav";
 
 function checkCode(){
 
