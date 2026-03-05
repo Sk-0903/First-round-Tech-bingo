@@ -5,29 +5,8 @@ const GAME_CODE = "keshav";
 let totalEventTime = 30 * 60;
 let timerInterval;
 
-function checkCode(){
-
-let code = document.getElementById("startCode").value.trim().toLowerCase();
-
-if(code === GAME_CODE){
-
-document.getElementById("startScreen").style.display = "none";
-document.getElementById("gameArea").style.display = "block";
-
-// ENTER FULLSCREEN
-document.documentElement.requestFullscreen();
-
-// START TIMER AFTER GAME START
-startEventTimer();
-
-}
-else{
-
-alert("Wrong start code");
-
-}
-
-}
+// GAME TIMER VARIABLE
+let startTime;
 
 // TIMER FUNCTION
 function startEventTimer(){
@@ -50,6 +29,40 @@ finish();
 }
 
 },1000);
+
+}
+
+// START GAME AFTER CODE
+function checkCode(){
+
+let code = document.getElementById("startCode").value.trim().toLowerCase();
+
+if(code === GAME_CODE){
+
+document.getElementById("startScreen").style.display = "none";
+document.getElementById("gameArea").style.display = "block";
+
+// ENTER FULLSCREEN
+document.documentElement.requestFullscreen();
+
+// SHOW FIRST QUESTION
+document.getElementById("question").innerText =
+shuffledQuestions[current].q;
+
+updateProgress();
+
+// START EVENT TIMER
+startEventTimer();
+
+// START GAME TIMER (for leaderboard)
+startTime = Date.now();
+
+}
+else{
+
+alert("Wrong start code");
+
+}
 
 }
 
@@ -85,20 +98,13 @@ finish();
 
 });
 
-// GAME TIMER (FOR LEADERBOARD TIME)
-let startTime = Date.now();
-
 // CREATE 4x5 GRID
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
-
 div.className="cell";
-
 div.innerText=i;
-
 div.id="cell"+i;
-
 board.appendChild(div);
 
 }
@@ -150,13 +156,22 @@ return array;
 let shuffledQuestions=shuffle([...questions]);
 
 let current=0;
-
 let score=0;
 
 let answers=new Array(20).fill("");
 
-// SHOW FIRST QUESTION
-document.getElementById("question").innerText=shuffledQuestions[current].q;
+// UPDATE QUESTION COUNTER + PROGRESS
+function updateProgress(){
+
+document.getElementById("questionNumber").innerText =
+"Question " + (current + 1) + " / 20";
+
+let answered = answers.filter(a => a !== "").length;
+
+document.getElementById("progress").innerText =
+"Answered " + answered + " / 20";
+
+}
 
 // SAVE ANSWER
 window.saveAnswer=function(){
@@ -177,6 +192,8 @@ checkBingo();
 
 checkAllAnswered();
 
+updateProgress();
+
 }
 
 // NEXT QUESTION
@@ -189,6 +206,8 @@ current++;
 document.getElementById("question").innerText=shuffledQuestions[current].q;
 
 document.getElementById("answer").value=answers[current];
+
+updateProgress();
 
 }
 
@@ -204,6 +223,8 @@ current--;
 document.getElementById("question").innerText=shuffledQuestions[current].q;
 
 document.getElementById("answer").value=answers[current];
+
+updateProgress();
 
 }
 
@@ -230,9 +251,7 @@ let active=[];
 for(let i=1;i<=20;i++){
 
 if(document.getElementById("cell"+i).classList.contains("active")){
-
 active.push(i);
-
 }
 
 }
@@ -286,7 +305,6 @@ time:totalTime
 fetch("https://script.google.com/macros/s/AKfycbwsaD9xHPt_DwKhFwJ8fdtJde0iHezFcXVi5mx8XLnw4TVRKRBYnYsqMblp0isB71GqCA/exec",{
 
 method:"POST",
-
 body:JSON.stringify(data)
 
 });
