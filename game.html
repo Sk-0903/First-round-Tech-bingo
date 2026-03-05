@@ -9,17 +9,37 @@
 
 <body>
 
+<!-- START SCREEN (HOST CONTROL) -->
+
+<div id="startScreen">
+
+<h2>Enter Game Start Code</h2>
+
+<input type="text" id="startCode" placeholder="Enter code">
+
+<button onclick="checkCode()">Start Game</button>
+
+</div>
+
+<!-- GAME AREA (HIDDEN UNTIL CODE IS ENTERED) -->
+
+<div id="gameArea" style="display:none;">
+
 <h2 id="teamName"></h2>
 
 <h3 id="question"></h3>
 
 <input type="text" id="answer" placeholder="Type answer">
+
 <button onclick="submitAnswer()">Submit</button>
 
 <div class="board" id="board"></div>
 
 <h2 id="result"></h2>
 
+</div>
+
 </body>
 </html>
+
 
