@@ -6,6 +6,9 @@ document.getElementById("teamName").innerText = "Team: " + team;
 
 let board = document.getElementById("board");
 
+// GAME TIMER START
+let startTime = Date.now();
+
 // create bingo grid
 for(let i = 1; i <= 25; i++){
 
@@ -36,7 +39,7 @@ let score = 0;
 // show first question
 document.getElementById("question").innerText = questions[current].q;
 
-// function for submit button
+// submit answer
 window.submitAnswer = function(){
 
 let ans = document.getElementById("answer").value.toLowerCase().trim();
@@ -69,12 +72,17 @@ document.getElementById("answer").value = "";
 
 }
 
-// finish game and send score
+// finish game and send score + time
 function finish(){
+
+let endTime = Date.now();
+
+let totalTime = Math.floor((endTime - startTime)/1000);
 
 let data = {
 team: team,
-score: score
+score: score,
+time: totalTime
 };
 
 fetch("https://script.google.com/macros/s/AKfycbwsaD9xHPt_DwKhFwJ8fdtJde0iHezFcXVi5mx8XLnw4TVRKRBYnYsqMblp0isB71GqCA/exec",{
@@ -85,7 +93,8 @@ body: JSON.stringify(data)
 
 });
 
-document.getElementById("result").innerText = "Score Submitted!";
+document.getElementById("result").innerText =
+"Score Submitted! Time: " + totalTime + " sec";
 
 }
 
