@@ -6,6 +6,7 @@
 <title>Tech Bingo Leaderboard</title>
 
 <style>
+
 body{
 font-family:Arial;
 text-align:center;
@@ -13,16 +14,43 @@ background:#0f172a;
 color:white;
 }
 
+h1{
+margin-top:30px;
+}
+
 table{
 margin:auto;
 border-collapse:collapse;
-width:60%;
+width:70%;
+margin-top:30px;
 }
 
 td,th{
 border:1px solid white;
-padding:10px;
+padding:12px;
+font-size:18px;
 }
+
+th{
+background:#1e293b;
+}
+
+tr:nth-child(even){
+background:#1e293b;
+}
+
+.rank1{
+background:#16a34a;
+}
+
+.rank2{
+background:#2563eb;
+}
+
+.rank3{
+background:#9333ea;
+}
+
 </style>
 
 </head>
@@ -34,11 +62,14 @@ padding:10px;
 <table>
 
 <thead>
+
 <tr>
+<th>Rank</th>
 <th>Team</th>
 <th>Score</th>
-<th>Time</th>
+<th>Time (sec)</th>
 </tr>
+
 </thead>
 
 <tbody id="leaderboard"></tbody>
@@ -61,25 +92,62 @@ let table=document.getElementById("leaderboard");
 
 table.innerHTML="";
 
+let teams=[];
+
 for(let i=1;i<rows.length;i++){
 
 let cols=rows[i].split(",");
 
-if(cols.length>1){
+if(cols.length>=4){
+
+teams.push({
+
+team:cols[1],
+score:parseInt(cols[2]) || 0,
+time:parseInt(cols[3]) || 0
+
+});
+
+}
+
+}
+
+// SORT BY SCORE DESC, TIME ASC
+teams.sort((a,b)=>{
+
+if(b.score===a.score){
+
+return a.time-b.time;
+
+}
+
+return b.score-a.score;
+
+});
+
+// DISPLAY
+teams.forEach((t,index)=>{
+
+let rank=index+1;
+
+let className="";
+
+if(rank===1) className="rank1";
+if(rank===2) className="rank2";
+if(rank===3) className="rank3";
 
 let row=`
-<tr>
-<td>${cols[0]}</td>
-<td>${cols[1]}</td>
-<td>${cols[2]}</td>
+<tr class="${className}">
+<td>${rank}</td>
+<td>${t.team}</td>
+<td>${t.score}</td>
+<td>${t.time}</td>
 </tr>
 `;
 
 table.innerHTML+=row;
 
-}
-
-}
+});
 
 });
 
