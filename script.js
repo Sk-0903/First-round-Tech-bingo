@@ -1,6 +1,10 @@
 // HOST START CODE
 const GAME_CODE = "keshav";
 
+// EVENT TIMER VARIABLES
+let totalEventTime = 30 * 60;
+let timerInterval;
+
 function checkCode(){
 
 let code = document.getElementById("startCode").value.trim().toLowerCase();
@@ -13,6 +17,9 @@ document.getElementById("gameArea").style.display = "block";
 // ENTER FULLSCREEN
 document.documentElement.requestFullscreen();
 
+// START TIMER AFTER GAME START
+startEventTimer();
+
 }
 else{
 
@@ -22,9 +29,34 @@ alert("Wrong start code");
 
 }
 
+// TIMER FUNCTION
+function startEventTimer(){
+
+timerInterval = setInterval(function(){
+
+let minutes = Math.floor(totalEventTime / 60);
+let seconds = totalEventTime % 60;
+
+document.getElementById("eventTimer").innerText =
+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+totalEventTime--;
+
+if(totalEventTime < 0){
+
+clearInterval(timerInterval);
+finish();
+
+}
+
+},1000);
+
+}
+
 document.addEventListener("DOMContentLoaded", function(){
 
 let team = localStorage.getItem("team");
+
 document.getElementById("teamName").innerText = "Team: " + team;
 
 let board = document.getElementById("board");
@@ -53,38 +85,20 @@ finish();
 
 });
 
-// 30 MINUTE EVENT TIMER
-let totalEventTime = 30 * 60;
-
-let timerInterval = setInterval(function(){
-
-let minutes = Math.floor(totalEventTime / 60);
-let seconds = totalEventTime % 60;
-
-document.getElementById("eventTimer").innerText =
-minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
-
-totalEventTime--;
-
-if(totalEventTime < 0){
-
-clearInterval(timerInterval);
-finish();
-
-}
-
-},1000);
-
-// GAME TIMER
+// GAME TIMER (FOR LEADERBOARD TIME)
 let startTime = Date.now();
 
 // CREATE 4x5 GRID
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
+
 div.className="cell";
+
 div.innerText=i;
+
 div.id="cell"+i;
+
 board.appendChild(div);
 
 }
@@ -124,6 +138,7 @@ function shuffle(array){
 for(let i=array.length-1;i>0;i--){
 
 let j=Math.floor(Math.random()*(i+1));
+
 [array[i],array[j]]=[array[j],array[i]];
 
 }
@@ -135,6 +150,7 @@ return array;
 let shuffledQuestions=shuffle([...questions]);
 
 let current=0;
+
 let score=0;
 
 let answers=new Array(20).fill("");
@@ -152,7 +168,9 @@ answers[current]=ans;
 if(ans===shuffledQuestions[current].a){
 
 document.getElementById("cell"+shuffledQuestions[current].cell).classList.add("active");
+
 score++;
+
 checkBingo();
 
 }
@@ -167,7 +185,9 @@ window.nextQuestion=function(){
 if(current<19){
 
 current++;
+
 document.getElementById("question").innerText=shuffledQuestions[current].q;
+
 document.getElementById("answer").value=answers[current];
 
 }
@@ -180,14 +200,16 @@ window.prevQuestion=function(){
 if(current>0){
 
 current--;
+
 document.getElementById("question").innerText=shuffledQuestions[current].q;
+
 document.getElementById("answer").value=answers[current];
 
 }
 
 }
 
-// CHECK ALL ANSWERED
+// SHOW SUBMIT BUTTON AFTER ALL ANSWERED
 function checkAllAnswered(){
 
 let done=answers.every(a=>a!=="");
@@ -208,7 +230,9 @@ let active=[];
 for(let i=1;i<=20;i++){
 
 if(document.getElementById("cell"+i).classList.contains("active")){
+
 active.push(i);
+
 }
 
 }
@@ -250,6 +274,7 @@ document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
 window.finish=function(){
 
 let endTime=Date.now();
+
 let totalTime=Math.floor((endTime-startTime)/1000);
 
 let data={
@@ -259,11 +284,15 @@ time:totalTime
 };
 
 fetch("https://script.google.com/macros/s/AKfycbwsaD9xHPt_DwKhFwJ8fdtJde0iHezFcXVi5mx8XLnw4TVRKRBYnYsqMblp0isB71GqCA/exec",{
+
 method:"POST",
+
 body:JSON.stringify(data)
+
 });
 
-document.getElementById("result").innerText="Submission successful. Check leaderboard.";
+document.getElementById("result").innerText=
+"Submission successful. Check leaderboard.";
 
 }
 
