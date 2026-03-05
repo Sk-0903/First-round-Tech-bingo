@@ -35,7 +35,19 @@
 
 <input type="text" id="answer" placeholder="Type answer">
 
-<button onclick="submitAnswer()">Submit</button>
+<br><br>
+
+<button onclick="prevQuestion()">Previous</button>
+
+<button onclick="saveAnswer()">Save</button>
+
+<button onclick="nextQuestion()">Next</button>
+
+<br><br>
+
+<button id="submitGame" onclick="finish()" style="display:none;">
+Submit Game
+</button>
 
 <div class="board" id="board"></div>
 
@@ -45,3 +57,4 @@
 
 </body>
 </html>
+
