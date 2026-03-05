@@ -26,12 +26,49 @@ board.appendChild(div);
 
 // questions + hidden answers
 const questions = [
+
 {q:"Function calling itself", a:"recursion", cell:1},
+
 {q:"Rules for communication between systems", a:"api", cell:2},
+
 {q:"Internet based storage service", a:"cloud", cell:3},
-{q:"Process of fixing errors", a:"debug", cell:4},
-{q:"Programming language named after snake", a:"python", cell:5}
+
+{q:"Process of fixing errors in a program", a:"debug", cell:4},
+
+{q:"Programming language named after a snake", a:"python", cell:5},
+
+{q:"Data structure used in BFS", a:"queue", cell:6},
+
+{q:"Data structure used in DFS", a:"stack", cell:7},
+
+{q:"Language used to style web pages", a:"css", cell:8},
+
+{q:"Language used to structure web pages", a:"html", cell:9},
+
+{q:"Short form of Structured Query Language", a:"sql", cell:10},
+
+{q:"Brain of the computer", a:"cpu", cell:11},
+
+{q:"Temporary memory of a computer", a:"ram", cell:12},
+
+{q:"Permanent memory of a computer", a:"rom", cell:13},
+
+{q:"Collection of interconnected computers", a:"network", cell:14},
+
+{q:"Technology for secure communication online", a:"encryption", cell:15},
+
+{q:"Technology connecting physical devices to internet", a:"iot", cell:16},
+
+{q:"Program that translates source code to machine code", a:"compiler", cell:17},
+
+{q:"Step-by-step procedure to solve a problem", a:"algorithm", cell:18},
+
+{q:"A collection of data stored in rows and columns", a:"database", cell:19},
+
+{q:"Process of converting binary data to readable form", a:"decoding", cell:20}
+
 ];
+
 
 let current = 0;
 let score = 0;
