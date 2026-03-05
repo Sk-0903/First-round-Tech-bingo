@@ -10,7 +10,7 @@ let board = document.getElementById("board");
 let startTime = Date.now();
 
 // create bingo grid
-for(let i = 1; i <= 25; i++){
+for(let i = 1; i <= 20; i++){
 
 let div = document.createElement("div");
 
