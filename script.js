@@ -42,7 +42,7 @@ const questions=[
 
 ];
 
-// SHUFFLE FUNCTION
+// SHUFFLE QUESTIONS
 function shuffle(array){
 
 for(let i=array.length-1;i>0;i--){
@@ -56,7 +56,6 @@ return array;
 
 }
 
-// SHUFFLED QUESTIONS
 let shuffledQuestions = shuffle([...questions]);
 
 // TIMER FUNCTION
@@ -94,6 +93,18 @@ document.getElementById("startScreen").style.display = "none";
 document.getElementById("gameArea").style.display = "block";
 
 document.documentElement.requestFullscreen();
+
+let team = localStorage.getItem("team");
+
+// SEND TEAM NAME TO LEADERBOARD
+fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
+method:"POST",
+body:JSON.stringify({
+team:team,
+score:0,
+time:0
+})
+});
 
 // SHOW FIRST QUESTION
 document.getElementById("question").innerText =
@@ -146,7 +157,7 @@ finish();
 
 });
 
-// CREATE BOARD
+// CREATE BINGO BOARD
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
@@ -257,21 +268,17 @@ let active=[];
 for(let i=1;i<=20;i++){
 
 if(document.getElementById("cell"+i).classList.contains("active")){
-
 active.push(i);
-
 }
 
 }
 
 let rows=[[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]];
-
 let cols=[[1,6,11,16],[2,7,12,17],[3,8,13,18],[4,9,14,19],[5,10,15,20]];
 
 let bingo=false;
 
 rows.forEach(r=>{ if(r.every(x=>active.includes(x))) bingo=true; });
-
 cols.forEach(c=>{ if(c.every(x=>active.includes(x))) bingo=true; });
 
 if(bingo){
