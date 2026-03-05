@@ -297,7 +297,7 @@ score:score,
 time:totalTime
 };
 
-fetch("https://script.google.com/macros/s/AKfycbz11h718iwrzHhA55Y1Itug70N7xvVuQsvMw8bH0SSosjmnUt2v8bhHEmhkSGxXLppFlg/exec",{
+fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
 body:JSON.stringify(data)
 });
