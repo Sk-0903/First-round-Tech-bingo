@@ -10,6 +10,9 @@ if(code === GAME_CODE){
 document.getElementById("startScreen").style.display = "none";
 document.getElementById("gameArea").style.display = "block";
 
+// ENTER FULLSCREEN
+document.documentElement.requestFullscreen();
+
 }
 else{
 
@@ -25,6 +28,30 @@ let team = localStorage.getItem("team");
 document.getElementById("teamName").innerText = "Team: " + team;
 
 let board = document.getElementById("board");
+
+// TAB SWITCH DETECTION
+document.addEventListener("visibilitychange", function(){
+
+if(document.hidden){
+
+alert("You left the game tab. Game will be submitted.");
+finish();
+
+}
+
+});
+
+// FULLSCREEN EXIT DETECTION
+document.addEventListener("fullscreenchange", function(){
+
+if(!document.fullscreenElement){
+
+alert("Fullscreen exited. Game will be submitted.");
+finish();
+
+}
+
+});
 
 // 30 MINUTE EVENT TIMER
 let totalEventTime = 30 * 60;
@@ -110,7 +137,6 @@ let shuffledQuestions=shuffle([...questions]);
 let current=0;
 let score=0;
 
-// STORE ANSWERS
 let answers=new Array(20).fill("");
 
 // SHOW FIRST QUESTION
@@ -126,9 +152,7 @@ answers[current]=ans;
 if(ans===shuffledQuestions[current].a){
 
 document.getElementById("cell"+shuffledQuestions[current].cell).classList.add("active");
-
 score++;
-
 checkBingo();
 
 }
@@ -143,7 +167,6 @@ window.nextQuestion=function(){
 if(current<19){
 
 current++;
-
 document.getElementById("question").innerText=shuffledQuestions[current].q;
 document.getElementById("answer").value=answers[current];
 
@@ -157,7 +180,6 @@ window.prevQuestion=function(){
 if(current>0){
 
 current--;
-
 document.getElementById("question").innerText=shuffledQuestions[current].q;
 document.getElementById("answer").value=answers[current];
 
@@ -186,9 +208,7 @@ let active=[];
 for(let i=1;i<=20;i++){
 
 if(document.getElementById("cell"+i).classList.contains("active")){
-
 active.push(i);
-
 }
 
 }
@@ -230,7 +250,6 @@ document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
 window.finish=function(){
 
 let endTime=Date.now();
-
 let totalTime=Math.floor((endTime-startTime)/1000);
 
 let data={
@@ -240,10 +259,8 @@ time:totalTime
 };
 
 fetch("https://script.google.com/macros/s/AKfycbwsaD9xHPt_DwKhFwJ8fdtJde0iHezFcXVi5mx8XLnw4TVRKRBYnYsqMblp0isB71GqCA/exec",{
-
 method:"POST",
 body:JSON.stringify(data)
-
 });
 
 document.getElementById("result").innerText="Submission successful. Check leaderboard.";
