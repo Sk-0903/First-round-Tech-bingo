@@ -9,7 +9,7 @@ let board = document.getElementById("board");
 // GAME TIMER START
 let startTime = Date.now();
 
-// create bingo grid
+// CREATE 4 x 5 BINGO GRID (20 CELLS)
 for(let i = 1; i <= 20; i++){
 
 let div = document.createElement("div");
@@ -24,7 +24,7 @@ board.appendChild(div);
 
 }
 
-// questions + hidden answers
+// QUESTIONS + ANSWERS
 const questions = [
 
 {q:"Function calling itself", a:"recursion", cell:1},
@@ -65,77 +65,58 @@ const questions = [
 
 {q:"A collection of data stored in rows and columns", a:"database", cell:19},
 
-{q:"Process of converting binary data to readable form", a:"decoding", cell:20}
+{q:"Process of converting encoded data back to original", a:"decoding", cell:20}
 
 ];
 
+// SHUFFLE FUNCTION
+function shuffle(array){
+
+for (let i = array.length - 1; i > 0; i--){
+
+const j = Math.floor(Math.random() * (i + 1));
+
+[array[i], array[j]] = [array[j], array[i]];
+
+}
+
+return array;
+
+}
+
+// RANDOM QUESTION ORDER
+let shuffledQuestions = shuffle([...questions]);
 
 let current = 0;
+
 let score = 0;
 
-// show first question
-document.getElementById("question").innerText = questions[current].q;
+// SHOW FIRST QUESTION
+document.getElementById("question").innerText = shuffledQuestions[current].q;
 
-// submit answer
+// SUBMIT ANSWER FUNCTION
 window.submitAnswer = function(){
 
 let ans = document.getElementById("answer").value.toLowerCase().trim();
 
 if(ans === "") return;
 
-// check correct answer
-if(ans === questions[current].a){
+// CHECK CORRECT ANSWER
+if(ans === shuffledQuestions[current].a){
 
-document.getElementById("cell" + questions[current].cell).classList.add("active");
+document.getElementById("cell" + shuffledQuestions[current].cell).classList.add("active");
 
 score++;
 
 }
 
-// move to next question
+// MOVE TO NEXT QUESTION
 current++;
 
-if(current < questions.length){
+if(current < shuffledQuestions.length){
 
-document.getElementById("question").innerText = questions[current].q;
+document.getElementById("question").innerText = shuffledQ
 
-}else{
-
-finish();
-
-}
-
-document.getElementById("answer").value = "";
-
-}
-
-// finish game and send score + time
-function finish(){
-
-let endTime = Date.now();
-
-let totalTime = Math.floor((endTime - startTime)/1000);
-
-let data = {
-team: team,
-score: score,
-time: totalTime
-};
-
-fetch("https://script.google.com/macros/s/AKfycbwsaD9xHPt_DwKhFwJ8fdtJde0iHezFcXVi5mx8XLnw4TVRKRBYnYsqMblp0isB71GqCA/exec",{
-
-method: "POST",
-
-body: JSON.stringify(data)
-
-});
-
-document.getElementById("result").innerText =
-"Score Submitted! Time: " + totalTime + " sec";
-
-}
-
-});
 
 
 
