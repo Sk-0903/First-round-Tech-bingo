@@ -327,6 +327,8 @@ color:#22c55e;
 
 /* BINGO MESSAGE */
 
+/* BINGO POPUP */
+
 #bingoMessage{
 
 display:none;
@@ -335,36 +337,37 @@ position:fixed;
 top:50%;
 left:50%;
 
-transform:translate(-50%,-50%);
+transform:translate(-50%,-50%) scale(0.5);
 
-font-size:70px;
+background:rgba(15,23,42,0.95);
+
+padding:40px 80px;
+
+font-size:60px;
 font-weight:bold;
 
 color:#22c55e;
 
-text-align:center;
-
-padding:40px 80px;
-
-background:rgba(15,23,42,0.9);
-
 border-radius:20px;
 
+text-align:center;
+
 box-shadow:
-0 0 25px #22c55e,
+0 0 20px #22c55e,
 0 0 60px #3b82f6;
 
 z-index:9999;
 
-animation:bingoPop 0.6s ease;
+animation:bingoAnimation 0.6s ease forwards;
+
 }
 
-/* ANIMATION */
+/* POP ANIMATION */
 
-@keyframes bingoPop{
+@keyframes bingoAnimation{
 
 0%{
-transform:translate(-50%,-50%) scale(0.4);
+transform:translate(-50%,-50%) scale(0.3);
 opacity:0;
 }
 
