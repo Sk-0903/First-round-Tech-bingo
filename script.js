@@ -11,6 +11,7 @@ let gameFinished = false;
 
 let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
+let questionLocked = new Array(20).fill(false);   // NEW
 
 /* FULLSCREEN FUNCTION */
 
@@ -98,31 +99,6 @@ return array;
 
 let shuffledQuestions = shuffle([...questions]);
 
-/* CHECK TEAM DUPLICATE */
-
-async function checkTeamExists(team){
-
-const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
-
-let res = await fetch(sheetURL);
-let data = await res.text();
-
-let rows = data.split("\n");
-
-for(let i=1;i<rows.length;i++){
-
-let cols = rows[i].split(",");
-
-if(cols[1] && cols[1].toLowerCase() === team.toLowerCase()){
-return true;
-}
-
-}
-
-return false;
-
-}
-
 /* EVENT TIMER */
 
 function startEventTimer(){
@@ -166,27 +142,11 @@ alert("Team name not found.");
 return;
 }
 
-let exists=await checkTeamExists(team);
-
-if(exists){
-alert("Team name already used.");
-return;
-}
-
-/* START GAME */
-
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
-/* ENTER FULLSCREEN */
-
 enterFullscreen();
-
-/* BLOCK BACK BUTTON NOW */
-
 blockBackNavigation();
-
-/* ADD TEAM TO LEADERBOARD */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
@@ -197,15 +157,12 @@ time:0
 })
 });
 
-/* SHOW FIRST QUESTION */
-
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
 updateProgress();
 
 startEventTimer();
-
 startTime=Date.now();
 
 }
@@ -219,11 +176,7 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-/* FULLSCREEN ON FIRST CLICK */
-
 document.addEventListener("click",enterFullscreen,{once:true});
-
-/* DETECT FULLSCREEN EXIT */
 
 document.addEventListener("fullscreenchange",function(){
 
@@ -236,12 +189,9 @@ finish();
 
 });
 
-/* CREATE BINGO BOARD */
-
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
-
 div.className="cell";
 div.innerText=i;
 div.id="cell"+i;
@@ -266,15 +216,28 @@ document.getElementById("progress").innerText=
 
 }
 
-/* SAVE ANSWER */
+/* SAVE ANSWER (LOCK AFTER ONE ATTEMPT) */
 
 function saveAnswer(){
 
+if(questionLocked[current]){
+alert("You have already answered this question.");
+return;
+}
+
 let ans=document.getElementById("answer").value.toLowerCase().trim();
 
-answers[current]=ans;
+if(ans===""){
+alert("Enter an answer first.");
+return;
+}
 
-if(ans===shuffledQuestions[current].a && !answeredCorrect[current]){
+answers[current]=ans;
+questionLocked[current]=true;
+
+document.getElementById("answer").disabled=true;
+
+if(ans===shuffledQuestions[current].a){
 
 document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
@@ -305,6 +268,9 @@ shuffledQuestions[current].q;
 document.getElementById("answer").value=
 answers[current];
 
+document.getElementById("answer").disabled =
+questionLocked[current];
+
 updateProgress();
 
 }
@@ -324,6 +290,9 @@ shuffledQuestions[current].q;
 
 document.getElementById("answer").value=
 answers[current];
+
+document.getElementById("answer").disabled =
+questionLocked[current];
 
 updateProgress();
 
@@ -398,9 +367,7 @@ document.getElementById("result").innerText=
 "Submission successful. Thank you!";
 
 setTimeout(function(){
-
 window.location.href="completed.html";
-
 },2000);
 
 }
