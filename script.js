@@ -1,6 +1,6 @@
 const GAME_CODE = "keshav";
 
-let totalEventTime = 20 * 60;
+let totalEventTime = 15 * 60;
 let timerInterval;
 
 let startTime;
