@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
+
 <title>Tech Bingo Game</title>
+
 <link rel="stylesheet" href="style.css">
+
 <script src="script.js" defer></script>
+
 </head>
 
 <body>
 
-<!-- TIMER (TOP RIGHT) -->
+<!-- MAIN TITLE -->
+
+<h1 class="mainTitle">TECH BINGO</h1>
+<h2 class="subTitle">TECHNO QUEST</h2>
+
+<!-- TIMER -->
 
 <div id="eventTimer">15:00</div>
 
@@ -20,6 +30,8 @@
 <h2>Enter Game Start Code</h2>
 
 <input type="text" id="startCode" placeholder="Enter code">
+
+<br><br>
 
 <button onclick="checkCode()">Start Game</button>
 
@@ -35,7 +47,7 @@
 
 <h3 id="questionNumber"></h3>
 
-<!-- PROGRESS TRACKER -->
+<!-- PROGRESS -->
 
 <h4 id="progress"></h4>
 
@@ -68,4 +80,5 @@ Submit Game
 </div>
 
 </body>
+
 </html>
