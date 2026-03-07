@@ -1,6 +1,6 @@
 const GAME_CODE = "keshav";
 
-/* TOTAL EVENT TIME (15 MIN) */
+/* TOTAL EVENT TIME */
 const EVENT_DURATION = 15 * 60;
 
 let totalEventTime = EVENT_DURATION;
@@ -15,7 +15,7 @@ let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
 let questionLocked = new Array(20).fill(false);
 
-/* FULLSCREEN FUNCTION */
+/* FULLSCREEN */
 
 function enterFullscreen(){
 if(!document.fullscreenElement){
@@ -23,17 +23,15 @@ document.documentElement.requestFullscreen().catch(()=>{});
 }
 }
 
-/* BLOCK BACK BUTTON ONLY AFTER GAME START */
+/* BLOCK BACK BUTTON */
 
 function blockBackNavigation(){
 
 history.pushState(null,null,location.href);
 
 window.onpopstate=function(){
-
 alert("Back navigation is disabled during the game.");
 history.pushState(null,null,location.href);
-
 };
 
 }
@@ -98,6 +96,31 @@ return array;
 
 let shuffledQuestions = shuffle([...questions]);
 
+/* CHECK DUPLICATE TEAM */
+
+async function checkTeamExists(team){
+
+const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+
+let res = await fetch(sheetURL);
+let data = await res.text();
+
+let rows = data.split("\n");
+
+for(let i=1;i<rows.length;i++){
+
+let cols = rows[i].split(",");
+
+if(cols[1] && cols[1].toLowerCase() === team.toLowerCase()){
+return true;
+}
+
+}
+
+return false;
+
+}
+
 /* EVENT TIMER */
 
 function startEventTimer(){
@@ -141,7 +164,16 @@ alert("Team name not found.");
 return;
 }
 
-/* START GAME UI */
+/* DUPLICATE CHECK */
+
+let exists = await checkTeamExists(team);
+
+if(exists){
+alert("Team name already used. Choose another team name.");
+return;
+}
+
+/* START UI */
 
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
@@ -149,7 +181,7 @@ document.getElementById("gameArea").style.display="block";
 enterFullscreen();
 blockBackNavigation();
 
-/* ADD TEAM TO LEADERBOARD */
+/* ADD TEAM */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
@@ -160,7 +192,7 @@ time:0
 })
 });
 
-/* SHOW FIRST QUESTION */
+/* FIRST QUESTION */
 
 document.getElementById("question").innerText =
 shuffledQuestions[current].q;
@@ -180,11 +212,7 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-/* FULLSCREEN ON FIRST CLICK */
-
 document.addEventListener("click",enterFullscreen,{once:true});
-
-/* DETECT FULLSCREEN EXIT */
 
 document.addEventListener("fullscreenchange",function(){
 
@@ -211,6 +239,16 @@ board.appendChild(div);
 
 }
 
+/* ENTER KEY SAVE ANSWER */
+
+document.getElementById("answer").addEventListener("keypress",function(e){
+
+if(e.key === "Enter"){
+saveAnswer();
+}
+
+});
+
 });
 
 /* UPDATE PROGRESS */
@@ -227,7 +265,7 @@ document.getElementById("progress").innerText =
 
 }
 
-/* SAVE ANSWER (ONLY ONE ATTEMPT) */
+/* SAVE ANSWER */
 
 function saveAnswer(){
 
@@ -239,7 +277,7 @@ return;
 let ans=document.getElementById("answer").value.toLowerCase().trim();
 
 if(ans===""){
-alert("Enter an answer first.");
+alert("Please enter an answer.");
 return;
 }
 
@@ -362,8 +400,6 @@ clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
-/* TIME USED = TOTAL TIME - REMAINING */
-
 let totalTime = EVENT_DURATION - totalEventTime;
 
 if(totalTime < 0){
@@ -383,8 +419,6 @@ time:totalTime
 
 document.getElementById("result").innerText =
 "Submission successful. Thank you!";
-
-/* REDIRECT */
 
 setTimeout(function(){
 window.location.href="completed.html";
