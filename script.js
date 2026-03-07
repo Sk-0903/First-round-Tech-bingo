@@ -1,5 +1,3 @@
-/* FIREBASE IMPORT */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
 getFirestore,
@@ -18,35 +16,29 @@ authDomain: "tech-bingo-leaderboard.firebaseapp.com",
 projectId: "tech-bingo-leaderboard",
 storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
 messagingSenderId: "614182283202",
-appId: "1:614182283202:web:28679433283e05efb2585b",
-measurementId: "G-BN4V2GQJPB"
+appId: "1:614182283202:web:28679433283e05efb2585b"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let teamDocId = null;
+/* GAME VARIABLES */
 
-/* GAME CODE */
+const GAME_CODE="keshav";
+const EVENT_DURATION=15*60;
 
-const GAME_CODE = "keshav";
-
-/* TOTAL EVENT TIME */
-
-const EVENT_DURATION = 15 * 60;
-
-let totalEventTime = EVENT_DURATION;
+let totalEventTime=EVENT_DURATION;
 let timerInterval;
 
-let current = 0;
-let score = 0;
+let current=0;
+let score=0;
 
-let gameFinished = false;
-let gameStarted = false;
+let gameStarted=false;
+let gameFinished=false;
 
-let answers = new Array(20).fill("");
-let answeredCorrect = new Array(20).fill(false);
-let questionLocked = new Array(20).fill(false);
+let teamDocId=null;
+
+let answers=new Array(20).fill("");
 
 /* QUESTIONS */
 
@@ -78,64 +70,49 @@ const questions=[
 
 ];
 
-/* SHUFFLE QUESTIONS */
+/* SHUFFLE */
 
-function shuffle(array){
-
-for(let i=array.length-1;i>0;i--){
+function shuffle(arr){
+for(let i=arr.length-1;i>0;i--){
 let j=Math.floor(Math.random()*(i+1));
-[array[i],array[j]]=[array[j],array[i]];
+[arr[i],arr[j]]=[arr[j],arr[i]];
+}
+return arr;
 }
 
-return array;
-
-}
-
-let shuffledQuestions = shuffle([...questions]);
-
-/* FULLSCREEN */
-
-function enterFullscreen(){
-if(!document.fullscreenElement){
-document.documentElement.requestFullscreen().catch(()=>{});
-}
-}
-
-/* BLOCK BACK BUTTON */
-
-function blockBackNavigation(){
-
-history.pushState(null,null,location.href);
-
-window.onpopstate=function(){
-alert("Back navigation is disabled during the game.");
-history.pushState(null,null,location.href);
-};
-
-}
+let shuffledQuestions=shuffle([...questions]);
 
 /* PAGE LOAD */
 
-document.addEventListener("DOMContentLoaded",function(){
+document.addEventListener("DOMContentLoaded",()=>{
 
 let team=localStorage.getItem("team");
 
-if(team){
 document.getElementById("teamName").innerText="Team: "+team;
-}
+
+/* board */
 
 let board=document.getElementById("board");
 
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
+
 div.className="cell";
-div.innerText=i;
 div.id="cell"+i;
+div.innerText=i;
 
 board.appendChild(div);
 
 }
+
+/* button events */
+
+document.getElementById("startBtn").addEventListener("click",checkCode);
+document.getElementById("nextBtn").addEventListener("click",nextQuestion);
+document.getElementById("prevBtn").addEventListener("click",prevQuestion);
+document.getElementById("saveBtn").addEventListener("click",saveAnswer);
+document.getElementById("submitGame").addEventListener("click",finish);
 
 });
 
@@ -143,16 +120,14 @@ board.appendChild(div);
 
 async function checkTeamExists(team){
 
-const snapshot = await getDocs(collection(db,"leaderboard"));
+const snapshot=await getDocs(collection(db,"leaderboard"));
 
-let exists = false;
+let exists=false;
 
 snapshot.forEach((d)=>{
 
-let data = d.data();
-
-if(data.teamName.toLowerCase() === team.toLowerCase()){
-exists = true;
+if(d.data().teamName.toLowerCase()===team.toLowerCase()){
+exists=true;
 }
 
 });
@@ -168,87 +143,70 @@ async function checkCode(){
 let code=document.getElementById("startCode").value.trim().toLowerCase();
 
 if(code!==GAME_CODE){
-alert("Wrong start code");
+alert("Wrong code");
 return;
 }
 
 let team=localStorage.getItem("team");
 
-if(!team){
-alert("Team name not found.");
-return;
-}
-
-let exists = await checkTeamExists(team);
+let exists=await checkTeamExists(team);
 
 if(exists){
-alert("Team name already used.");
+alert("Team already exists");
 return;
 }
 
-/* CREATE TEAM ENTRY */
+/* create record */
 
-const docRef = await addDoc(collection(db,"leaderboard"),{
+const ref=await addDoc(collection(db,"leaderboard"),{
 teamName:team,
 score:0,
 time:0
 });
 
-teamDocId = docRef.id;
+teamDocId=ref.id;
 
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
 gameStarted=true;
 
-enterFullscreen();
-blockBackNavigation();
+showQuestion();
+startTimer();
+
+}
+
+/* SHOW QUESTION */
+
+function showQuestion(){
 
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
-updateProgress();
-
-startEventTimer();
+document.getElementById("questionNumber").innerText=
+"Question "+(current+1)+" / 20";
 
 }
 
 /* TIMER */
 
-function startEventTimer(){
+function startTimer(){
 
-timerInterval=setInterval(function(){
+timerInterval=setInterval(()=>{
 
-let minutes=Math.floor(totalEventTime/60);
-let seconds=totalEventTime%60;
+let m=Math.floor(totalEventTime/60);
+let s=totalEventTime%60;
 
-document.getElementById("eventTimer").innerText =
-minutes+":"+(seconds<10?"0"+seconds:seconds);
+document.getElementById("eventTimer").innerText=
+m+":"+(s<10?"0"+s:s);
 
 totalEventTime--;
 
-if(totalEventTime <= 0){
-
-clearInterval(timerInterval);
+if(totalEventTime<=0){
 finish();
-
 }
 
 },1000);
-
-}
-
-/* UPDATE PROGRESS */
-
-function updateProgress(){
-
-document.getElementById("questionNumber").innerText=
-"Question "+(current+1)+" / 20";
-
-let answered=answers.filter(a=>a!=="").length;
-
-document.getElementById("progress").innerText=
-"Answered "+answered+" / 20";
 
 }
 
@@ -256,17 +214,9 @@ document.getElementById("progress").innerText=
 
 function saveAnswer(){
 
-if(questionLocked[current]) return;
-
-let ans=document.getElementById("answer").value.toLowerCase().trim();
-
-if(ans===""){
-alert("Enter answer");
-return;
-}
+let ans=document.getElementById("answer").value.trim().toLowerCase();
 
 answers[current]=ans;
-questionLocked[current]=true;
 
 if(ans===shuffledQuestions[current].a){
 
@@ -274,103 +224,62 @@ document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
 
 score++;
-answeredCorrect[current]=true;
 
 }
 
-checkAllAnswered();
-updateProgress();
-
 }
 
-/* NEXT QUESTION */
+/* NAVIGATION */
 
 function nextQuestion(){
 
 if(current<19){
 
 current++;
-
-document.getElementById("question").innerText=
-shuffledQuestions[current].q;
-
-document.getElementById("answer").value=answers[current];
-
-updateProgress();
+showQuestion();
 
 }
 
+if(current===19){
+document.getElementById("submitGame").style.display="block";
 }
 
-/* PREVIOUS QUESTION */
+}
 
 function prevQuestion(){
 
 if(current>0){
 
 current--;
-
-document.getElementById("question").innerText=
-shuffledQuestions[current].q;
-
-document.getElementById("answer").value=answers[current];
-
-updateProgress();
+showQuestion();
 
 }
 
 }
 
-/* SHOW SUBMIT BUTTON */
-
-function checkAllAnswered(){
-
-let done=answers.every(a=>a!=="");
-
-if(done && current===19){
-document.getElementById("submitGame").style.display="block";
-}
-
-}
-
-/* FINISH GAME */
+/* FINISH */
 
 async function finish(){
 
-if(!gameStarted) return;
 if(gameFinished) return;
 
 gameFinished=true;
 
 clearInterval(timerInterval);
 
-let timeRemaining = Math.max(0,totalEventTime);
-let totalTime = EVENT_DURATION - timeRemaining;
-
-/* UPDATE FIREBASE */
-
-if(teamDocId){
+let timeUsed=EVENT_DURATION-totalEventTime;
 
 await updateDoc(doc(db,"leaderboard",teamDocId),{
 score:score,
-time:totalTime
+time:timeUsed
 });
 
-}
+document.getElementById("result").innerText="Submission successful";
 
-document.getElementById("result").innerText=
-"Submission successful.";
+setTimeout(()=>{
 
-setTimeout(function(){
-window.location.href="completed.html";
+window.location="completed.html";
+
 },2000);
 
 }
-
-/* MAKE FUNCTIONS ACCESSIBLE FROM HTML */
-
-window.checkCode = checkCode;
-window.saveAnswer = saveAnswer;
-window.nextQuestion = nextQuestion;
-window.prevQuestion = prevQuestion;
-window.finish = finish;
