@@ -2,30 +2,20 @@
 <html>
 
 <head>
-
 <title>Tech Bingo Game</title>
 
 <link rel="stylesheet" href="style.css">
 
-<!-- IMPORTANT: script must be module for Firebase -->
 <script type="module" src="script.js"></script>
 
 </head>
 
 <body>
 
-<!-- MAIN TITLE -->
-
 <h1 class="mainTitle">TECH BINGO</h1>
 <h2 class="subTitle">TECHNO QUEST</h2>
 
-
-<!-- TIMER (TOP RIGHT) -->
-
 <div id="eventTimer">15:00</div>
-
-
-<!-- START SCREEN -->
 
 <div id="startScreen">
 
@@ -37,73 +27,35 @@
 
 <br><br>
 
-<button class="startBtn" onclick="checkCode()">Start Game</button>
-
-<p class="securityNote">
-⚠ Do not switch tabs or exit fullscreen.  
-Game will automatically submit if you leave.
-</p>
+<button id="startBtn">Start Game</button>
 
 </div>
-
-
-<!-- GAME AREA -->
 
 <div id="gameArea" style="display:none;">
 
 <h2 id="teamName"></h2>
 
-
-<!-- QUESTION POSITION -->
-
 <h3 id="questionNumber"></h3>
-
-
-<!-- PROGRESS -->
 
 <h4 id="progress"></h4>
 
-
-<!-- QUESTION -->
-
 <h3 id="question"></h3>
-
-
-<!-- ANSWER INPUT -->
 
 <input type="text" id="answer" placeholder="Type answer">
 
 <br><br>
 
+<button id="prevBtn">⬅ Previous</button>
 
-<!-- NAVIGATION CONTROLS -->
+<button id="saveBtn">Save</button>
 
-<div class="navControls">
+<button id="nextBtn">Next ➡</button>
 
-<button class="navBtn" onclick="prevQuestion()">⬅ Previous</button>
+<br><br>
 
-<button id="saveBtn" class="saveBtn" onclick="saveAnswer()">Save</button>
-
-<button class="navBtn" onclick="nextQuestion()">Next ➡</button>
-
-</div>
-
-<br>
-
-
-<!-- FINAL SUBMIT BUTTON (VISIBLE ONLY AT END) -->
-
-<button id="submitGame" class="submitBtn" onclick="finish()" style="display:none;">
-Submit Game
-</button>
-
-
-<!-- BINGO BOARD -->
+<button id="submitGame" style="display:none;">Submit Game</button>
 
 <div class="board" id="board"></div>
-
-
-<!-- RESULT MESSAGE -->
 
 <h2 id="result"></h2>
 
