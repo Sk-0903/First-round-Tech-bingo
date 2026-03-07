@@ -144,9 +144,7 @@ time:parseInt(cols[3]) || 0
 teams.sort((a,b)=>{
 
 if(b.score===a.score){
-
 return a.time-b.time;
-
 }
 
 return b.score-a.score;
@@ -168,15 +166,10 @@ if(rank==3) className="rank3";
 let row=`
 
 <tr class="${className}">
-
 <td>${medal}</td>
-
 <td>${t.team}</td>
-
 <td>${t.score}</td>
-
 <td>${t.time}</td>
-
 </tr>
 
 `;
@@ -193,13 +186,13 @@ function resetLeaderboard(){
 
 if(confirm("Reset leaderboard?")){
 
+// clear table immediately
+document.getElementById("leaderboard").innerHTML="";
+
+// clear Google Sheet
 fetch(resetURL)
 .then(()=>{
-
-alert("Leaderboard reset");
-
-loadLeaderboard();
-
+alert("Leaderboard reset successfully");
 });
 
 }
