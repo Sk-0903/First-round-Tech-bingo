@@ -39,49 +39,115 @@ let teamDocId=null;
 let answers=new Array(20).fill("");
 let questionLocked=new Array(20).fill(false);
 
-/* QUESTIONS */
+/* QUESTIONS FROM PDF */
 
 const questions=[
 
-{q:"Function calling itself is called?",options:["Loop","Recursion","Iteration","Compilation"],a:"recursion",cell:1},
+{q:`What will be the output?
+int a = 5;
+int b = 10;
+printf("%d", a+++b);`,
+options:["15","16","Compilation Error","5"],
+a:"15",
+cell:1},
 
-{q:"Rules for communication between systems?",options:["Protocol","API","Compiler","Socket"],a:"api",cell:2},
+{q:"Which programming language is mainly used for Android app development?",
+options:["Swift","Kotlin","Ruby","Go"],
+a:"kotlin",
+cell:2},
 
-{q:"Internet based storage service?",options:["Server","Cloud","RAM","Drive"],a:"cloud",cell:3},
+{q:"Which company owns GitHub?",
+options:["Google","Microsoft","Amazon","Meta"],
+a:"microsoft",
+cell:3},
 
-{q:"Process of fixing errors?",options:["Testing","Debug","Compilation","Execution"],a:"debug",cell:4},
+{q:"Which programming language was named after a comedy show?",
+options:["Ruby","Python","Java","Swift"],
+a:"python",
+cell:4},
 
-{q:"Programming language named after snake?",options:["Ruby","Python","Java","Go"],a:"python",cell:5},
+{q:"What is the full form of GPT in ChatGPT?",
+options:["General Processing Tool","Generative Pre-trained Transformer","Global Programming Tool","General Purpose Transformer"],
+a:"generative pre-trained transformer",
+cell:5},
 
-{q:"Data structure used in BFS?",options:["Stack","Queue","Tree","Graph"],a:"queue",cell:6},
+{q:"Which company created TensorFlow?",
+options:["Meta","Google","Microsoft","Amazon"],
+a:"google",
+cell:6},
 
-{q:"Data structure used in DFS?",options:["Queue","Stack","Heap","Array"],a:"stack",cell:7},
+{q:"Which database type is MongoDB?",
+options:["Relational","NoSQL","Graph","Distributed"],
+a:"nosql",
+cell:7},
 
-{q:"Language used to style web pages?",options:["HTML","CSS","JS","PHP"],a:"css",cell:8},
+{q:"What was Java called before it was renamed Java?",
+options:["Oak","Pine","Coffee","Maple"],
+a:"oak",
+cell:8},
 
-{q:"Language used to structure web pages?",options:["HTML","CSS","Python","SQL"],a:"html",cell:9},
+{q:"Which AI tool is famous for text-to-image generation?",
+options:["ChatGPT","DALL-E","GitHub","Docker"],
+a:"dall-e",
+cell:9},
 
-{q:"Short form of Structured Query Language?",options:["SQL","HTML","CSS","XML"],a:"sql",cell:10},
+{q:`Which programming language has the motto
+"Write once, run anywhere"?`,
+options:["C++","Java","Python","Go"],
+a:"java",
+cell:10},
 
-{q:"Brain of the computer?",options:["RAM","ROM","CPU","GPU"],a:"cpu",cell:11},
+{q:"How many bits are in an IPv4 address?",
+options:["16","32","64","128"],
+a:"32",
+cell:11},
 
-{q:"Temporary memory of a computer?",options:["ROM","RAM","HDD","SSD"],a:"ram",cell:12},
+{q:"Which Indian IT company started as a vegetable oil company?",
+options:["Infosys","Wipro","TCS","HCL"],
+a:"wipro",
+cell:12},
 
-{q:"Permanent memory of a computer?",options:["RAM","ROM","Cache","Register"],a:"rom",cell:13},
+{q:"What type of electromagnetic waves does WiFi use?",
+options:["Infrared","Microwaves","Radio waves","Gamma rays"],
+a:"radio waves",
+cell:13},
 
-{q:"Collection of interconnected computers?",options:["Internet","Network","Server","Cloud"],a:"network",cell:14},
+{q:"What was the first computer virus?",
+options:["Creeper","ILOVEYOU","Melissa","Brain"],
+a:"creeper",
+cell:14},
 
-{q:"Technology for secure communication online?",options:["Encryption","Firewall","Protocol","Cloud"],a:"encryption",cell:15},
+{q:"Maximum length of a single post on Twitter/X?",
+options:["140 characters","200 characters","280 characters","500 characters"],
+a:"280 characters",
+cell:15},
 
-{q:"Technology connecting physical devices to internet?",options:["AI","ML","IoT","Cloud"],a:"iot",cell:16},
+{q:"The Firefox logo actually represents which animal?",
+options:["Fox","Panda","Red Panda","Wolf"],
+a:"red panda",
+cell:16},
 
-{q:"Program translating source code to machine code?",options:["Interpreter","Compiler","Debugger","Assembler"],a:"compiler",cell:17},
+{q:"Approximately how much data exists in the digital universe today?",
+options:["2.7 MB","2.7 GB","2.7 Zettabytes","2.7 TB"],
+a:"2.7 zettabytes",
+cell:17},
 
-{q:"Step-by-step problem solving method?",options:["Program","Algorithm","Process","Loop"],a:"algorithm",cell:18},
+{q:"Before being renamed Meta, what was the company originally known as?",
+options:["SocialNet","Facebook Inc.","Meta Labs","Connect Inc."],
+a:"facebook inc.",
+cell:18},
 
-{q:"Collection of structured data?",options:["Database","File","Server","Index"],a:"database",cell:19},
+{
+q:"Identify the logo shown below",
+image:"github.png",
+a:"github",
+cell:19
+}
 
-{q:"Process of converting encoded data to original?",options:["Encoding","Decoding","Encryption","Compression"],a:"decoding",cell:20}
+{q:"ChatGPT is based on which architecture?",
+options:["CNN","RNN","Transformer","Decision Tree"],
+a:"transformer",
+cell:20}
 
 ];
 
@@ -214,26 +280,33 @@ teamDocId=ref.id;
 
 function showQuestion(){
 
-let q=shuffledQuestions[current];
+let q = shuffledQuestions[current];
 
-let html=`<div class="questionText">${q.q}</div><br>`;
+let html = `<div class="questionText">${q.q}</div><br>`;
+
+/* SHOW IMAGE IF PRESENT */
+
+if(q.image){
+html += `<img src="${q.image}" class="questionImage"><br><br>`;
+}
+
+/* SHOW OPTIONS */
 
 q.options.forEach((opt,index)=>{
-html+=`<div class="optionLine">${String.fromCharCode(65+index)}. ${opt}</div>`;
+html += `<div class="optionLine">${String.fromCharCode(65+index)}. ${opt}</div>`;
 });
 
-document.getElementById("question").innerHTML=html;
+document.getElementById("question").innerHTML = html;
 
-document.getElementById("questionNumber").innerText=
+document.getElementById("questionNumber").innerText =
 "Question "+(current+1)+" / 20";
 
-let input=document.getElementById("answer");
-let saveBtn=document.getElementById("saveBtn");
+let input = document.getElementById("answer");
+let saveBtn = document.getElementById("saveBtn");
 
-input.value=answers[current];
-
-input.disabled=questionLocked[current];
-saveBtn.disabled=questionLocked[current];
+input.value = answers[current];
+input.disabled = questionLocked[current];
+saveBtn.disabled = questionLocked[current];
 
 }
 
@@ -252,7 +325,6 @@ m+":"+(s<10?"0"+s:s);
 totalEventTime--;
 
 if(totalEventTime<=0){
-totalEventTime=0;
 finish();
 }
 
@@ -295,7 +367,6 @@ function saveAnswer(){
 if(questionLocked[current]) return;
 
 let input=document.getElementById("answer");
-let saveBtn=document.getElementById("saveBtn");
 
 let ans=input.value.trim().toLowerCase();
 
@@ -308,7 +379,6 @@ answers[current]=ans;
 questionLocked[current]=true;
 
 input.disabled=true;
-saveBtn.disabled=true;
 
 if(ans===shuffledQuestions[current].a){
 
@@ -326,27 +396,22 @@ checkBingo();
 /* NEXT */
 
 function nextQuestion(){
-
 if(current<19){
 current++;
 showQuestion();
 }
-
 if(current===19){
 document.getElementById("submitGame").style.display="block";
 }
-
 }
 
 /* PREV */
 
 function prevQuestion(){
-
 if(current>0){
 current--;
 showQuestion();
 }
-
 }
 
 /* FINISH */
@@ -361,14 +426,10 @@ clearInterval(timerInterval);
 
 let timeUsed=EVENT_DURATION-totalEventTime;
 
-if(teamDocId){
-
 await updateDoc(doc(db,"leaderboard",teamDocId),{
 score:score,
 time:timeUsed
 });
-
-}
 
 document.getElementById("result").innerText="Submission successful";
 
