@@ -142,7 +142,7 @@ q:"Identify the logo shown below",
 image:"github.png",
 a:"github",
 cell:19
-}
+},
 
 {q:"ChatGPT is based on which architecture?",
 options:["CNN","RNN","Transformer","Decision Tree"],
