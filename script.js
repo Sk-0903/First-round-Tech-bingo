@@ -124,8 +124,6 @@ if(team){
 document.getElementById("teamName").innerText="Team: "+team;
 }
 
-/* create bingo board */
-
 let board=document.getElementById("board");
 
 for(let i=1;i<=20;i++){
@@ -141,7 +139,7 @@ board.appendChild(div);
 
 });
 
-/* CHECK DUPLICATE TEAM FROM FIREBASE */
+/* CHECK DUPLICATE TEAM */
 
 async function checkTeamExists(team){
 
@@ -184,7 +182,7 @@ return;
 let exists = await checkTeamExists(team);
 
 if(exists){
-alert("Team name already used. Choose another team name.");
+alert("Team name already used.");
 return;
 }
 
@@ -215,7 +213,7 @@ startEventTimer();
 
 }
 
-/* EVENT TIMER */
+/* TIMER */
 
 function startEventTimer(){
 
@@ -231,7 +229,6 @@ totalEventTime--;
 
 if(totalEventTime <= 0){
 
-totalEventTime = 0;
 clearInterval(timerInterval);
 finish();
 
@@ -277,7 +274,6 @@ document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
 
 score++;
-
 answeredCorrect[current]=true;
 
 }
@@ -325,7 +321,7 @@ updateProgress();
 
 }
 
-/* SHOW SUBMIT ONLY AT QUESTION 20 */
+/* SHOW SUBMIT BUTTON */
 
 function checkAllAnswered(){
 
@@ -351,9 +347,6 @@ clearInterval(timerInterval);
 let timeRemaining = Math.max(0,totalEventTime);
 let totalTime = EVENT_DURATION - timeRemaining;
 
-if(totalTime < 0) totalTime = 0;
-if(totalTime > EVENT_DURATION) totalTime = EVENT_DURATION;
-
 /* UPDATE FIREBASE */
 
 if(teamDocId){
@@ -366,10 +359,18 @@ time:totalTime
 }
 
 document.getElementById("result").innerText=
-"Submission successful. Thank you!";
+"Submission successful.";
 
 setTimeout(function(){
 window.location.href="completed.html";
 },2000);
 
 }
+
+/* MAKE FUNCTIONS ACCESSIBLE FROM HTML */
+
+window.checkCode = checkCode;
+window.saveAnswer = saveAnswer;
+window.nextQuestion = nextQuestion;
+window.prevQuestion = prevQuestion;
+window.finish = finish;
