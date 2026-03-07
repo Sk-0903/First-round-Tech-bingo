@@ -2,13 +2,12 @@
 <html>
 
 <head>
-
-<title>Tech Bingo Leaderboard</title>
+<title>TECHNO QUEST Leaderboard</title>
 
 <style>
 
 body{
-font-family:"Segoe UI", Arial;
+font-family:"Segoe UI",Arial;
 text-align:center;
 margin:0;
 background:linear-gradient(135deg,#020617,#0f172a,#020617);
@@ -18,11 +17,52 @@ color:white;
 /* TITLE */
 
 h1{
-margin-top:40px;
-font-size:48px;
-letter-spacing:2px;
+margin-top:30px;
+font-size:50px;
 color:#22c55e;
 text-shadow:0 0 10px #22c55e;
+}
+
+/* PODIUM */
+
+.podium{
+display:flex;
+justify-content:center;
+align-items:flex-end;
+gap:30px;
+margin-top:30px;
+height:200px;
+}
+
+.podium div{
+width:140px;
+border-radius:10px;
+display:flex;
+flex-direction:column;
+justify-content:flex-end;
+align-items:center;
+padding:10px;
+font-weight:bold;
+box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+.first{
+height:200px;
+background:linear-gradient(#facc15,#eab308);
+color:black;
+font-size:20px;
+}
+
+.second{
+height:150px;
+background:linear-gradient(#cbd5f5,#94a3b8);
+color:black;
+}
+
+.third{
+height:120px;
+background:linear-gradient(#f59e0b,#d97706);
+color:black;
 }
 
 /* TABLE */
@@ -52,38 +92,12 @@ font-size:20px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-/* EVEN ROWS */
-
 tr:nth-child(even){
 background:rgba(255,255,255,0.04);
 }
 
-/* HOVER */
-
 tr:hover{
 background:rgba(34,197,94,0.1);
-transform:scale(1.01);
-transition:0.2s;
-}
-
-/* TOP 3 */
-
-.rank1{
-background:linear-gradient(90deg,#facc15,#eab308);
-color:black;
-font-weight:bold;
-}
-
-.rank2{
-background:linear-gradient(90deg,#cbd5f5,#94a3b8);
-color:black;
-font-weight:bold;
-}
-
-.rank3{
-background:linear-gradient(90deg,#f59e0b,#d97706);
-color:black;
-font-weight:bold;
 }
 
 /* RESET BUTTON */
@@ -99,41 +113,22 @@ padding:12px 20px;
 font-size:18px;
 border-radius:10px;
 cursor:pointer;
-box-shadow:0 0 10px rgba(0,0,0,0.6);
 }
 
 .resetBtn:hover{
 background:#dc2626;
-transform:scale(1.05);
-}
-
-/* FOOTER */
-
-.footer{
-margin-top:40px;
-opacity:0.6;
-font-size:14px;
-}
-
-/* LOADING TEXT */
-
-.loading{
-margin-top:40px;
-font-size:20px;
-opacity:0.7;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<button class="resetBtn" onclick="resetLeaderboard()">🔄 Reset</button>
+<button class="resetBtn" onclick="resetLeaderboard()">Reset</button>
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
-<div id="loading" class="loading">Loading leaderboard...</div>
+<div class="podium" id="podium"></div>
 
 <table>
 
@@ -150,42 +145,30 @@ opacity:0.7;
 
 </table>
 
-<div class="footer">
-Live updating every 3 seconds
-</div>
-
 <script>
 
 const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
 
 const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
 
-/* FORMAT TIME */
-
 function formatTime(seconds){
 
 let minutes=Math.floor(seconds/60);
 let secs=seconds%60;
 
-return minutes + ":" + (secs<10 ? "0"+secs : secs);
+return minutes+":"+(secs<10?"0"+secs:secs);
 
 }
 
-/* LOAD LEADERBOARD */
-
 function loadLeaderboard(){
 
-fetch(sheetURL + "&t=" + new Date().getTime())   // bypass cache
+fetch(sheetURL)
 .then(res=>res.text())
 .then(data=>{
-
-document.getElementById("loading").style.display="none";
 
 let rows=data.split("\n");
 
 let teams=[];
-
-/* READ DATA */
 
 for(let i=1;i<rows.length;i++){
 
@@ -193,35 +176,47 @@ let cols=rows[i].split(",");
 
 if(cols.length>=4){
 
-let teamName = cols[1] ? cols[1].trim() : "";
-
-if(teamName !== ""){
-
 teams.push({
-team:teamName,
-score:parseInt(cols[2]) || 0,
-time:parseInt(cols[3]) || 0
+team:cols[1],
+score:parseInt(cols[2])||0,
+time:parseInt(cols[3])||0
 });
 
 }
 
 }
-
-}
-
-/* SORT */
 
 teams.sort((a,b)=>{
 
-if(b.score !== a.score){
-return b.score - a.score;
+if(b.score!==a.score){
+return b.score-a.score;
 }
 
-return a.time - b.time;
+return a.time-b.time;
 
 });
 
-/* BUILD TABLE */
+/* PODIUM */
+
+let podiumHTML="";
+
+if(teams[1]){
+podiumHTML+=`<div class="second">🥈 ${teams[1].team}<br>${teams[1].score}</div>`;
+}
+
+if(teams[0]){
+podiumHTML+=`<div class="first">🥇 ${teams[0].team}<br>${teams[0].score}</div>`;
+}
+
+if(teams[2]){
+podiumHTML+=`<div class="third">🥉 ${teams[2].team}<br>${teams[2].score}</div>`;
+}
+
+document.getElementById("podium").innerHTML=podiumHTML;
+
+/* TABLE */
+
+let table=document.getElementById("leaderboard");
 
 let html="";
 
@@ -229,17 +224,9 @@ teams.forEach((t,index)=>{
 
 let rank=index+1;
 
-let medal = rank==1 ? "🥇" : rank==2 ? "🥈" : rank==3 ? "🥉" : rank;
-
-let className="";
-
-if(rank==1) className="rank1";
-if(rank==2) className="rank2";
-if(rank==3) className="rank3";
-
-html += `
-<tr class="${className}">
-<td>${medal}</td>
+html+=`
+<tr>
+<td>${rank}</td>
 <td>${t.team}</td>
 <td>${t.score}</td>
 <td>${formatTime(t.time)}</td>
@@ -248,34 +235,23 @@ html += `
 
 });
 
-document.getElementById("leaderboard").innerHTML = html;
+table.innerHTML=html;
 
-})
-
-.catch(err=>{
-document.getElementById("loading").innerText="Failed to load leaderboard.";
 });
 
 }
-
-/* RESET */
 
 function resetLeaderboard(){
 
 if(confirm("Reset leaderboard?")){
 
+fetch(resetURL);
 document.getElementById("leaderboard").innerHTML="";
-
-fetch(resetURL)
-.then(()=>{
-alert("Leaderboard reset successfully");
-});
+document.getElementById("podium").innerHTML="";
 
 }
 
 }
-
-/* AUTO REFRESH */
 
 loadLeaderboard();
 setInterval(loadLeaderboard,3000);
@@ -283,5 +259,4 @@ setInterval(loadLeaderboard,3000);
 </script>
 
 </body>
-
 </html>
