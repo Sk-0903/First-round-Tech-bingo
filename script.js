@@ -43,6 +43,7 @@ let questionLocked=new Array(20).fill(false);
 /* QUESTIONS */
 
 const questions=[
+
 {q:`What will be the output?
 int a = 5;
 int b = 10;
@@ -149,6 +150,7 @@ cell:19
 options:["CNN","RNN","Transformer","Decision Tree"],
 a:"transformer",
 cell:20}
+
 ];
 
 /* SHUFFLE */
@@ -356,11 +358,14 @@ if(bingo){
 
 showingBingo=true;
 
-alert("🎉 BINGO ACHIEVED!");
+let msg=document.getElementById("bingoMessage");
+
+msg.style.display="block";
 
 setTimeout(()=>{
+msg.style.display="none";
 showingBingo=false;
-},1000);
+},3000);
 
 }
 
