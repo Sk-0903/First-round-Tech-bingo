@@ -4,7 +4,8 @@ getFirestore,
 collection,
 addDoc,
 updateDoc,
-doc
+doc,
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* FIREBASE */
@@ -98,9 +99,7 @@ document.addEventListener("paste",e=>e.preventDefault());
 document.addEventListener("keydown",function(e){
 
 if(e.key==="F12") e.preventDefault();
-
 if(e.ctrlKey && e.shiftKey && e.key==="I") e.preventDefault();
-
 if(e.ctrlKey && e.key==="u") e.preventDefault();
 
 });
@@ -128,6 +127,28 @@ if(!gameFinished){
 return "Leaving will submit your game.";
 }
 };
+
+/* CHECK DUPLICATE TEAM */
+
+async function checkTeamExists(team){
+
+const snapshot = await getDocs(collection(db,"leaderboard"));
+
+let exists=false;
+
+snapshot.forEach((docData)=>{
+
+let data = docData.data();
+
+if(data.teamName.toLowerCase() === team.toLowerCase()){
+exists = true;
+}
+
+});
+
+return exists;
+
+}
 
 /* PAGE LOAD */
 
@@ -178,6 +199,15 @@ alert("Team name missing");
 return;
 }
 
+/* CHECK DUPLICATE TEAM */
+
+let exists = await checkTeamExists(team);
+
+if(exists){
+alert("Team name already used. Choose another team name.");
+return;
+}
+
 enterFullscreen();
 
 document.getElementById("startScreen").style.display="none";
@@ -185,6 +215,8 @@ document.getElementById("gameArea").style.display="block";
 
 showQuestion();
 startTimer();
+
+/* CREATE TEAM ENTRY */
 
 const ref=await addDoc(collection(db,"leaderboard"),{
 teamName:team,
@@ -261,6 +293,8 @@ questionLocked[current]=true;
 
 input.disabled=true;
 saveBtn.disabled=true;
+
+/* CORRECT ANSWER = +1 */
 
 if(ans===shuffledQuestions[current].a){
 
