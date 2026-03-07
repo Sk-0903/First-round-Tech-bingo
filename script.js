@@ -92,7 +92,6 @@ document.documentElement.requestFullscreen().catch(()=>{});
 /* SECURITY */
 
 document.addEventListener("contextmenu",e=>e.preventDefault());
-
 document.addEventListener("copy",e=>e.preventDefault());
 document.addEventListener("paste",e=>e.preventDefault());
 
@@ -242,13 +241,8 @@ let saveBtn=document.getElementById("saveBtn");
 
 input.value=answers[current];
 
-if(questionLocked[current]){
-input.disabled=true;
-saveBtn.disabled=true;
-}else{
-input.disabled=false;
-saveBtn.disabled=false;
-}
+input.disabled=questionLocked[current];
+saveBtn.disabled=questionLocked[current];
 
 }
 
@@ -266,7 +260,10 @@ m+":"+(s<10?"0"+s:s);
 
 totalEventTime--;
 
-if(totalEventTime<=0) finish();
+if(totalEventTime<=0){
+totalEventTime=0;
+finish();
+}
 
 },1000);
 
@@ -345,10 +342,14 @@ clearInterval(timerInterval);
 
 let timeUsed=EVENT_DURATION-totalEventTime;
 
+if(teamDocId){
+
 await updateDoc(doc(db,"leaderboard",teamDocId),{
 score:score,
 time:timeUsed
 });
+
+}
 
 document.getElementById("result").innerText="Submission successful";
 
