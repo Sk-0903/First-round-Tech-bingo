@@ -325,43 +325,51 @@ color:#22c55e;
 }
 /* BINGO MESSAGE */
 
+/* BINGO MESSAGE */
+
 #bingoMessage{
+
+display:none;
 
 position:fixed;
 top:50%;
 left:50%;
+
 transform:translate(-50%,-50%);
 
-font-size:48px;
+font-size:70px;
 font-weight:bold;
 
 color:#22c55e;
 
-background:rgba(0,0,0,0.85);
+text-align:center;
 
-padding:30px 50px;
+padding:40px 80px;
 
-border-radius:16px;
+background:rgba(15,23,42,0.9);
+
+border-radius:20px;
 
 box-shadow:
 0 0 25px #22c55e,
-0 0 50px #22c55e;
+0 0 60px #3b82f6;
 
-display:none;
+z-index:9999;
 
 animation:bingoPop 0.6s ease;
-
-z-index:1000;
-
 }
 
-/* animation */
+/* ANIMATION */
 
 @keyframes bingoPop{
 
 0%{
-transform:translate(-50%,-50%) scale(0.5);
+transform:translate(-50%,-50%) scale(0.4);
 opacity:0;
+}
+
+60%{
+transform:translate(-50%,-50%) scale(1.1);
 }
 
 100%{
