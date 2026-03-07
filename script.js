@@ -4,8 +4,7 @@ getFirestore,
 collection,
 addDoc,
 updateDoc,
-doc,
-getDocs
+doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* FIREBASE */
@@ -37,6 +36,7 @@ let gameFinished=false;
 let teamDocId=null;
 
 let answers=new Array(20).fill("");
+let questionLocked=new Array(20).fill(false);
 
 /* QUESTIONS */
 
@@ -80,6 +80,71 @@ return arr;
 
 let shuffledQuestions=shuffle([...questions]);
 
+/* FULLSCREEN */
+
+function enterFullscreen(){
+if(!document.fullscreenElement){
+document.documentElement.requestFullscreen().catch(()=>{});
+}
+}
+
+/* BLOCK RIGHT CLICK */
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+/* BLOCK COPY PASTE */
+
+document.addEventListener("copy",e=>e.preventDefault());
+document.addEventListener("paste",e=>e.preventDefault());
+
+/* BLOCK KEY SHORTCUTS */
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="F12"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.shiftKey && e.key==="I"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.key==="u"){
+e.preventDefault();
+}
+
+});
+
+/* TAB SWITCH DETECTION */
+
+document.addEventListener("visibilitychange",function(){
+
+if(document.hidden && !gameFinished){
+alert("Tab switch detected. Game submitted.");
+finish();
+}
+
+});
+
+/* FULLSCREEN EXIT */
+
+document.addEventListener("fullscreenchange",function(){
+
+if(!document.fullscreenElement && !gameFinished){
+alert("Fullscreen exited. Game submitted.");
+finish();
+}
+
+});
+
+/* REFRESH BLOCK */
+
+window.onbeforeunload=function(){
+if(!gameFinished){
+return "Leaving will submit your game.";
+}
+};
+
 /* PAGE LOAD */
 
 document.addEventListener("DOMContentLoaded",()=>{
@@ -89,8 +154,6 @@ const team=localStorage.getItem("team");
 if(team){
 document.getElementById("teamName").innerText="Team: "+team;
 }
-
-/* CREATE BINGO BOARD */
 
 let board=document.getElementById("board");
 
@@ -104,8 +167,6 @@ div.innerText=i;
 board.appendChild(div);
 
 }
-
-/* BUTTON EVENTS */
 
 document.getElementById("startBtn").onclick=startGame;
 document.getElementById("nextBtn").onclick=nextQuestion;
@@ -133,20 +194,13 @@ alert("Team name missing");
 return;
 }
 
-/* SWITCH SCREEN */
+enterFullscreen();
 
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
-/* SHOW FIRST QUESTION */
-
 showQuestion();
-
-/* START TIMER */
-
 startTimer();
-
-/* ADD TEAM TO FIREBASE */
 
 const ref=await addDoc(collection(db,"leaderboard"),{
 teamName:team,
@@ -166,6 +220,9 @@ document.getElementById("question").innerText=shuffledQuestions[current].q;
 
 document.getElementById("questionNumber").innerText=
 "Question "+(current+1)+" / 20";
+
+document.getElementById("answer").value=answers[current];
+document.getElementById("answer").disabled=questionLocked[current];
 
 }
 
@@ -193,9 +250,19 @@ if(totalEventTime<=0) finish();
 
 function saveAnswer(){
 
+if(questionLocked[current]) return;
+
 let ans=document.getElementById("answer").value.trim().toLowerCase();
 
+if(ans===""){
+alert("Enter answer");
+return;
+}
+
 answers[current]=ans;
+questionLocked[current]=true;
+
+document.getElementById("answer").disabled=true;
 
 if(ans===shuffledQuestions[current].a){
 
