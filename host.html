@@ -15,10 +15,63 @@ color:white;
 }
 
 h1{
-margin-top:30px;
+margin-top:20px;
 font-size:50px;
 color:#22c55e;
 }
+
+/* RESET BUTTON */
+
+.resetBtn{
+position:fixed;
+top:20px;
+right:20px;
+background:#ef4444;
+color:white;
+border:none;
+padding:10px 20px;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* PODIUM */
+
+.podium{
+display:flex;
+justify-content:center;
+align-items:flex-end;
+gap:40px;
+margin-top:30px;
+}
+
+.podiumBox{
+width:160px;
+text-align:center;
+border-radius:12px;
+padding:15px;
+font-size:20px;
+font-weight:bold;
+}
+
+.first{
+background:linear-gradient(45deg,#facc15,#fde047);
+color:black;
+height:160px;
+}
+
+.second{
+background:linear-gradient(45deg,#d1d5db,#9ca3af);
+color:black;
+height:130px;
+}
+
+.third{
+background:linear-gradient(45deg,#fb923c,#ea580c);
+height:110px;
+}
+
+/* TABLE */
 
 table{
 margin:auto;
@@ -38,32 +91,13 @@ th{
 background:#111827;
 }
 
-.resetBtn{
-position:fixed;
-top:20px;
-right:20px;
-background:#ef4444;
-color:white;
-border:none;
-padding:10px 20px;
-font-size:16px;
-border-radius:8px;
-cursor:pointer;
+tr{
+transition:0.3s;
 }
 
-.gold{
-color:#facc15;
-font-weight:bold;
-}
-
-.silver{
-color:#d1d5db;
-font-weight:bold;
-}
-
-.bronze{
-color:#f97316;
-font-weight:bold;
+tr:hover{
+background:rgba(59,130,246,0.2);
+transform:scale(1.02);
 }
 
 </style>
@@ -75,6 +109,29 @@ font-weight:bold;
 <button class="resetBtn" onclick="resetLeaderboard()">Reset</button>
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
+
+<!-- PODIUM -->
+
+<div class="podium">
+
+<div class="podiumBox second">
+🥈
+<div id="p2">---</div>
+</div>
+
+<div class="podiumBox first">
+🥇
+<div id="p1">---</div>
+</div>
+
+<div class="podiumBox third">
+🥉
+<div id="p3">---</div>
+</div>
+
+</div>
+
+<!-- TABLE -->
 
 <table>
 
@@ -104,7 +161,7 @@ deleteDoc,
 doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* FIREBASE CONFIG */
+/* FIREBASE */
 
 const firebaseConfig = {
 apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
@@ -112,8 +169,7 @@ authDomain: "tech-bingo-leaderboard.firebaseapp.com",
 projectId: "tech-bingo-leaderboard",
 storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
 messagingSenderId: "614182283202",
-appId: "1:614182283202:web:28679433283e05efb2585b",
-measurementId: "G-BN4V2GQJPB"
+appId: "1:614182283202:web:28679433283e05efb2585b"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -132,7 +188,7 @@ return m+":"+(s<10?"0"+s:s);
 
 }
 
-/* REALTIME LEADERBOARD */
+/* LISTEN REALTIME */
 
 function listenLeaderboard(){
 
@@ -153,7 +209,7 @@ time:data.time||0
 
 });
 
-/* SORTING RULE */
+/* SORT */
 
 teams.sort((a,b)=>{
 
@@ -162,6 +218,14 @@ if(b.score!==a.score) return b.score-a.score;
 return a.time-b.time;
 
 });
+
+/* UPDATE PODIUM */
+
+document.getElementById("p1").innerText = teams[0]?.team || "---";
+document.getElementById("p2").innerText = teams[1]?.team || "---";
+document.getElementById("p3").innerText = teams[2]?.team || "---";
+
+/* UPDATE TABLE */
 
 updateBoard(teams);
 
@@ -181,18 +245,10 @@ teams.forEach((team,index)=>{
 
 let row=document.createElement("tr");
 
-let rank=index+1;
-
-let rankClass="";
-
-if(rank===1) rankClass="gold";
-else if(rank===2) rankClass="silver";
-else if(rank===3) rankClass="bronze";
-
 row.innerHTML=`
 
-<td class="${rankClass}">${rank}</td>
-<td class="${rankClass}">${team.team}</td>
+<td>${index+1}</td>
+<td>${team.team}</td>
 <td>${team.score}</td>
 <td>${formatTime(team.time)}</td>
 
@@ -204,25 +260,27 @@ table.appendChild(row);
 
 }
 
-/* RESET LEADERBOARD */
+/* RESET */
 
 async function resetLeaderboard(){
 
-if(confirm("Reset leaderboard?")){
+if(!confirm("Reset leaderboard?")) return;
 
 let snapshot = await getDocs(collection(db,"leaderboard"));
 
-snapshot.forEach(async (d)=>{
+let deletes=[];
 
-await deleteDoc(doc(db,"leaderboard",d.id));
-
+snapshot.forEach((d)=>{
+deletes.push(deleteDoc(doc(db,"leaderboard",d.id)));
 });
 
-}
+await Promise.all(deletes);
+
+alert("Leaderboard reset!");
 
 }
 
-/* START REALTIME LISTENER */
+/* START */
 
 listenLeaderboard();
 
