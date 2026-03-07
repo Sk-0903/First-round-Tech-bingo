@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -7,7 +6,9 @@
 <title>Tech Bingo Game</title>
 
 <link rel="stylesheet" href="style.css">
-<script src="script.js" defer></script>
+
+<!-- IMPORTANT: script must be module for Firebase -->
+<script type="module" src="script.js" defer></script>
 
 </head>
 
@@ -18,9 +19,11 @@
 <h1 class="mainTitle">TECH BINGO</h1>
 <h2 class="subTitle">TECHNO QUEST</h2>
 
-<!-- TIMER -->
+
+<!-- TIMER (TOP RIGHT) -->
 
 <div id="eventTimer">15:00</div>
+
 
 <!-- START SCREEN -->
 
@@ -36,7 +39,13 @@
 
 <button class="startBtn" onclick="checkCode()">Start Game</button>
 
+<p class="securityNote">
+⚠ Do not switch tabs or exit fullscreen.  
+Game will automatically submit if you leave.
+</p>
+
 </div>
+
 
 <!-- GAME AREA -->
 
@@ -44,48 +53,61 @@
 
 <h2 id="teamName"></h2>
 
-<!-- QUESTION COUNTER -->
+
+<!-- QUESTION POSITION -->
 
 <h3 id="questionNumber"></h3>
+
 
 <!-- PROGRESS -->
 
 <h4 id="progress"></h4>
 
+
 <!-- QUESTION -->
 
 <h3 id="question"></h3>
+
+
+<!-- ANSWER INPUT -->
 
 <input type="text" id="answer" placeholder="Type answer">
 
 <br><br>
 
-<!-- NAVIGATION BUTTONS -->
 
-<button onclick="prevQuestion()">Previous</button>
+<!-- NAVIGATION CONTROLS -->
 
-<!-- UPDATED SAVE BUTTON -->
+<div class="navControls">
 
-<button id="saveBtn" type="button" onclick="saveAnswer()">Save</button>
+<button class="navBtn" onclick="prevQuestion()">⬅ Previous</button>
 
-<button onclick="nextQuestion()">Next</button>
+<button id="saveBtn" class="saveBtn" onclick="saveAnswer()">Save</button>
 
-<br><br>
+<button class="navBtn" onclick="nextQuestion()">Next ➡</button>
 
-<!-- SUBMIT BUTTON -->
+</div>
 
-<button id="submitGame" onclick="finish()" style="display:none;">
+<br>
+
+
+<!-- FINAL SUBMIT BUTTON (VISIBLE ONLY AT END) -->
+
+<button id="submitGame" class="submitBtn" onclick="finish()" style="display:none;">
 Submit Game
 </button>
+
 
 <!-- BINGO BOARD -->
 
 <div class="board" id="board"></div>
+
+
+<!-- RESULT MESSAGE -->
 
 <h2 id="result"></h2>
 
 </div>
 
 </body>
-
 </html>
