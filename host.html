@@ -161,7 +161,7 @@ deleteDoc,
 doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* FIREBASE */
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
 apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
@@ -246,12 +246,10 @@ teams.forEach((team,index)=>{
 let row=document.createElement("tr");
 
 row.innerHTML=`
-
 <td>${index+1}</td>
 <td>${team.team}</td>
 <td>${team.score}</td>
 <td>${formatTime(team.time)}</td>
-
 `;
 
 table.appendChild(row);
@@ -260,11 +258,13 @@ table.appendChild(row);
 
 }
 
-/* RESET */
+/* RESET LEADERBOARD */
 
 async function resetLeaderboard(){
 
 if(!confirm("Reset leaderboard?")) return;
+
+try{
 
 let snapshot = await getDocs(collection(db,"leaderboard"));
 
@@ -276,11 +276,29 @@ deletes.push(deleteDoc(doc(db,"leaderboard",d.id)));
 
 await Promise.all(deletes);
 
-alert("Leaderboard reset!");
+/* CLEAR UI */
+
+document.getElementById("board").innerHTML="";
+document.getElementById("p1").innerText="---";
+document.getElementById("p2").innerText="---";
+document.getElementById("p3").innerText="---";
+
+alert("Leaderboard reset successful");
+
+}catch(err){
+
+console.error(err);
+alert("Error resetting leaderboard");
 
 }
 
-/* START */
+}
+
+/* MAKE BUTTON WORK */
+
+window.resetLeaderboard = resetLeaderboard;
+
+/* START LISTENER */
 
 listenLeaderboard();
 
