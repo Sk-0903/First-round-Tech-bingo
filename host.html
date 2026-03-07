@@ -76,12 +76,25 @@ cursor:pointer;
 
 </table>
 
-<script>
+<script type="module">
 
-const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
-const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-let currentData={};
+/* Firebase Config */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
+  authDomain: "tech-bingo-leaderboard.firebaseapp.com",
+  projectId: "tech-bingo-leaderboard",
+  storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
+  messagingSenderId: "614182283202",
+  appId: "1:614182283202:web:28679433283e05efb2585b",
+  measurementId: "G-BN4V2GQJPB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 function formatTime(sec){
 
@@ -94,31 +107,26 @@ return m+":"+(s<10?"0"+s:s);
 
 }
 
-function fetchLeaderboard(){
+/* Fetch leaderboard from Firebase */
 
-fetch(sheetURL+"?t="+Date.now())
-.then(res=>res.text())
-.then(data=>{
+async function fetchLeaderboard(){
 
-let rows=data.trim().split("\n");
+let snapshot = await getDocs(collection(db,"leaderboard"));
 
 let teams=[];
 
-for(let i=1;i<rows.length;i++){
+snapshot.forEach((docData)=>{
 
-let cols=rows[i].split(",");
+let data=docData.data();
 
-if(cols.length<4) continue;
+teams.push({
+id:docData.id,
+team:data.teamName,
+score:data.score||0,
+time:data.time||0
+});
 
-let team=cols[1].trim();
-let score=parseInt(cols[2])||0;
-let time=parseInt(cols[3])||0;
-
-if(!team) continue;
-
-teams.push({team,score,time});
-
-}
+});
 
 /* ranking rule */
 
@@ -132,59 +140,52 @@ return a.time-b.time;
 
 updateBoard(teams);
 
-});
-
 }
 
 function updateBoard(teams){
 
 let table=document.getElementById("board");
 
+table.innerHTML="";
+
 teams.forEach((team,index)=>{
 
-let id="row_"+team.team.replace(/\s/g,"");
-
-let row=document.getElementById(id);
-
-if(!row){
-
-row=document.createElement("tr");
-row.id=id;
+let row=document.createElement("tr");
 
 row.innerHTML=`
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>${index+1}</td>
+<td>${team.team}</td>
+<td>${team.score}</td>
+<td>${formatTime(team.time)}</td>
 `;
 
 table.appendChild(row);
 
-}
-
-row.children[0].innerText=index+1;
-row.children[1].innerText=team.team;
-row.children[2].innerText=team.score;
-row.children[3].innerText=formatTime(team.time);
-
 });
 
 }
 
-function resetLeaderboard(){
+/* Reset leaderboard */
+
+async function resetLeaderboard(){
 
 if(confirm("Reset leaderboard?")){
 
-fetch(resetURL).then(()=>{
+let snapshot = await getDocs(collection(db,"leaderboard"));
 
-document.getElementById("board").innerHTML="";
-currentData={};
+snapshot.forEach(async (d)=>{
+
+await deleteDoc(doc(db,"leaderboard",d.id));
 
 });
 
+document.getElementById("board").innerHTML="";
+
 }
 
 }
+
+/* Auto refresh */
 
 fetchLeaderboard();
 setInterval(fetchLeaderboard,2000);
