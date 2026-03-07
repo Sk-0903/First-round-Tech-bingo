@@ -3,7 +3,6 @@ const GAME_CODE = "keshav";
 let totalEventTime = 15 * 60;
 let timerInterval;
 
-let startTime;
 let current = 0;
 let score = 0;
 
@@ -11,7 +10,7 @@ let gameFinished = false;
 
 let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
-let questionLocked = new Array(20).fill(false);   // NEW
+let questionLocked = new Array(20).fill(false);
 
 /* FULLSCREEN FUNCTION */
 
@@ -148,6 +147,8 @@ document.getElementById("gameArea").style.display="block";
 enterFullscreen();
 blockBackNavigation();
 
+/* ADD TEAM TO LEADERBOARD */
+
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
 body:JSON.stringify({
@@ -157,13 +158,14 @@ time:0
 })
 });
 
+/* SHOW FIRST QUESTION */
+
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
 updateProgress();
 
 startEventTimer();
-startTime=Date.now();
 
 }
 
@@ -189,9 +191,12 @@ finish();
 
 });
 
+/* CREATE BINGO BOARD */
+
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
+
 div.className="cell";
 div.innerText=i;
 div.id="cell"+i;
@@ -216,7 +221,7 @@ document.getElementById("progress").innerText=
 
 }
 
-/* SAVE ANSWER (LOCK AFTER ONE ATTEMPT) */
+/* SAVE ANSWER */
 
 function saveAnswer(){
 
@@ -347,12 +352,21 @@ function finish(){
 if(gameFinished) return;
 gameFinished=true;
 
+/* stop timer */
+
 clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
-let endTime=Date.now();
-let totalTime=Math.floor((endTime-startTime)/1000);
+/* calculate time used from countdown */
+
+let totalTime = (15 * 60) - totalEventTime;
+
+if(totalTime < 0){
+totalTime = 0;
+}
+
+/* send score */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
