@@ -113,7 +113,7 @@ a:"radio waves",
 cell:13},
 
 {q:"What was the first computer virus?",
-options:["Creeper","ILOVEYOU","Melissa","Brain"],
+options:["Creeper","Morris Worm","Melissa","Brain"],
 a:"creeper",
 cell:14},
 
@@ -140,6 +140,7 @@ cell:18},
 {
 q:"Identify the logo shown below",
 image:"github.png",
+options:["GitHub","GitLab","Bitbucket","Azure"],
 a:"github",
 cell:19
 },
@@ -148,7 +149,6 @@ cell:19
 options:["CNN","RNN","Transformer","Decision Tree"],
 a:"transformer",
 cell:20}
-
 ];
 
 /* SHUFFLE */
