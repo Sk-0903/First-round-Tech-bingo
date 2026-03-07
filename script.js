@@ -33,16 +33,16 @@ let timerInterval;
 let current=0;
 let score=0;
 let gameFinished=false;
+let showingBingo=false;
 
 let teamDocId=null;
 
 let answers=new Array(20).fill("");
 let questionLocked=new Array(20).fill(false);
 
-/* QUESTIONS FROM PDF */
+/* QUESTIONS */
 
 const questions=[
-
 {q:`What will be the output?
 int a = 5;
 int b = 10;
@@ -183,10 +183,12 @@ finish();
 });
 
 document.addEventListener("fullscreenchange",function(){
-if(!document.fullscreenElement && !gameFinished){
+
+if(!document.fullscreenElement && !gameFinished && !showingBingo){
 alert("Fullscreen exited. Game submitted.");
 finish();
 }
+
 });
 
 /* CHECK DUPLICATE TEAM */
@@ -284,13 +286,9 @@ let q = shuffledQuestions[current];
 
 let html = `<div class="questionText">${q.q}</div><br>`;
 
-/* SHOW IMAGE IF PRESENT */
-
 if(q.image){
 html += `<img src="${q.image}" class="questionImage"><br><br>`;
 }
-
-/* SHOW OPTIONS */
 
 q.options.forEach((opt,index)=>{
 html += `<div class="optionLine">${String.fromCharCode(65+index)}. ${opt}</div>`;
@@ -355,7 +353,15 @@ cols.forEach(c=>{ if(c.every(x=>active.includes(x))) bingo=true; });
 diagonals.forEach(d=>{ if(d.every(x=>active.includes(x))) bingo=true; });
 
 if(bingo){
+
+showingBingo=true;
+
 alert("🎉 BINGO ACHIEVED!");
+
+setTimeout(()=>{
+showingBingo=false;
+},1000);
+
 }
 
 }
