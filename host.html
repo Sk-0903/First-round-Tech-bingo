@@ -86,14 +86,6 @@ font-size:20px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-tr:nth-child(even){
-background:rgba(255,255,255,0.04);
-}
-
-tr:hover{
-background:rgba(34,197,94,0.1);
-}
-
 .resetBtn{
 position:fixed;
 top:20px;
@@ -143,8 +135,6 @@ const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96
 
 const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
 
-/* FORMAT TIME */
-
 function formatTime(sec){
 
 sec=parseInt(sec)||0;
@@ -156,56 +146,40 @@ return m+":"+(s<10?"0"+s:s);
 
 }
 
-/* LOAD LEADERBOARD */
-
 function loadLeaderboard(){
 
-fetch(sheetURL+"?"+Date.now())
+fetch(sheetURL + "&t=" + Date.now())
 .then(res=>res.text())
 .then(data=>{
 
-let rows=data.split("\n");
+let rows=data.trim().split("\n");
 
 let teams=[];
 
-/* READ CSV */
-
 for(let i=1;i<rows.length;i++){
 
-let cols=rows[i].split(",");
+let cols=rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 if(cols.length<4) continue;
 
-let team=(cols[1]||"").trim();
-let score=parseInt(cols[2])||0;
-let time=parseInt(cols[3])||0;
+let team=cols[1].replace(/"/g,"").trim();
+let score=parseInt(cols[2]);
+let time=parseInt(cols[3]);
 
-if(team==="") continue;
+if(!team) continue;
 
-teams.push({
-team:team,
-score:score,
-time:time
-});
+if(isNaN(score)) score=0;
+if(isNaN(time)) time=0;
+
+teams.push({team,score,time});
 
 }
-
-/* REMOVE DUPLICATES (KEEP LAST ENTRY) */
-
-let map={};
-
-teams.forEach(t=>{
-map[t.team]=t;
-});
-
-teams=Object.values(map);
 
 /* SORT */
 
 teams.sort((a,b)=>{
 
-if(b.score!==a.score)
-return b.score-a.score;
+if(b.score!==a.score) return b.score-a.score;
 
 return a.time-b.time;
 
@@ -215,14 +189,17 @@ return a.time-b.time;
 
 let podiumHTML="";
 
-if(teams.length>1)
+if(teams[1]){
 podiumHTML+=`<div class="second">🥈 ${teams[1].team}<br>${teams[1].score}</div>`;
+}
 
-if(teams.length>0)
+if(teams[0]){
 podiumHTML+=`<div class="first">🥇 ${teams[0].team}<br>${teams[0].score}</div>`;
+}
 
-if(teams.length>2)
+if(teams[2]){
 podiumHTML+=`<div class="third">🥉 ${teams[2].team}<br>${teams[2].score}</div>`;
+}
 
 document.getElementById("podium").innerHTML=podiumHTML;
 
@@ -230,11 +207,11 @@ document.getElementById("podium").innerHTML=podiumHTML;
 
 let html="";
 
-teams.forEach((t,i)=>{
+teams.forEach((t,index)=>{
 
 html+=`
 <tr>
-<td>${i+1}</td>
+<td>${index+1}</td>
 <td>${t.team}</td>
 <td>${t.score}</td>
 <td>${formatTime(t.time)}</td>
@@ -245,31 +222,26 @@ html+=`
 
 document.getElementById("leaderboard").innerHTML=html;
 
+})
+
+.catch(err=>{
+console.log("Leaderboard load error:",err);
 });
 
 }
-
-/* RESET */
 
 function resetLeaderboard(){
 
 if(confirm("Reset leaderboard?")){
 
-fetch(resetURL)
-.then(()=>{
-
+fetch(resetURL).then(()=>{
 document.getElementById("leaderboard").innerHTML="";
 document.getElementById("podium").innerHTML="";
-
-setTimeout(loadLeaderboard,1000);
-
 });
 
 }
 
 }
-
-/* AUTO UPDATE */
 
 loadLeaderboard();
 setInterval(loadLeaderboard,3000);
