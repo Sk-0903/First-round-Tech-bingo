@@ -21,46 +21,6 @@ color:#22c55e;
 text-shadow:0 0 10px #22c55e;
 }
 
-.podium{
-display:flex;
-justify-content:center;
-align-items:flex-end;
-gap:30px;
-margin-top:30px;
-height:200px;
-}
-
-.podium div{
-width:140px;
-border-radius:10px;
-display:flex;
-flex-direction:column;
-justify-content:flex-end;
-align-items:center;
-padding:10px;
-font-weight:bold;
-box-shadow:0 0 15px rgba(0,0,0,0.5);
-}
-
-.first{
-height:200px;
-background:linear-gradient(#facc15,#eab308);
-color:black;
-font-size:20px;
-}
-
-.second{
-height:150px;
-background:linear-gradient(#cbd5f5,#94a3b8);
-color:black;
-}
-
-.third{
-height:120px;
-background:linear-gradient(#f59e0b,#d97706);
-color:black;
-}
-
 table{
 margin:auto;
 border-collapse:collapse;
@@ -77,7 +37,6 @@ th{
 background:#111827;
 padding:16px;
 font-size:22px;
-border-bottom:2px solid #22c55e;
 }
 
 td{
@@ -99,10 +58,6 @@ border-radius:10px;
 cursor:pointer;
 }
 
-.resetBtn:hover{
-background:#dc2626;
-}
-
 </style>
 </head>
 
@@ -111,8 +66,6 @@ background:#dc2626;
 <button class="resetBtn" onclick="resetLeaderboard()">Reset</button>
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
-
-<div class="podium" id="podium"></div>
 
 <table>
 
@@ -135,6 +88,8 @@ const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96
 
 const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
 
+let leaderboardData={};
+
 function formatTime(sec){
 
 sec=parseInt(sec)||0;
@@ -148,7 +103,7 @@ return m+":"+(s<10?"0"+s:s);
 
 function loadLeaderboard(){
 
-fetch(sheetURL + "&t=" + Date.now())
+fetch(sheetURL+"?t="+Date.now())
 .then(res=>res.text())
 .then(data=>{
 
@@ -158,24 +113,19 @@ let teams=[];
 
 for(let i=1;i<rows.length;i++){
 
-let cols=rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+let cols=rows[i].split(",");
 
 if(cols.length<4) continue;
 
-let team=cols[1].replace(/"/g,"").trim();
-let score=parseInt(cols[2]);
-let time=parseInt(cols[3]);
+let team=cols[1].trim();
+let score=parseInt(cols[2])||0;
+let time=parseInt(cols[3])||0;
 
 if(!team) continue;
-
-if(isNaN(score)) score=0;
-if(isNaN(time)) time=0;
 
 teams.push({team,score,time});
 
 }
-
-/* SORT */
 
 teams.sort((a,b)=>{
 
@@ -185,25 +135,15 @@ return a.time-b.time;
 
 });
 
-/* PODIUM */
+updateTable(teams);
 
-let podiumHTML="";
+});
 
-if(teams[1]){
-podiumHTML+=`<div class="second">🥈 ${teams[1].team}<br>${teams[1].score}</div>`;
 }
 
-if(teams[0]){
-podiumHTML+=`<div class="first">🥇 ${teams[0].team}<br>${teams[0].score}</div>`;
-}
+function updateTable(teams){
 
-if(teams[2]){
-podiumHTML+=`<div class="third">🥉 ${teams[2].team}<br>${teams[2].score}</div>`;
-}
-
-document.getElementById("podium").innerHTML=podiumHTML;
-
-/* TABLE */
+let table=document.getElementById("leaderboard");
 
 let html="";
 
@@ -220,13 +160,7 @@ html+=`
 
 });
 
-document.getElementById("leaderboard").innerHTML=html;
-
-})
-
-.catch(err=>{
-console.log("Leaderboard load error:",err);
-});
+table.innerHTML=html;
 
 }
 
@@ -235,8 +169,9 @@ function resetLeaderboard(){
 if(confirm("Reset leaderboard?")){
 
 fetch(resetURL).then(()=>{
+
 document.getElementById("leaderboard").innerHTML="";
-document.getElementById("podium").innerHTML="";
+
 });
 
 }
@@ -244,6 +179,7 @@ document.getElementById("podium").innerHTML="";
 }
 
 loadLeaderboard();
+
 setInterval(loadLeaderboard,3000);
 
 </script>
