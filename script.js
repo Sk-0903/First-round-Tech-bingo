@@ -1,6 +1,9 @@
 const GAME_CODE = "keshav";
 
-let totalEventTime = 15 * 60;
+/* TOTAL EVENT TIME (15 MIN) */
+const EVENT_DURATION = 15 * 60;
+
+let totalEventTime = EVENT_DURATION;
 let timerInterval;
 
 let current = 0;
@@ -15,11 +18,9 @@ let questionLocked = new Array(20).fill(false);
 /* FULLSCREEN FUNCTION */
 
 function enterFullscreen(){
-
 if(!document.fullscreenElement){
 document.documentElement.requestFullscreen().catch(()=>{});
 }
-
 }
 
 /* BLOCK BACK BUTTON ONLY AFTER GAME START */
@@ -31,7 +32,6 @@ history.pushState(null,null,location.href);
 window.onpopstate=function(){
 
 alert("Back navigation is disabled during the game.");
-
 history.pushState(null,null,location.href);
 
 };
@@ -112,7 +112,7 @@ minutes+":"+(seconds<10?"0"+seconds:seconds);
 
 totalEventTime--;
 
-if(totalEventTime<=0){
+if(totalEventTime < 0){
 
 clearInterval(timerInterval);
 finish();
@@ -141,6 +141,8 @@ alert("Team name not found.");
 return;
 }
 
+/* START GAME UI */
+
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
@@ -160,7 +162,7 @@ time:0
 
 /* SHOW FIRST QUESTION */
 
-document.getElementById("question").innerText=
+document.getElementById("question").innerText =
 shuffledQuestions[current].q;
 
 updateProgress();
@@ -178,7 +180,11 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
+/* FULLSCREEN ON FIRST CLICK */
+
 document.addEventListener("click",enterFullscreen,{once:true});
+
+/* DETECT FULLSCREEN EXIT */
 
 document.addEventListener("fullscreenchange",function(){
 
@@ -211,17 +217,17 @@ board.appendChild(div);
 
 function updateProgress(){
 
-document.getElementById("questionNumber").innerText=
+document.getElementById("questionNumber").innerText =
 "Question "+(current+1)+" / 20";
 
 let answered=answers.filter(a=>a!=="").length;
 
-document.getElementById("progress").innerText=
+document.getElementById("progress").innerText =
 "Answered "+answered+" / 20";
 
 }
 
-/* SAVE ANSWER */
+/* SAVE ANSWER (ONLY ONE ATTEMPT) */
 
 function saveAnswer(){
 
@@ -267,10 +273,10 @@ if(current<19){
 
 current++;
 
-document.getElementById("question").innerText=
+document.getElementById("question").innerText =
 shuffledQuestions[current].q;
 
-document.getElementById("answer").value=
+document.getElementById("answer").value =
 answers[current];
 
 document.getElementById("answer").disabled =
@@ -290,10 +296,10 @@ if(current>0){
 
 current--;
 
-document.getElementById("question").innerText=
+document.getElementById("question").innerText =
 shuffledQuestions[current].q;
 
-document.getElementById("answer").value=
+document.getElementById("answer").value =
 answers[current];
 
 document.getElementById("answer").disabled =
@@ -352,21 +358,19 @@ function finish(){
 if(gameFinished) return;
 gameFinished=true;
 
-/* stop timer */
-
 clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
-/* calculate time used from countdown */
+/* TIME USED = TOTAL TIME - REMAINING */
 
-let totalTime = (15 * 60) - totalEventTime;
+let totalTime = EVENT_DURATION - totalEventTime;
 
 if(totalTime < 0){
 totalTime = 0;
 }
 
-/* send score */
+/* SEND RESULT */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
@@ -377,8 +381,10 @@ time:totalTime
 })
 });
 
-document.getElementById("result").innerText=
+document.getElementById("result").innerText =
 "Submission successful. Thank you!";
+
+/* REDIRECT */
 
 setTimeout(function(){
 window.location.href="completed.html";
