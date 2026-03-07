@@ -22,6 +22,50 @@ animation:techBackground 15s ease infinite;
 
 }
 
+/* MAIN TITLE */
+
+.mainTitle{
+
+font-size:70px;
+font-weight:bold;
+letter-spacing:4px;
+margin-top:10px;
+
+background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
+background-size:200% auto;
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:titleGlow 4s linear infinite;
+
+text-shadow:
+0 0 10px rgba(34,197,94,0.8),
+0 0 25px rgba(59,130,246,0.7),
+0 0 40px rgba(59,130,246,0.6);
+
+}
+
+/* SUBTITLE */
+
+.subTitle{
+
+font-size:22px;
+letter-spacing:3px;
+opacity:0.85;
+margin-top:5px;
+
+}
+
+/* TITLE ANIMATION */
+
+@keyframes titleGlow{
+
+0%{background-position:0%;}
+100%{background-position:200%;}
+
+}
+
 /* GLASS PANEL FOR START & GAME AREA */
 
 #startScreen,
@@ -42,7 +86,7 @@ box-shadow:0 0 30px rgba(0,0,0,0.6);
 
 }
 
-/* TIMER (TOP RIGHT CORNER) */
+/* TIMER */
 
 #eventTimer{
 position:fixed;
@@ -106,7 +150,7 @@ input:focus{
 box-shadow:0 0 8px #2563eb;
 }
 
-/* NORMAL BUTTONS */
+/* BUTTONS */
 
 button{
 padding:10px 20px;
@@ -125,7 +169,7 @@ background:#1d4ed8;
 transform:scale(1.05);
 }
 
-/* SUBMIT GAME BUTTON */
+/* SUBMIT BUTTON */
 
 #submitGame{
 display:block;
@@ -146,9 +190,10 @@ background:#16a34a;
 transform:scale(1.05);
 }
 
-/* GLOWING HEADINGS */
+/* QUESTION GLOW */
 
 h2,h3{
-text-shadow:0 0 8px #3b82f6,
+text-shadow:
+0 0 8px #3b82f6,
 0 0 20px #2563eb;
 }
