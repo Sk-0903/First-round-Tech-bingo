@@ -22,14 +22,21 @@ document.documentElement.requestFullscreen().catch(()=>{});
 
 }
 
-/* BLOCK BACK BUTTON */
+/* BLOCK BACK BUTTON ONLY AFTER GAME START */
+
+function blockBackNavigation(){
 
 history.pushState(null,null,location.href);
 
 window.onpopstate=function(){
-alert("Back navigation is disabled during the event.");
+
+alert("Back navigation is disabled during the game.");
+
 history.pushState(null,null,location.href);
+
 };
+
+}
 
 /* BLOCK TAB SWITCH */
 
@@ -91,7 +98,7 @@ return array;
 
 let shuffledQuestions = shuffle([...questions]);
 
-/* CHECK TEAM NAME DUPLICATE */
+/* CHECK TEAM DUPLICATE */
 
 async function checkTeamExists(team){
 
@@ -155,21 +162,29 @@ return;
 let team=localStorage.getItem("team");
 
 if(!team){
-alert("Team name not found. Please register again.");
+alert("Team name not found.");
 return;
 }
 
 let exists=await checkTeamExists(team);
 
 if(exists){
-alert("Team name already used. Choose another team name.");
+alert("Team name already used.");
 return;
 }
+
+/* START GAME */
 
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
+/* ENTER FULLSCREEN */
+
 enterFullscreen();
+
+/* BLOCK BACK BUTTON NOW */
+
+blockBackNavigation();
 
 /* ADD TEAM TO LEADERBOARD */
 
@@ -181,6 +196,8 @@ score:0,
 time:0
 })
 });
+
+/* SHOW FIRST QUESTION */
 
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
