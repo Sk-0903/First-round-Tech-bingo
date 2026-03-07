@@ -18,7 +18,6 @@ h1{
 margin-top:30px;
 font-size:50px;
 color:#22c55e;
-text-shadow:0 0 10px #22c55e;
 }
 
 table{
@@ -27,22 +26,16 @@ border-collapse:collapse;
 width:75%;
 margin-top:40px;
 background:rgba(255,255,255,0.05);
-backdrop-filter:blur(8px);
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 0 20px rgba(0,0,0,0.7);
+}
+
+th,td{
+padding:16px;
+font-size:20px;
+border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
 th{
 background:#111827;
-padding:16px;
-font-size:22px;
-}
-
-td{
-padding:16px;
-font-size:20px;
-border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
 .resetBtn{
@@ -52,13 +45,14 @@ right:20px;
 background:#ef4444;
 color:white;
 border:none;
-padding:12px 20px;
-font-size:18px;
-border-radius:10px;
+padding:10px 20px;
+font-size:16px;
+border-radius:8px;
 cursor:pointer;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -78,17 +72,16 @@ cursor:pointer;
 </tr>
 </thead>
 
-<tbody id="leaderboard"></tbody>
+<tbody id="board"></tbody>
 
 </table>
 
 <script>
 
 const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec";
 
-const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
-
-let leaderboardData={};
+let currentData={};
 
 function formatTime(sec){
 
@@ -101,7 +94,7 @@ return m+":"+(s<10?"0"+s:s);
 
 }
 
-function loadLeaderboard(){
+function fetchLeaderboard(){
 
 fetch(sheetURL+"?t="+Date.now())
 .then(res=>res.text())
@@ -127,6 +120,8 @@ teams.push({team,score,time});
 
 }
 
+/* ranking rule */
+
 teams.sort((a,b)=>{
 
 if(b.score!==a.score) return b.score-a.score;
@@ -135,32 +130,44 @@ return a.time-b.time;
 
 });
 
-updateTable(teams);
+updateBoard(teams);
 
 });
 
 }
 
-function updateTable(teams){
+function updateBoard(teams){
 
-let table=document.getElementById("leaderboard");
+let table=document.getElementById("board");
 
-let html="";
+teams.forEach((team,index)=>{
 
-teams.forEach((t,index)=>{
+let id="row_"+team.team.replace(/\s/g,"");
 
-html+=`
-<tr>
-<td>${index+1}</td>
-<td>${t.team}</td>
-<td>${t.score}</td>
-<td>${formatTime(t.time)}</td>
-</tr>
+let row=document.getElementById(id);
+
+if(!row){
+
+row=document.createElement("tr");
+row.id=id;
+
+row.innerHTML=`
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 `;
 
-});
+table.appendChild(row);
 
-table.innerHTML=html;
+}
+
+row.children[0].innerText=index+1;
+row.children[1].innerText=team.team;
+row.children[2].innerText=team.score;
+row.children[3].innerText=formatTime(team.time);
+
+});
 
 }
 
@@ -170,7 +177,8 @@ if(confirm("Reset leaderboard?")){
 
 fetch(resetURL).then(()=>{
 
-document.getElementById("leaderboard").innerHTML="";
+document.getElementById("board").innerHTML="";
+currentData={};
 
 });
 
@@ -178,9 +186,8 @@ document.getElementById("leaderboard").innerHTML="";
 
 }
 
-loadLeaderboard();
-
-setInterval(loadLeaderboard,3000);
+fetchLeaderboard();
+setInterval(fetchLeaderboard,2000);
 
 </script>
 
