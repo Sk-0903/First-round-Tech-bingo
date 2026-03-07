@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -9,71 +8,111 @@
 <style>
 
 body{
-font-family:Arial;
+font-family: "Segoe UI", Arial;
 text-align:center;
-background:#0f172a;
+margin:0;
+background:linear-gradient(135deg,#020617,#0f172a,#020617);
 color:white;
 }
 
+/* TITLE */
+
 h1{
-margin-top:30px;
-font-size:40px;
+margin-top:40px;
+font-size:48px;
+letter-spacing:2px;
+color:#22c55e;
+text-shadow:0 0 10px #22c55e;
 }
+
+/* TABLE */
 
 table{
 margin:auto;
 border-collapse:collapse;
-width:70%;
-margin-top:30px;
-}
-
-td,th{
-border:1px solid white;
-padding:14px;
-font-size:22px;
+width:75%;
+margin-top:40px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(8px);
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 0 20px rgba(0,0,0,0.7);
 }
 
 th{
-background:#1e293b;
+background:#111827;
+padding:16px;
+font-size:22px;
+border-bottom:2px solid #22c55e;
 }
+
+td{
+padding:16px;
+font-size:20px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+/* EVEN ROWS */
 
 tr:nth-child(even){
-background:#1e293b;
+background:rgba(255,255,255,0.04);
 }
 
+/* HOVER */
+
+tr:hover{
+background:rgba(34,197,94,0.1);
+transform:scale(1.01);
+transition:0.2s;
+}
+
+/* TOP 3 */
+
 .rank1{
-background:#16a34a;
+background:linear-gradient(90deg,#facc15,#eab308);
+color:black;
+font-weight:bold;
 }
 
 .rank2{
-background:#2563eb;
+background:linear-gradient(90deg,#cbd5f5,#94a3b8);
+color:black;
+font-weight:bold;
 }
 
 .rank3{
-background:#9333ea;
+background:linear-gradient(90deg,#f59e0b,#d97706);
+color:black;
+font-weight:bold;
 }
 
-.resetBtn{
+/* RESET BUTTON */
 
+.resetBtn{
 position:fixed;
 top:20px;
 right:20px;
-
 background:#ef4444;
 color:white;
-
 border:none;
-padding:10px 16px;
-
+padding:12px 20px;
 font-size:18px;
-
-border-radius:8px;
+border-radius:10px;
 cursor:pointer;
-
+box-shadow:0 0 10px rgba(0,0,0,0.6);
 }
 
 .resetBtn:hover{
 background:#dc2626;
+transform:scale(1.05);
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:40px;
+opacity:0.6;
+font-size:14px;
 }
 
 </style>
@@ -84,7 +123,7 @@ background:#dc2626;
 
 <button class="resetBtn" onclick="resetLeaderboard()">🔄 Reset</button>
 
-<h1>🏆 Live Leaderboard</h1>
+<h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
 <table>
 
@@ -102,6 +141,10 @@ background:#dc2626;
 <tbody id="leaderboard"></tbody>
 
 </table>
+
+<div class="footer">
+Live updating every 3 seconds
+</div>
 
 <script>
 
@@ -141,6 +184,8 @@ time:parseInt(cols[3]) || 0
 
 }
 
+/* SORT */
+
 teams.sort((a,b)=>{
 
 if(b.score===a.score){
@@ -150,6 +195,8 @@ return a.time-b.time;
 return b.score-a.score;
 
 });
+
+/* DISPLAY */
 
 teams.forEach((t,index)=>{
 
@@ -182,14 +229,14 @@ table.innerHTML+=row;
 
 }
 
+/* RESET */
+
 function resetLeaderboard(){
 
 if(confirm("Reset leaderboard?")){
 
-// clear table immediately
 document.getElementById("leaderboard").innerHTML="";
 
-// clear Google Sheet
 fetch(resetURL)
 .then(()=>{
 alert("Leaderboard reset successfully");
