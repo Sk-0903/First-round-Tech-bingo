@@ -51,6 +51,21 @@ border-radius:8px;
 cursor:pointer;
 }
 
+.gold{
+color:#facc15;
+font-weight:bold;
+}
+
+.silver{
+color:#d1d5db;
+font-weight:bold;
+}
+
+.bronze{
+color:#f97316;
+font-weight:bold;
+}
+
 </style>
 
 </head>
@@ -79,22 +94,32 @@ cursor:pointer;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* Firebase Config */
+import {
+getFirestore,
+collection,
+onSnapshot,
+getDocs,
+deleteDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
-  authDomain: "tech-bingo-leaderboard.firebaseapp.com",
-  projectId: "tech-bingo-leaderboard",
-  storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
-  messagingSenderId: "614182283202",
-  appId: "1:614182283202:web:28679433283e05efb2585b",
-  measurementId: "G-BN4V2GQJPB"
+apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
+authDomain: "tech-bingo-leaderboard.firebaseapp.com",
+projectId: "tech-bingo-leaderboard",
+storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
+messagingSenderId: "614182283202",
+appId: "1:614182283202:web:28679433283e05efb2585b",
+measurementId: "G-BN4V2GQJPB"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+/* FORMAT TIME */
 
 function formatTime(sec){
 
@@ -107,11 +132,11 @@ return m+":"+(s<10?"0"+s:s);
 
 }
 
-/* Fetch leaderboard from Firebase */
+/* REALTIME LEADERBOARD */
 
-async function fetchLeaderboard(){
+function listenLeaderboard(){
 
-let snapshot = await getDocs(collection(db,"leaderboard"));
+onSnapshot(collection(db,"leaderboard"),(snapshot)=>{
 
 let teams=[];
 
@@ -128,7 +153,7 @@ time:data.time||0
 
 });
 
-/* ranking rule */
+/* SORTING RULE */
 
 teams.sort((a,b)=>{
 
@@ -140,7 +165,11 @@ return a.time-b.time;
 
 updateBoard(teams);
 
+});
+
 }
+
+/* UPDATE TABLE */
 
 function updateBoard(teams){
 
@@ -152,11 +181,21 @@ teams.forEach((team,index)=>{
 
 let row=document.createElement("tr");
 
+let rank=index+1;
+
+let rankClass="";
+
+if(rank===1) rankClass="gold";
+else if(rank===2) rankClass="silver";
+else if(rank===3) rankClass="bronze";
+
 row.innerHTML=`
-<td>${index+1}</td>
-<td>${team.team}</td>
+
+<td class="${rankClass}">${rank}</td>
+<td class="${rankClass}">${team.team}</td>
 <td>${team.score}</td>
 <td>${formatTime(team.time)}</td>
+
 `;
 
 table.appendChild(row);
@@ -165,7 +204,7 @@ table.appendChild(row);
 
 }
 
-/* Reset leaderboard */
+/* RESET LEADERBOARD */
 
 async function resetLeaderboard(){
 
@@ -179,16 +218,13 @@ await deleteDoc(doc(db,"leaderboard",d.id));
 
 });
 
-document.getElementById("board").innerHTML="";
-
 }
 
 }
 
-/* Auto refresh */
+/* START REALTIME LISTENER */
 
-fetchLeaderboard();
-setInterval(fetchLeaderboard,2000);
+listenLeaderboard();
 
 </script>
 
