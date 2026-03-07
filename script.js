@@ -164,7 +164,7 @@ alert("Team name not found.");
 return;
 }
 
-/* DUPLICATE CHECK */
+/* DUPLICATE TEAM CHECK */
 
 let exists = await checkTeamExists(team);
 
@@ -173,24 +173,13 @@ alert("Team name already used. Choose another team name.");
 return;
 }
 
-/* START UI */
+/* START GAME UI */
 
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
 enterFullscreen();
 blockBackNavigation();
-
-/* ADD TEAM */
-
-fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
-method:"POST",
-body:JSON.stringify({
-team:team,
-score:0,
-time:0
-})
-});
 
 /* FIRST QUESTION */
 
@@ -239,7 +228,7 @@ board.appendChild(div);
 
 }
 
-/* ENTER KEY SAVE ANSWER */
+/* ENTER KEY SAVE */
 
 document.getElementById("answer").addEventListener("keypress",function(e){
 
@@ -268,6 +257,8 @@ document.getElementById("progress").innerText =
 /* SAVE ANSWER */
 
 function saveAnswer(){
+
+if(gameFinished) return;
 
 if(questionLocked[current]){
 alert("You have already answered this question.");
@@ -400,13 +391,15 @@ clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
+/* TIME USED */
+
 let totalTime = EVENT_DURATION - totalEventTime;
 
 if(totalTime < 0){
 totalTime = 0;
 }
 
-/* SEND RESULT */
+/* SEND RESULT ONLY ONCE */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
