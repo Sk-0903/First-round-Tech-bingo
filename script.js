@@ -250,10 +250,13 @@ board.appendChild(div);
 
 /* ENTER KEY SAVE */
 
-document.getElementById("answer").addEventListener("keypress",function(e){
+document.getElementById("answer").addEventListener("keydown",function(e){
 
 if(e.key === "Enter"){
+
+e.preventDefault();
 saveAnswer();
+
 }
 
 });
@@ -280,10 +283,7 @@ function saveAnswer(){
 
 if(gameFinished) return;
 
-if(questionLocked[current]){
-alert("You have already answered this question.");
-return;
-}
+if(questionLocked[current]) return;
 
 let ans=document.getElementById("answer").value.toLowerCase().trim();
 
@@ -295,7 +295,14 @@ return;
 answers[current]=ans;
 questionLocked[current]=true;
 
+/* disable input + save button */
+
 document.getElementById("answer").disabled=true;
+
+let saveBtn=document.getElementById("saveBtn");
+if(saveBtn) saveBtn.disabled=true;
+
+/* correct answer */
 
 if(ans===shuffledQuestions[current].a){
 
@@ -331,6 +338,9 @@ answers[current];
 document.getElementById("answer").disabled =
 questionLocked[current];
 
+let saveBtn=document.getElementById("saveBtn");
+if(saveBtn) saveBtn.disabled = questionLocked[current];
+
 updateProgress();
 
 }
@@ -353,6 +363,9 @@ answers[current];
 
 document.getElementById("answer").disabled =
 questionLocked[current];
+
+let saveBtn=document.getElementById("saveBtn");
+if(saveBtn) saveBtn.disabled = questionLocked[current];
 
 updateProgress();
 
