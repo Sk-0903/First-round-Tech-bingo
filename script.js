@@ -24,7 +24,7 @@ const db = getFirestore(app);
 
 /* SETTINGS */
 
-const GAME_CODE="keshav";
+const GAME_CODE="kesha";
 const EVENT_DURATION=15*60;
 
 let totalEventTime=EVENT_DURATION;
