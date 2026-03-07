@@ -34,6 +34,7 @@ let current=0;
 let score=0;
 let gameFinished=false;
 let showingBingo=false;
+let bingoAchieved=false;
 
 let teamDocId=null;
 
@@ -43,7 +44,6 @@ let questionLocked=new Array(20).fill(false);
 /* QUESTIONS */
 
 const questions=[
-
 {q:`What will be the output?
 int a = 5;
 int b = 10;
@@ -150,7 +150,6 @@ cell:19
 options:["CNN","RNN","Transformer","Decision Tree"],
 a:"transformer",
 cell:20}
-
 ];
 
 /* SHUFFLE */
@@ -185,12 +184,10 @@ finish();
 });
 
 document.addEventListener("fullscreenchange",function(){
-
 if(!document.fullscreenElement && !gameFinished && !showingBingo){
 alert("Fullscreen exited. Game submitted.");
 finish();
 }
-
 });
 
 /* CHECK DUPLICATE TEAM */
@@ -302,11 +299,9 @@ document.getElementById("questionNumber").innerText =
 "Question "+(current+1)+" / 20";
 
 let input = document.getElementById("answer");
-let saveBtn = document.getElementById("saveBtn");
 
 input.value = answers[current];
 input.disabled = questionLocked[current];
-saveBtn.disabled = questionLocked[current];
 
 }
 
@@ -332,9 +327,37 @@ finish();
 
 }
 
-/* BINGO CHECK */
+/* TRIGGER BINGO */
+
+function triggerBingo(cells){
+
+bingoAchieved=true;
+showingBingo=true;
+
+/* GLOW WINNING CELLS */
+
+cells.forEach(c=>{
+document.getElementById("cell"+c).classList.add("bingoGlow");
+});
+
+/* SHOW POPUP */
+
+let msg=document.getElementById("bingoMessage");
+
+msg.style.display="block";
+
+setTimeout(()=>{
+msg.style.display="none";
+showingBingo=false;
+},3000);
+
+}
+
+/* CHECK BINGO */
 
 function checkBingo(){
+
+if(bingoAchieved) return;
 
 let active=[];
 
@@ -348,25 +371,25 @@ let rows=[[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]];
 let cols=[[1,6,11,16],[2,7,12,17],[3,8,13,18],[4,9,14,19],[5,10,15,20]];
 let diagonals=[[1,7,13,19],[5,9,13,17]];
 
-let bingo=false;
+for(let r of rows){
+if(r.every(x=>active.includes(x))){
+triggerBingo(r);
+return;
+}
+}
 
-rows.forEach(r=>{ if(r.every(x=>active.includes(x))) bingo=true; });
-cols.forEach(c=>{ if(c.every(x=>active.includes(x))) bingo=true; });
-diagonals.forEach(d=>{ if(d.every(x=>active.includes(x))) bingo=true; });
+for(let c of cols){
+if(c.every(x=>active.includes(x))){
+triggerBingo(c);
+return;
+}
+}
 
-if(bingo){
-
-showingBingo=true;
-
-let msg=document.getElementById("bingoMessage");
-
-msg.style.display="block";
-
-setTimeout(()=>{
-msg.style.display="none";
-showingBingo=false;
-},3000);
-
+for(let d of diagonals){
+if(d.every(x=>active.includes(x))){
+triggerBingo(d);
+return;
+}
 }
 
 }
