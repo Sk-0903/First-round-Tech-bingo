@@ -12,6 +12,25 @@ let gameFinished = false;
 let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
 
+/* PREVENT BACK BUTTON */
+history.pushState(null,null,location.href);
+window.onpopstate=function(){
+alert("Back navigation is disabled during the event.");
+history.pushState(null,null,location.href);
+};
+
+/* PREVENT TAB SWITCH */
+document.addEventListener("visibilitychange",function(){
+
+if(document.hidden && !gameFinished){
+
+alert("You left the game tab. Game submitted.");
+finish();
+
+}
+
+});
+
 const questions=[
 
 {q:"Function calling itself",a:"recursion",cell:1},
@@ -127,7 +146,8 @@ return;
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
-document.documentElement.requestFullscreen();
+/* FORCE FULLSCREEN */
+document.documentElement.requestFullscreen().catch(()=>{});
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
@@ -156,20 +176,15 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-document.addEventListener("visibilitychange",function(){
-
-if(document.hidden){
-alert("You left the game tab. Game submitted.");
-finish();
-}
-
-});
+/* FULLSCREEN EXIT PROTECTION */
 
 document.addEventListener("fullscreenchange",function(){
 
-if(!document.fullscreenElement){
+if(!document.fullscreenElement && !gameFinished){
+
 alert("Fullscreen exited. Game submitted.");
 finish();
+
 }
 
 });
