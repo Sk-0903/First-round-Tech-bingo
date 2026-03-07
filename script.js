@@ -7,6 +7,8 @@ let startTime;
 let current = 0;
 let score = 0;
 
+let gameFinished = false;
+
 let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
 
@@ -111,6 +113,13 @@ return;
 }
 
 let team=localStorage.getItem("team");
+
+if(!team){
+
+alert("Team name not found. Please register again.");
+return;
+
+}
 
 let exists=await checkTeamExists(team);
 
@@ -222,7 +231,6 @@ checkBingo();
 }
 
 checkAllAnswered();
-
 updateProgress();
 
 }
@@ -304,6 +312,9 @@ document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
 }
 
 function finish(){
+
+if(gameFinished) return;
+gameFinished=true;
 
 let team=localStorage.getItem("team");
 
