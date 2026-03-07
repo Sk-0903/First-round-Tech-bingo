@@ -370,3 +370,10 @@ opacity:1;
 }
 
 }
+.questionImage{
+width:120px;
+margin:10px auto;
+display:block;
+border-radius:10px;
+box-shadow:0 0 15px rgba(59,130,246,0.7);
+}
