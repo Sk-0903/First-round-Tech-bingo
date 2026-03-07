@@ -145,14 +145,14 @@ const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8j
 
 /* FORMAT TIME */
 
-function formatTime(seconds){
+function formatTime(sec){
 
-seconds=parseInt(seconds)||0;
+sec=parseInt(sec)||0;
 
-let minutes=Math.floor(seconds/60);
-let secs=seconds%60;
+let m=Math.floor(sec/60);
+let s=sec%60;
 
-return minutes+":"+(secs<10?"0"+secs:secs);
+return m+":"+(s<10?"0"+s:s);
 
 }
 
@@ -160,13 +160,15 @@ return minutes+":"+(secs<10?"0"+secs:secs);
 
 function loadLeaderboard(){
 
-fetch(sheetURL+"?t="+Date.now())  // prevents caching
+fetch(sheetURL+"?"+Date.now())
 .then(res=>res.text())
 .then(data=>{
 
-let rows=data.trim().split("\n");
+let rows=data.split("\n");
 
 let teams=[];
+
+/* READ CSV */
 
 for(let i=1;i<rows.length;i++){
 
@@ -175,17 +177,10 @@ let cols=rows[i].split(",");
 if(cols.length<4) continue;
 
 let team=(cols[1]||"").trim();
-let score=parseInt(cols[2]);
-let time=parseInt(cols[3]);
+let score=parseInt(cols[2])||0;
+let time=parseInt(cols[3])||0;
 
-if(!team) continue;
-
-/* ignore default rows */
-
-if(score===0 && time===0) continue;
-
-if(isNaN(score)) score=0;
-if(isNaN(time)) time=0;
+if(team==="") continue;
 
 teams.push({
 team:team,
@@ -195,23 +190,22 @@ time:time
 
 }
 
-/* KEEP LATEST ENTRY OF EACH TEAM */
+/* REMOVE DUPLICATES (KEEP LAST ENTRY) */
 
-let uniqueTeams={};
+let map={};
 
 teams.forEach(t=>{
-uniqueTeams[t.team]=t;
+map[t.team]=t;
 });
 
-teams=Object.values(uniqueTeams);
+teams=Object.values(map);
 
-/* SORT BY SCORE THEN TIME */
+/* SORT */
 
 teams.sort((a,b)=>{
 
-if(b.score!==a.score){
+if(b.score!==a.score)
 return b.score-a.score;
-}
 
 return a.time-b.time;
 
@@ -221,17 +215,14 @@ return a.time-b.time;
 
 let podiumHTML="";
 
-if(teams[1]){
+if(teams.length>1)
 podiumHTML+=`<div class="second">🥈 ${teams[1].team}<br>${teams[1].score}</div>`;
-}
 
-if(teams[0]){
+if(teams.length>0)
 podiumHTML+=`<div class="first">🥇 ${teams[0].team}<br>${teams[0].score}</div>`;
-}
 
-if(teams[2]){
+if(teams.length>2)
 podiumHTML+=`<div class="third">🥉 ${teams[2].team}<br>${teams[2].score}</div>`;
-}
 
 document.getElementById("podium").innerHTML=podiumHTML;
 
@@ -239,13 +230,11 @@ document.getElementById("podium").innerHTML=podiumHTML;
 
 let html="";
 
-teams.forEach((t,index)=>{
-
-let rank=index+1;
+teams.forEach((t,i)=>{
 
 html+=`
 <tr>
-<td>${rank}</td>
+<td>${i+1}</td>
 <td>${t.team}</td>
 <td>${t.score}</td>
 <td>${formatTime(t.time)}</td>
@@ -280,7 +269,7 @@ setTimeout(loadLeaderboard,1000);
 
 }
 
-/* AUTO REFRESH */
+/* AUTO UPDATE */
 
 loadLeaderboard();
 setInterval(loadLeaderboard,3000);
