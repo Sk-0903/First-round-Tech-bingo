@@ -10,6 +10,7 @@ let current = 0;
 let score = 0;
 
 let gameFinished = false;
+let gameStarted = false;
 
 let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
@@ -40,7 +41,7 @@ history.pushState(null,null,location.href);
 
 document.addEventListener("visibilitychange",function(){
 
-if(document.hidden && !gameFinished){
+if(document.hidden && gameStarted && !gameFinished){
 
 alert("You left the game tab. Game submitted.");
 finish();
@@ -48,6 +49,19 @@ finish();
 }
 
 });
+
+/* REFRESH / CLOSE TAB PROTECTION */
+
+window.onbeforeunload=function(){
+
+if(gameStarted && !gameFinished){
+
+finish();
+return "Leaving will submit your game.";
+
+}
+
+};
 
 /* QUESTIONS */
 
@@ -178,6 +192,8 @@ return;
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
+gameStarted = true;
+
 enterFullscreen();
 blockBackNavigation();
 
@@ -201,11 +217,15 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
+/* ENTER FULLSCREEN ON FIRST CLICK */
+
 document.addEventListener("click",enterFullscreen,{once:true});
+
+/* FULLSCREEN EXIT DETECTION */
 
 document.addEventListener("fullscreenchange",function(){
 
-if(!document.fullscreenElement && !gameFinished){
+if(!document.fullscreenElement && gameStarted && !gameFinished){
 
 alert("Fullscreen exited. Game submitted.");
 finish();
@@ -384,7 +404,9 @@ document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
 
 function finish(){
 
+if(!gameStarted) return;
 if(gameFinished) return;
+
 gameFinished=true;
 
 clearInterval(timerInterval);
@@ -399,7 +421,7 @@ if(totalTime < 0){
 totalTime = 0;
 }
 
-/* SEND RESULT ONLY ONCE */
+/* SEND RESULT */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
