@@ -88,34 +88,22 @@ document.documentElement.requestFullscreen().catch(()=>{});
 }
 }
 
-/* BLOCK RIGHT CLICK */
+/* SECURITY */
 
 document.addEventListener("contextmenu",e=>e.preventDefault());
-
-/* BLOCK COPY PASTE */
 
 document.addEventListener("copy",e=>e.preventDefault());
 document.addEventListener("paste",e=>e.preventDefault());
 
-/* BLOCK KEY SHORTCUTS */
-
 document.addEventListener("keydown",function(e){
 
-if(e.key==="F12"){
-e.preventDefault();
-}
+if(e.key==="F12") e.preventDefault();
 
-if(e.ctrlKey && e.shiftKey && e.key==="I"){
-e.preventDefault();
-}
+if(e.ctrlKey && e.shiftKey && e.key==="I") e.preventDefault();
 
-if(e.ctrlKey && e.key==="u"){
-e.preventDefault();
-}
+if(e.ctrlKey && e.key==="u") e.preventDefault();
 
 });
-
-/* TAB SWITCH DETECTION */
 
 document.addEventListener("visibilitychange",function(){
 
@@ -126,8 +114,6 @@ finish();
 
 });
 
-/* FULLSCREEN EXIT */
-
 document.addEventListener("fullscreenchange",function(){
 
 if(!document.fullscreenElement && !gameFinished){
@@ -136,8 +122,6 @@ finish();
 }
 
 });
-
-/* REFRESH BLOCK */
 
 window.onbeforeunload=function(){
 if(!gameFinished){
@@ -221,8 +205,18 @@ document.getElementById("question").innerText=shuffledQuestions[current].q;
 document.getElementById("questionNumber").innerText=
 "Question "+(current+1)+" / 20";
 
-document.getElementById("answer").value=answers[current];
-document.getElementById("answer").disabled=questionLocked[current];
+let input=document.getElementById("answer");
+let saveBtn=document.getElementById("saveBtn");
+
+input.value=answers[current];
+
+if(questionLocked[current]){
+input.disabled=true;
+saveBtn.disabled=true;
+}else{
+input.disabled=false;
+saveBtn.disabled=false;
+}
 
 }
 
@@ -252,7 +246,10 @@ function saveAnswer(){
 
 if(questionLocked[current]) return;
 
-let ans=document.getElementById("answer").value.trim().toLowerCase();
+let input=document.getElementById("answer");
+let saveBtn=document.getElementById("saveBtn");
+
+let ans=input.value.trim().toLowerCase();
 
 if(ans===""){
 alert("Enter answer");
@@ -262,7 +259,8 @@ return;
 answers[current]=ans;
 questionLocked[current]=true;
 
-document.getElementById("answer").disabled=true;
+input.disabled=true;
+saveBtn.disabled=true;
 
 if(ans===shuffledQuestions[current].a){
 
