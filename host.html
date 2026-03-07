@@ -8,7 +8,7 @@
 <style>
 
 body{
-font-family: "Segoe UI", Arial;
+font-family:"Segoe UI", Arial;
 text-align:center;
 margin:0;
 background:linear-gradient(135deg,#020617,#0f172a,#020617);
@@ -115,6 +115,14 @@ opacity:0.6;
 font-size:14px;
 }
 
+/* LOADING TEXT */
+
+.loading{
+margin-top:40px;
+font-size:20px;
+opacity:0.7;
+}
+
 </style>
 
 </head>
@@ -125,17 +133,17 @@ font-size:14px;
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
+<div id="loading" class="loading">Loading leaderboard...</div>
+
 <table>
 
 <thead>
-
 <tr>
 <th>Rank</th>
 <th>Team</th>
 <th>Score</th>
 <th>Time Used</th>
 </tr>
-
 </thead>
 
 <tbody id="leaderboard"></tbody>
@@ -152,6 +160,8 @@ const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96
 
 const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
 
+/* FORMAT TIME (SECONDS → MM:SS) */
+
 function formatTime(seconds){
 
 let minutes=Math.floor(seconds/60);
@@ -161,19 +171,23 @@ return minutes + ":" + (secs<10 ? "0"+secs : secs);
 
 }
 
+/* LOAD LEADERBOARD */
+
 function loadLeaderboard(){
 
 fetch(sheetURL)
 .then(res=>res.text())
 .then(data=>{
 
+document.getElementById("loading").style.display="none";
+
 let rows=data.split("\n");
 
 let table=document.getElementById("leaderboard");
 
-table.innerHTML="";
-
 let teams=[];
+
+/* READ DATA */
 
 for(let i=1;i<rows.length;i++){
 
@@ -182,30 +196,30 @@ let cols=rows[i].split(",");
 if(cols.length>=4){
 
 teams.push({
-
 team:cols[1],
 score:parseInt(cols[2]) || 0,
 time:parseInt(cols[3]) || 0
-
 });
 
 }
 
 }
 
-/* SORTING */
+/* SORT BY SCORE → TIME */
 
 teams.sort((a,b)=>{
 
 if(b.score !== a.score){
-return b.score - a.score; // higher score first
+return b.score - a.score;
 }
 
-return a.time - b.time; // lower time wins
+return a.time - b.time;
 
 });
 
-/* DISPLAY */
+/* BUILD TABLE */
+
+let html="";
 
 teams.forEach((t,index)=>{
 
@@ -219,20 +233,24 @@ if(rank==1) className="rank1";
 if(rank==2) className="rank2";
 if(rank==3) className="rank3";
 
-let row=`
-
+html += `
 <tr class="${className}">
 <td>${medal}</td>
 <td>${t.team}</td>
 <td>${t.score}</td>
 <td>${formatTime(t.time)}</td>
 </tr>
-
 `;
 
-table.innerHTML+=row;
-
 });
+
+table.innerHTML=html;
+
+})
+
+.catch(err=>{
+
+document.getElementById("loading").innerText="Failed to load leaderboard.";
 
 });
 
@@ -255,8 +273,9 @@ alert("Leaderboard reset successfully");
 
 }
 
-loadLeaderboard();
+/* AUTO REFRESH */
 
+loadLeaderboard();
 setInterval(loadLeaderboard,3000);
 
 </script>
