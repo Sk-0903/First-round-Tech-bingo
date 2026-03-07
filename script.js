@@ -1,6 +1,6 @@
 const GAME_CODE = "keshav";
 
-let totalEventTime = 30 * 60;
+let totalEventTime = 20 * 60;
 let timerInterval;
 
 let startTime;
@@ -90,7 +90,7 @@ minutes+":"+(seconds<10?"0"+seconds:seconds);
 
 totalEventTime--;
 
-if(totalEventTime<0){
+if(totalEventTime<=0){
 
 clearInterval(timerInterval);
 finish();
@@ -316,6 +316,8 @@ function finish(){
 if(gameFinished) return;
 gameFinished=true;
 
+clearInterval(timerInterval);
+
 let team=localStorage.getItem("team");
 
 let endTime=Date.now();
@@ -332,6 +334,12 @@ time:totalTime
 });
 
 document.getElementById("result").innerText=
-"Submission successful. Check leaderboard.";
+"Submission successful. Thank you!";
+
+setTimeout(function(){
+
+window.location.href="about:blank";
+
+},2000);
 
 }
