@@ -7,7 +7,6 @@
 <title>Tech Bingo Game</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script src="script.js" defer></script>
 
 </head>
@@ -61,13 +60,19 @@
 
 <br><br>
 
+<!-- NAVIGATION BUTTONS -->
+
 <button onclick="prevQuestion()">Previous</button>
 
-<button onclick="saveAnswer()">Save</button>
+<!-- UPDATED SAVE BUTTON -->
+
+<button id="saveBtn" onclick="saveAnswer()">Save</button>
 
 <button onclick="nextQuestion()">Next</button>
 
 <br><br>
+
+<!-- SUBMIT BUTTON -->
 
 <button id="submitGame" onclick="finish()" style="display:none;">
 Submit Game
