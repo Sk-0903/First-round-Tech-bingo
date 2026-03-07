@@ -4,6 +4,7 @@ text-align:center;
 color:white;
 margin:0;
 padding:0;
+min-height:100vh;
 
 /* TECH BACKGROUND */
 
@@ -26,10 +27,10 @@ animation:techBackground 15s ease infinite;
 
 .mainTitle{
 
-font-size:70px;
+font-size:72px;
 font-weight:bold;
 letter-spacing:4px;
-margin-top:10px;
+margin-top:20px;
 
 background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
 background-size:200% auto;
@@ -50,9 +51,9 @@ text-shadow:
 
 .subTitle{
 
-font-size:22px;
-letter-spacing:3px;
-opacity:0.85;
+font-size:24px;
+letter-spacing:4px;
+opacity:0.9;
 margin-top:5px;
 
 }
@@ -74,16 +75,31 @@ margin-top:5px;
 background:rgba(30,41,59,0.65);
 backdrop-filter:blur(10px);
 
-border-radius:14px;
+border-radius:16px;
 
-padding:35px;
+padding:40px;
 
 width:60%;
+max-width:700px;
 
-margin:70px auto;
+margin:60px auto;
 
-box-shadow:0 0 30px rgba(0,0,0,0.6);
+box-shadow:
+0 0 30px rgba(0,0,0,0.6),
+0 0 20px rgba(59,130,246,0.25);
 
+}
+
+/* START SCREEN TEXT */
+
+.startTitle{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.startSubtitle{
+opacity:0.7;
+margin-bottom:20px;
 }
 
 /* TIMER */
@@ -107,7 +123,7 @@ box-shadow:0 0 12px rgba(0,0,0,0.6);
 display:grid;
 grid-template-columns: repeat(5,110px);
 grid-template-rows: repeat(4,110px);
-gap:12px;
+gap:14px;
 justify-content:center;
 margin-top:40px;
 }
@@ -125,13 +141,19 @@ font-weight:bold;
 transition:0.25s;
 }
 
+/* CELL HOVER */
+
+.cell:hover{
+transform:scale(1.05);
+}
+
 /* ACTIVE CELL */
 
 .active{
 background:#22c55e;
 color:black;
 font-weight:bold;
-box-shadow:0 0 12px #22c55e;
+box-shadow:0 0 15px #22c55e;
 }
 
 /* INPUT FIELD */
@@ -142,18 +164,24 @@ font-size:16px;
 border-radius:8px;
 border:none;
 margin-top:15px;
-width:220px;
+width:240px;
 outline:none;
+background:#0f172a;
+color:white;
+}
+
+input::placeholder{
+color:#94a3b8;
 }
 
 input:focus{
-box-shadow:0 0 8px #2563eb;
+box-shadow:0 0 10px #2563eb;
 }
 
 /* BUTTONS */
 
 button{
-padding:10px 20px;
+padding:10px 22px;
 margin:8px;
 font-size:16px;
 border:none;
@@ -167,6 +195,13 @@ transition:0.25s;
 button:hover{
 background:#1d4ed8;
 transform:scale(1.05);
+}
+
+/* START BUTTON */
+
+.startBtn{
+font-size:18px;
+padding:12px 28px;
 }
 
 /* SUBMIT BUTTON */
@@ -196,4 +231,13 @@ h2,h3{
 text-shadow:
 0 0 8px #3b82f6,
 0 0 20px #2563eb;
+}
+
+/* RESULT TEXT */
+
+#result{
+margin-top:25px;
+font-size:22px;
+font-weight:bold;
+color:#22c55e;
 }
