@@ -1,6 +1,38 @@
+/* FIREBASE IMPORT */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc,
+updateDoc,
+doc,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
+
+const firebaseConfig = {
+apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
+authDomain: "tech-bingo-leaderboard.firebaseapp.com",
+projectId: "tech-bingo-leaderboard",
+storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
+messagingSenderId: "614182283202",
+appId: "1:614182283202:web:28679433283e05efb2585b",
+measurementId: "G-BN4V2GQJPB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let teamDocId = null;
+
+/* GAME CODE */
+
 const GAME_CODE = "keshav";
 
 /* TOTAL EVENT TIME */
+
 const EVENT_DURATION = 15 * 60;
 
 let totalEventTime = EVENT_DURATION;
@@ -16,132 +48,77 @@ let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
 let questionLocked = new Array(20).fill(false);
 
-/* FULLSCREEN */
-
-function enterFullscreen(){
-if(!document.fullscreenElement){
-document.documentElement.requestFullscreen().catch(()=>{});
-}
-}
-
-/* BLOCK BACK BUTTON */
-
-function blockBackNavigation(){
-
-history.pushState(null,null,location.href);
-
-window.onpopstate=function(){
-alert("Back navigation is disabled during the game.");
-history.pushState(null,null,location.href);
-};
-
-}
-
-/* BLOCK TAB SWITCH */
-
-document.addEventListener("visibilitychange",function(){
-
-if(document.hidden && gameStarted && !gameFinished){
-
-alert("You left the game tab. Game submitted.");
-finish();
-
-}
-
-});
-
-/* REFRESH / CLOSE TAB PROTECTION */
-
-window.onbeforeunload=function(){
-
-if(gameStarted && !gameFinished){
-
-finish();
-return "Leaving will submit your game.";
-
-}
-
-};
-
-/* PREVENT F11 EXIT */
-
-document.addEventListener("keydown",function(e){
-
-if(e.key==="F11"){
-e.preventDefault();
-}
-
-});
-
-/* QUESTIONS */
-
-const questions=[
-
-{q:"Function calling itself",a:"recursion",cell:1},
-{q:"Rules for communication between systems",a:"api",cell:2},
-{q:"Internet based storage service",a:"cloud",cell:3},
-{q:"Process of fixing errors",a:"debug",cell:4},
-{q:"Programming language named after snake",a:"python",cell:5},
-
-{q:"Data structure used in BFS",a:"queue",cell:6},
-{q:"Data structure used in DFS",a:"stack",cell:7},
-{q:"Language used to style web pages",a:"css",cell:8},
-{q:"Language used to structure web pages",a:"html",cell:9},
-{q:"Short form of Structured Query Language",a:"sql",cell:10},
-
-{q:"Brain of the computer",a:"cpu",cell:11},
-{q:"Temporary memory of a computer",a:"ram",cell:12},
-{q:"Permanent memory of a computer",a:"rom",cell:13},
-{q:"Collection of interconnected computers",a:"network",cell:14},
-{q:"Technology for secure communication online",a:"encryption",cell:15},
-
-{q:"Technology connecting physical devices to internet",a:"iot",cell:16},
-{q:"Program translating source code to machine code",a:"compiler",cell:17},
-{q:"Step-by-step problem solving method",a:"algorithm",cell:18},
-{q:"Collection of structured data",a:"database",cell:19},
-{q:"Process of converting encoded data to original",a:"decoding",cell:20}
-
-];
-
-/* SHUFFLE QUESTIONS */
-
-function shuffle(array){
-
-for(let i=array.length-1;i>0;i--){
-
-let j=Math.floor(Math.random()*(i+1));
-[array[i],array[j]]=[array[j],array[i]];
-
-}
-
-return array;
-
-}
-
-let shuffledQuestions = shuffle([...questions]);
-
-/* CHECK DUPLICATE TEAM */
+/* CHECK DUPLICATE TEAM FROM FIREBASE */
 
 async function checkTeamExists(team){
 
-const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
+const snapshot = await getDocs(collection(db,"leaderboard"));
 
-let res = await fetch(sheetURL);
-let data = await res.text();
+let exists = false;
 
-let rows = data.split("\n");
+snapshot.forEach((d)=>{
 
-for(let i=1;i<rows.length;i++){
+let data = d.data();
 
-let cols = rows[i].split(",");
-
-if(cols[1] && cols[1].toLowerCase() === team.toLowerCase()){
-return true;
+if(data.teamName.toLowerCase() === team.toLowerCase()){
+exists = true;
 }
 
+});
+
+return exists;
+
 }
 
-return false;
+/* START GAME */
+
+async function checkCode(){
+
+let code=document.getElementById("startCode").value.trim().toLowerCase();
+
+if(code!==GAME_CODE){
+alert("Wrong start code");
+return;
+}
+
+let team=localStorage.getItem("team");
+
+if(!team){
+alert("Team name not found.");
+return;
+}
+
+let exists = await checkTeamExists(team);
+
+if(exists){
+alert("Team name already used. Choose another team name.");
+return;
+}
+
+/* CREATE TEAM ENTRY */
+
+const docRef = await addDoc(collection(db,"leaderboard"),{
+teamName:team,
+score:0,
+time:0
+});
+
+teamDocId = docRef.id;
+
+document.getElementById("startScreen").style.display="none";
+document.getElementById("gameArea").style.display="block";
+
+gameStarted=true;
+
+enterFullscreen();
+blockBackNavigation();
+
+document.getElementById("question").innerText=
+shuffledQuestions[current].q;
+
+updateProgress();
+
+startEventTimer();
 
 }
 
@@ -171,249 +148,9 @@ finish();
 
 }
 
-/* START GAME */
-
-async function checkCode(){
-
-let code=document.getElementById("startCode").value.trim().toLowerCase();
-
-if(code!==GAME_CODE){
-alert("Wrong start code");
-return;
-}
-
-let team=localStorage.getItem("team");
-
-if(!team){
-alert("Team name not found.");
-return;
-}
-
-let exists = await checkTeamExists(team);
-
-if(exists){
-alert("Team name already used. Choose another team name.");
-return;
-}
-
-document.getElementById("startScreen").style.display="none";
-document.getElementById("gameArea").style.display="block";
-
-gameStarted=true;
-
-enterFullscreen();
-blockBackNavigation();
-
-document.getElementById("question").innerText=
-shuffledQuestions[current].q;
-
-updateProgress();
-
-startEventTimer();
-
-}
-
-/* PAGE LOAD */
-
-document.addEventListener("DOMContentLoaded",function(){
-
-let team=localStorage.getItem("team");
-document.getElementById("teamName").innerText="Team: "+team;
-
-let board=document.getElementById("board");
-
-document.addEventListener("click",enterFullscreen,{once:true});
-
-document.addEventListener("fullscreenchange",function(){
-
-if(!document.fullscreenElement && gameStarted && !gameFinished){
-
-alert("Fullscreen exited. Game submitted.");
-finish();
-
-}
-
-});
-
-for(let i=1;i<=20;i++){
-
-let div=document.createElement("div");
-div.className="cell";
-div.innerText=i;
-div.id="cell"+i;
-
-board.appendChild(div);
-
-}
-
-/* ENTER KEY SAVE */
-
-document.getElementById("answer").addEventListener("keydown",function(e){
-
-if(e.key==="Enter"){
-e.preventDefault();
-saveAnswer();
-}
-
-});
-
-});
-
-/* UPDATE PROGRESS */
-
-function updateProgress(){
-
-document.getElementById("questionNumber").innerText=
-"Question "+(current+1)+" / 20";
-
-let answered=answers.filter(a=>a!=="").length;
-
-document.getElementById("progress").innerText=
-"Answered "+answered+" / 20";
-
-}
-
-/* SAVE ANSWER */
-
-function saveAnswer(){
-
-if(gameFinished) return;
-
-let saveBtn=document.getElementById("saveBtn");
-
-if(saveBtn && saveBtn.disabled) return;
-
-if(questionLocked[current]) return;
-
-let input=document.getElementById("answer");
-
-let ans=input.value.toLowerCase().trim();
-
-if(ans===""){
-alert("Please enter an answer.");
-input.focus();
-return;
-}
-
-answers[current]=ans;
-questionLocked[current]=true;
-
-input.disabled=true;
-
-if(saveBtn) saveBtn.disabled=true;
-
-if(ans===shuffledQuestions[current].a){
-
-document.getElementById("cell"+shuffledQuestions[current].cell)
-.classList.add("active");
-
-score++;
-answeredCorrect[current]=true;
-
-checkBingo();
-
-}
-
-checkAllAnswered();
-updateProgress();
-
-}
-
-/* NEXT QUESTION */
-
-function nextQuestion(){
-
-if(current<19){
-
-current++;
-
-document.getElementById("question").innerText=
-shuffledQuestions[current].q;
-
-document.getElementById("answer").value=
-answers[current];
-
-document.getElementById("answer").disabled=
-questionLocked[current];
-
-let saveBtn=document.getElementById("saveBtn");
-if(saveBtn) saveBtn.disabled=questionLocked[current];
-
-updateProgress();
-
-}
-
-}
-
-/* PREVIOUS QUESTION */
-
-function prevQuestion(){
-
-if(current>0){
-
-current--;
-
-document.getElementById("question").innerText=
-shuffledQuestions[current].q;
-
-document.getElementById("answer").value=
-answers[current];
-
-document.getElementById("answer").disabled=
-questionLocked[current];
-
-let saveBtn=document.getElementById("saveBtn");
-if(saveBtn) saveBtn.disabled=questionLocked[current];
-
-updateProgress();
-
-}
-
-}
-
-/* SHOW SUBMIT BUTTON */
-
-function checkAllAnswered(){
-
-let done=answers.every(a=>a!=="");
-
-if(done){
-document.getElementById("submitGame").style.display="block";
-}
-
-}
-
-/* BINGO CHECK */
-
-function checkBingo(){
-
-let active=[];
-
-for(let i=1;i<=20;i++){
-
-if(document.getElementById("cell"+i).classList.contains("active")){
-active.push(i);
-}
-
-}
-
-let rows=[[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]];
-let cols=[[1,6,11,16],[2,7,12,17],[3,8,13,18],[4,9,14,19],[5,10,15,20]];
-
-let bingo=false;
-
-rows.forEach(r=>{if(r.every(x=>active.includes(x)))bingo=true});
-cols.forEach(c=>{if(c.every(x=>active.includes(x)))bingo=true});
-
-if(bingo){
-document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
-}
-
-}
-
 /* FINISH GAME */
 
-function finish(){
+async function finish(){
 
 if(!gameStarted) return;
 if(gameFinished) return;
@@ -424,22 +161,22 @@ clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
-/* SAFE TIME CALCULATION */
-
 let timeRemaining = Math.max(0,totalEventTime);
 let totalTime = EVENT_DURATION - timeRemaining;
 
 if(totalTime < 0) totalTime = 0;
 if(totalTime > EVENT_DURATION) totalTime = EVENT_DURATION;
 
-fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
-method:"POST",
-body:JSON.stringify({
-team:team,
+/* UPDATE FIREBASE */
+
+if(teamDocId){
+
+await updateDoc(doc(db,"leaderboard",teamDocId),{
 score:score,
 time:totalTime
-})
 });
+
+}
 
 document.getElementById("result").innerText=
 "Submission successful. Thank you!";
