@@ -118,8 +118,8 @@ a:"creeper",
 cell:14},
 
 {q:"Maximum length of a single post on Twitter/X?",
-options:["140 characters","200 characters","280 characters","500 characters"],
-a:"280 characters",
+options:["140","200","280","500"],
+a:"280",
 cell:15},
 
 {q:"The Firefox logo actually represents which animal?",
@@ -133,14 +133,14 @@ a:"2.7 zettabytes",
 cell:17},
 
 {q:"Before being renamed Meta, what was the company originally known as?",
-options:["SocialNet","Facebook Inc.","Meta Labs","Connect Inc."],
-a:"facebook inc.",
+options:["SocialNet","Facebook Inc","Meta Labs","Connect Inc"],
+a:"facebook inc",
 cell:18},
 
 {
 q:"Identify the logo shown below",
 image:"github.png",
-options:["GitHub","GitLab","Bitbucket","Azure"],
+options:["GitHub","Source Forge","Bitbucket","Azure"],
 a:"github",
 cell:19
 },
