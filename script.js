@@ -198,8 +198,6 @@ alert("Team name missing");
 return;
 }
 
-/* CHECK DUPLICATE TEAM */
-
 let exists = await checkTeamExists(team);
 
 if(exists){
@@ -214,8 +212,6 @@ document.getElementById("gameArea").style.display="block";
 
 showQuestion();
 startTimer();
-
-/* CREATE TEAM ENTRY */
 
 const ref=await addDoc(collection(db,"leaderboard"),{
 teamName:team,
@@ -269,6 +265,72 @@ finish();
 
 }
 
+/* BINGO CHECK */
+
+function checkBingo(){
+
+let active=[];
+
+for(let i=1;i<=20;i++){
+
+let cell=document.getElementById("cell"+i);
+
+if(cell.classList.contains("active")){
+active.push(i);
+}
+
+}
+
+let rows=[
+[1,2,3,4,5],
+[6,7,8,9,10],
+[11,12,13,14,15],
+[16,17,18,19,20]
+];
+
+let cols=[
+[1,6,11,16],
+[2,7,12,17],
+[3,8,13,18],
+[4,9,14,19],
+[5,10,15,20]
+];
+
+let diagonals=[
+[1,7,13,19],
+[5,9,13,17]
+];
+
+let bingo=false;
+
+rows.forEach(r=>{
+if(r.every(x=>active.includes(x))) bingo=true;
+});
+
+cols.forEach(c=>{
+if(c.every(x=>active.includes(x))) bingo=true;
+});
+
+diagonals.forEach(d=>{
+if(d.every(x=>active.includes(x))) bingo=true;
+});
+
+if(bingo){
+
+let msg=document.getElementById("bingoMessage");
+
+if(msg){
+msg.style.display="block";
+
+setTimeout(()=>{
+msg.style.display="none";
+},3000);
+}
+
+}
+
+}
+
 /* SAVE ANSWER */
 
 function saveAnswer(){
@@ -291,14 +353,14 @@ questionLocked[current]=true;
 input.disabled=true;
 saveBtn.disabled=true;
 
-/* CORRECT ANSWER = +1 */
-
 if(ans===shuffledQuestions[current].a){
 
 document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
 
 score++;
+
+checkBingo();
 
 }
 
