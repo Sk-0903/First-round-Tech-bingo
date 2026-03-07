@@ -1,10 +1,45 @@
 body{
 font-family:Arial, Helvetica, sans-serif;
 text-align:center;
-background:#0f172a;
 color:white;
 margin:0;
 padding:0;
+
+/* TECH BACKGROUND */
+
+background:linear-gradient(135deg,#020617,#0f172a,#1e3a8a,#020617);
+background-size:400% 400%;
+animation:techBackground 15s ease infinite;
+}
+
+/* BACKGROUND ANIMATION */
+
+@keyframes techBackground{
+
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+
+}
+
+/* GLASS PANEL FOR START & GAME AREA */
+
+#startScreen,
+#gameArea{
+
+background:rgba(30,41,59,0.65);
+backdrop-filter:blur(10px);
+
+border-radius:14px;
+
+padding:35px;
+
+width:60%;
+
+margin:70px auto;
+
+box-shadow:0 0 30px rgba(0,0,0,0.6);
+
 }
 
 /* TIMER (TOP RIGHT CORNER) */
@@ -46,13 +81,13 @@ font-weight:bold;
 transition:0.25s;
 }
 
-/* ACTIVE CELL (CORRECT ANSWER) */
+/* ACTIVE CELL */
 
 .active{
 background:#22c55e;
 color:black;
 font-weight:bold;
-box-shadow:0 0 10px #22c55e;
+box-shadow:0 0 12px #22c55e;
 }
 
 /* INPUT FIELD */
@@ -68,7 +103,7 @@ outline:none;
 }
 
 input:focus{
-box-shadow:0 0 6px #2563eb;
+box-shadow:0 0 8px #2563eb;
 }
 
 /* NORMAL BUTTONS */
@@ -82,7 +117,7 @@ border-radius:8px;
 background:#2563eb;
 color:white;
 cursor:pointer;
-transition:0.2s;
+transition:0.25s;
 }
 
 button:hover{
@@ -90,7 +125,7 @@ background:#1d4ed8;
 transform:scale(1.05);
 }
 
-/* SUBMIT GAME BUTTON (CENTERED) */
+/* SUBMIT GAME BUTTON */
 
 #submitGame{
 display:block;
@@ -103,10 +138,17 @@ color:white;
 border:none;
 border-radius:12px;
 cursor:pointer;
-transition:0.2s;
+transition:0.25s;
 }
 
 #submitGame:hover{
 background:#16a34a;
 transform:scale(1.05);
+}
+
+/* GLOWING HEADINGS */
+
+h2,h3{
+text-shadow:0 0 8px #3b82f6,
+0 0 20px #2563eb;
 }
