@@ -283,25 +283,33 @@ function showQuestion(){
 
 let q = shuffledQuestions[current];
 
-let html = `<div class="questionText">${q.q}</div><br>`;
+let questionHTML = `<div class="questionText">${q.q}</div>`;
 
 if(q.image){
-html += `<img src="${q.image}" class="questionImage"><br><br>`;
+questionHTML += `<img src="${q.image}" class="questionImage">`;
 }
 
-q.options.forEach((opt,index)=>{
-html += `<div class="optionLine">${String.fromCharCode(65+index)}. ${opt}</div>`;
-});
-
-document.getElementById("question").innerHTML = html;
+document.getElementById("question").innerHTML = questionHTML;
 
 document.getElementById("questionNumber").innerText =
 "Question "+(current+1)+" / 20";
 
-let input = document.getElementById("answer");
+let optionsHTML="";
 
-input.value = answers[current];
-input.disabled = questionLocked[current];
+q.options.forEach((opt,index)=>{
+
+let checked = answers[current] === opt ? "checked" : "";
+
+optionsHTML += `
+<label class="optionItem">
+<input type="radio" name="option" value="${opt}" ${checked} ${questionLocked[current]?"disabled":""}>
+${String.fromCharCode(65+index)}. ${opt}
+</label>
+`;
+
+});
+
+document.getElementById("optionsContainer").innerHTML = optionsHTML;
 
 }
 
@@ -400,19 +408,23 @@ function saveAnswer(){
 
 if(questionLocked[current]) return;
 
-let input=document.getElementById("answer");
+let selected = document.querySelector('input[name="option"]:checked');
 
-let ans=input.value.trim().toLowerCase();
-
-if(ans===""){
-alert("Enter answer");
+if(!selected){
+alert("Select an option");
 return;
 }
+
+let ans = selected.value.toLowerCase();
 
 answers[current]=ans;
 questionLocked[current]=true;
 
-input.disabled=true;
+/* disable options */
+
+document.querySelectorAll('input[name="option"]').forEach(o=>{
+o.disabled=true;
+});
 
 if(ans===shuffledQuestions[current].a){
 
