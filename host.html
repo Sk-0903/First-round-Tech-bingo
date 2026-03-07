@@ -160,7 +160,7 @@ const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96
 
 const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
 
-/* FORMAT TIME (SECONDS → MM:SS) */
+/* FORMAT TIME */
 
 function formatTime(seconds){
 
@@ -175,15 +175,13 @@ return minutes + ":" + (secs<10 ? "0"+secs : secs);
 
 function loadLeaderboard(){
 
-fetch(sheetURL)
+fetch(sheetURL + "&t=" + new Date().getTime())   // bypass cache
 .then(res=>res.text())
 .then(data=>{
 
 document.getElementById("loading").style.display="none";
 
 let rows=data.split("\n");
-
-let table=document.getElementById("leaderboard");
 
 let teams=[];
 
@@ -195,8 +193,12 @@ let cols=rows[i].split(",");
 
 if(cols.length>=4){
 
+let teamName = cols[1] ? cols[1].trim() : "";
+
+if(teamName !== ""){
+
 teams.push({
-team:cols[1],
+team:teamName,
 score:parseInt(cols[2]) || 0,
 time:parseInt(cols[3]) || 0
 });
@@ -205,7 +207,9 @@ time:parseInt(cols[3]) || 0
 
 }
 
-/* SORT BY SCORE → TIME */
+}
+
+/* SORT */
 
 teams.sort((a,b)=>{
 
@@ -244,14 +248,12 @@ html += `
 
 });
 
-table.innerHTML=html;
+document.getElementById("leaderboard").innerHTML = html;
 
 })
 
 .catch(err=>{
-
 document.getElementById("loading").innerText="Failed to load leaderboard.";
-
 });
 
 }
