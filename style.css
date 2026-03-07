@@ -388,3 +388,26 @@ display:block;
 border-radius:10px;
 box-shadow:0 0 15px rgba(59,130,246,0.7);
 }
+/* WINNING BINGO GLOW */
+
+.bingoGlow{
+
+animation:bingoGlow 1s infinite alternate;
+
+}
+
+@keyframes bingoGlow{
+
+0%{
+box-shadow:0 0 10px #22c55e;
+background:#22c55e;
+color:black;
+}
+
+100%{
+box-shadow:0 0 35px #22c55e;
+background:#16a34a;
+color:black;
+}
+
+}
