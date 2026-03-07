@@ -63,6 +63,16 @@ return "Leaving will submit your game.";
 
 };
 
+/* PREVENT F11 EXIT */
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="F11"){
+e.preventDefault();
+}
+
+});
+
 /* QUESTIONS */
 
 const questions=[
@@ -149,7 +159,7 @@ minutes+":"+(seconds<10?"0"+seconds:seconds);
 
 totalEventTime--;
 
-if(totalEventTime < 0){
+if(totalEventTime <= 0){
 
 clearInterval(timerInterval);
 finish();
@@ -178,8 +188,6 @@ alert("Team name not found.");
 return;
 }
 
-/* DUPLICATE TEAM CHECK */
-
 let exists = await checkTeamExists(team);
 
 if(exists){
@@ -187,19 +195,15 @@ alert("Team name already used. Choose another team name.");
 return;
 }
 
-/* START GAME UI */
-
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
-gameStarted = true;
+gameStarted=true;
 
 enterFullscreen();
 blockBackNavigation();
 
-/* FIRST QUESTION */
-
-document.getElementById("question").innerText =
+document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
 updateProgress();
@@ -217,11 +221,7 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-/* ENTER FULLSCREEN ON FIRST CLICK */
-
 document.addEventListener("click",enterFullscreen,{once:true});
-
-/* FULLSCREEN EXIT DETECTION */
 
 document.addEventListener("fullscreenchange",function(){
 
@@ -234,12 +234,9 @@ finish();
 
 });
 
-/* CREATE BINGO BOARD */
-
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
-
 div.className="cell";
 div.innerText=i;
 div.id="cell"+i;
@@ -252,7 +249,7 @@ board.appendChild(div);
 
 document.getElementById("answer").addEventListener("keydown",function(e){
 
-if(e.key === "Enter"){
+if(e.key==="Enter"){
 
 e.preventDefault();
 saveAnswer();
@@ -267,12 +264,12 @@ saveAnswer();
 
 function updateProgress(){
 
-document.getElementById("questionNumber").innerText =
+document.getElementById("questionNumber").innerText=
 "Question "+(current+1)+" / 20";
 
 let answered=answers.filter(a=>a!=="").length;
 
-document.getElementById("progress").innerText =
+document.getElementById("progress").innerText=
 "Answered "+answered+" / 20";
 
 }
@@ -283,26 +280,28 @@ function saveAnswer(){
 
 if(gameFinished) return;
 
+let saveBtn=document.getElementById("saveBtn");
+
+if(saveBtn && saveBtn.disabled) return;
+
 if(questionLocked[current]) return;
 
-let ans=document.getElementById("answer").value.toLowerCase().trim();
+let input=document.getElementById("answer");
+
+let ans=input.value.toLowerCase().trim();
 
 if(ans===""){
 alert("Please enter an answer.");
+input.focus();
 return;
 }
 
 answers[current]=ans;
 questionLocked[current]=true;
 
-/* disable input + save button */
+input.disabled=true;
 
-document.getElementById("answer").disabled=true;
-
-let saveBtn=document.getElementById("saveBtn");
 if(saveBtn) saveBtn.disabled=true;
-
-/* correct answer */
 
 if(ans===shuffledQuestions[current].a){
 
@@ -329,17 +328,17 @@ if(current<19){
 
 current++;
 
-document.getElementById("question").innerText =
+document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
-document.getElementById("answer").value =
+document.getElementById("answer").value=
 answers[current];
 
-document.getElementById("answer").disabled =
+document.getElementById("answer").disabled=
 questionLocked[current];
 
 let saveBtn=document.getElementById("saveBtn");
-if(saveBtn) saveBtn.disabled = questionLocked[current];
+if(saveBtn) saveBtn.disabled=questionLocked[current];
 
 updateProgress();
 
@@ -355,17 +354,17 @@ if(current>0){
 
 current--;
 
-document.getElementById("question").innerText =
+document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
-document.getElementById("answer").value =
+document.getElementById("answer").value=
 answers[current];
 
-document.getElementById("answer").disabled =
+document.getElementById("answer").disabled=
 questionLocked[current];
 
 let saveBtn=document.getElementById("saveBtn");
-if(saveBtn) saveBtn.disabled = questionLocked[current];
+if(saveBtn) saveBtn.disabled=questionLocked[current];
 
 updateProgress();
 
@@ -426,15 +425,9 @@ clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
-/* TIME USED */
+let totalTime=EVENT_DURATION-totalEventTime;
 
-let totalTime = EVENT_DURATION - totalEventTime;
-
-if(totalTime < 0){
-totalTime = 0;
-}
-
-/* SEND RESULT */
+if(totalTime<0) totalTime=0;
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
@@ -445,7 +438,7 @@ time:totalTime
 })
 });
 
-document.getElementById("result").innerText =
+document.getElementById("result").innerText=
 "Submission successful. Thank you!";
 
 setTimeout(function(){
