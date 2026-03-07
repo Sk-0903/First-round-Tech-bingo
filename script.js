@@ -43,29 +43,45 @@ let questionLocked=new Array(20).fill(false);
 
 const questions=[
 
-{q:"Function calling itself",a:"recursion",cell:1},
-{q:"Rules for communication between systems",a:"api",cell:2},
-{q:"Internet based storage service",a:"cloud",cell:3},
-{q:"Process of fixing errors",a:"debug",cell:4},
-{q:"Programming language named after snake",a:"python",cell:5},
+{q:"Function calling itself is called?",options:["Loop","Recursion","Iteration","Compilation"],a:"recursion",cell:1},
 
-{q:"Data structure used in BFS",a:"queue",cell:6},
-{q:"Data structure used in DFS",a:"stack",cell:7},
-{q:"Language used to style web pages",a:"css",cell:8},
-{q:"Language used to structure web pages",a:"html",cell:9},
-{q:"Short form of Structured Query Language",a:"sql",cell:10},
+{q:"Rules for communication between systems?",options:["Protocol","API","Compiler","Socket"],a:"api",cell:2},
 
-{q:"Brain of the computer",a:"cpu",cell:11},
-{q:"Temporary memory of a computer",a:"ram",cell:12},
-{q:"Permanent memory of a computer",a:"rom",cell:13},
-{q:"Collection of interconnected computers",a:"network",cell:14},
-{q:"Technology for secure communication online",a:"encryption",cell:15},
+{q:"Internet based storage service?",options:["Server","Cloud","RAM","Drive"],a:"cloud",cell:3},
 
-{q:"Technology connecting physical devices to internet",a:"iot",cell:16},
-{q:"Program translating source code to machine code",a:"compiler",cell:17},
-{q:"Step-by-step problem solving method",a:"algorithm",cell:18},
-{q:"Collection of structured data",a:"database",cell:19},
-{q:"Process of converting encoded data to original",a:"decoding",cell:20}
+{q:"Process of fixing errors?",options:["Testing","Debug","Compilation","Execution"],a:"debug",cell:4},
+
+{q:"Programming language named after snake?",options:["Ruby","Python","Java","Go"],a:"python",cell:5},
+
+{q:"Data structure used in BFS?",options:["Stack","Queue","Tree","Graph"],a:"queue",cell:6},
+
+{q:"Data structure used in DFS?",options:["Queue","Stack","Heap","Array"],a:"stack",cell:7},
+
+{q:"Language used to style web pages?",options:["HTML","CSS","JS","PHP"],a:"css",cell:8},
+
+{q:"Language used to structure web pages?",options:["HTML","CSS","Python","SQL"],a:"html",cell:9},
+
+{q:"Short form of Structured Query Language?",options:["SQL","HTML","CSS","XML"],a:"sql",cell:10},
+
+{q:"Brain of the computer?",options:["RAM","ROM","CPU","GPU"],a:"cpu",cell:11},
+
+{q:"Temporary memory of a computer?",options:["ROM","RAM","HDD","SSD"],a:"ram",cell:12},
+
+{q:"Permanent memory of a computer?",options:["RAM","ROM","Cache","Register"],a:"rom",cell:13},
+
+{q:"Collection of interconnected computers?",options:["Internet","Network","Server","Cloud"],a:"network",cell:14},
+
+{q:"Technology for secure communication online?",options:["Encryption","Firewall","Protocol","Cloud"],a:"encryption",cell:15},
+
+{q:"Technology connecting physical devices to internet?",options:["AI","ML","IoT","Cloud"],a:"iot",cell:16},
+
+{q:"Program translating source code to machine code?",options:["Interpreter","Compiler","Debugger","Assembler"],a:"compiler",cell:17},
+
+{q:"Step-by-step problem solving method?",options:["Program","Algorithm","Process","Loop"],a:"algorithm",cell:18},
+
+{q:"Collection of structured data?",options:["Database","File","Server","Index"],a:"database",cell:19},
+
+{q:"Process of converting encoded data to original?",options:["Encoding","Decoding","Encryption","Compression"],a:"decoding",cell:20}
 
 ];
 
@@ -92,40 +108,20 @@ document.documentElement.requestFullscreen().catch(()=>{});
 /* SECURITY */
 
 document.addEventListener("contextmenu",e=>e.preventDefault());
-document.addEventListener("copy",e=>e.preventDefault());
-document.addEventListener("paste",e=>e.preventDefault());
-
-document.addEventListener("keydown",function(e){
-
-if(e.key==="F12") e.preventDefault();
-if(e.ctrlKey && e.shiftKey && e.key==="I") e.preventDefault();
-if(e.ctrlKey && e.key==="u") e.preventDefault();
-
-});
 
 document.addEventListener("visibilitychange",function(){
-
 if(document.hidden && !gameFinished){
 alert("Tab switch detected. Game submitted.");
 finish();
 }
-
 });
 
 document.addEventListener("fullscreenchange",function(){
-
 if(!document.fullscreenElement && !gameFinished){
 alert("Fullscreen exited. Game submitted.");
 finish();
 }
-
 });
-
-window.onbeforeunload=function(){
-if(!gameFinished){
-return "Leaving will submit your game.";
-}
-};
 
 /* CHECK DUPLICATE TEAM */
 
@@ -136,13 +132,9 @@ const snapshot = await getDocs(collection(db,"leaderboard"));
 let exists=false;
 
 snapshot.forEach((docData)=>{
-
-let data = docData.data();
-
-if(data.teamName.toLowerCase() === team.toLowerCase()){
-exists = true;
+if(docData.data().teamName.toLowerCase()===team.toLowerCase()){
+exists=true;
 }
-
 });
 
 return exists;
@@ -193,15 +185,10 @@ return;
 
 let team=localStorage.getItem("team");
 
-if(!team){
-alert("Team name missing");
-return;
-}
-
 let exists = await checkTeamExists(team);
 
 if(exists){
-alert("Team name already used. Choose another team name.");
+alert("Team name already used");
 return;
 }
 
@@ -227,7 +214,15 @@ teamDocId=ref.id;
 
 function showQuestion(){
 
-document.getElementById("question").innerText=shuffledQuestions[current].q;
+let q=shuffledQuestions[current];
+
+let html=`<div class="questionText">${q.q}</div><br>`;
+
+q.options.forEach((opt,index)=>{
+html+=`<div class="optionLine">${String.fromCharCode(65+index)}. ${opt}</div>`;
+});
+
+document.getElementById("question").innerHTML=html;
 
 document.getElementById("questionNumber").innerText=
 "Question "+(current+1)+" / 20";
@@ -272,61 +267,23 @@ function checkBingo(){
 let active=[];
 
 for(let i=1;i<=20;i++){
-
-let cell=document.getElementById("cell"+i);
-
-if(cell.classList.contains("active")){
+if(document.getElementById("cell"+i).classList.contains("active")){
 active.push(i);
 }
-
 }
 
-let rows=[
-[1,2,3,4,5],
-[6,7,8,9,10],
-[11,12,13,14,15],
-[16,17,18,19,20]
-];
-
-let cols=[
-[1,6,11,16],
-[2,7,12,17],
-[3,8,13,18],
-[4,9,14,19],
-[5,10,15,20]
-];
-
-let diagonals=[
-[1,7,13,19],
-[5,9,13,17]
-];
+let rows=[[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]];
+let cols=[[1,6,11,16],[2,7,12,17],[3,8,13,18],[4,9,14,19],[5,10,15,20]];
+let diagonals=[[1,7,13,19],[5,9,13,17]];
 
 let bingo=false;
 
-rows.forEach(r=>{
-if(r.every(x=>active.includes(x))) bingo=true;
-});
-
-cols.forEach(c=>{
-if(c.every(x=>active.includes(x))) bingo=true;
-});
-
-diagonals.forEach(d=>{
-if(d.every(x=>active.includes(x))) bingo=true;
-});
+rows.forEach(r=>{ if(r.every(x=>active.includes(x))) bingo=true; });
+cols.forEach(c=>{ if(c.every(x=>active.includes(x))) bingo=true; });
+diagonals.forEach(d=>{ if(d.every(x=>active.includes(x))) bingo=true; });
 
 if(bingo){
-
-let msg=document.getElementById("bingoMessage");
-
-if(msg){
-msg.style.display="block";
-
-setTimeout(()=>{
-msg.style.display="none";
-},3000);
-}
-
+alert("🎉 BINGO ACHIEVED!");
 }
 
 }
