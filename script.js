@@ -161,6 +161,7 @@ totalEventTime--;
 
 if(totalEventTime <= 0){
 
+totalEventTime = 0;
 clearInterval(timerInterval);
 finish();
 
@@ -250,10 +251,8 @@ board.appendChild(div);
 document.getElementById("answer").addEventListener("keydown",function(e){
 
 if(e.key==="Enter"){
-
 e.preventDefault();
 saveAnswer();
-
 }
 
 });
@@ -425,9 +424,13 @@ clearInterval(timerInterval);
 
 let team=localStorage.getItem("team");
 
-let totalTime=EVENT_DURATION-totalEventTime;
+/* SAFE TIME CALCULATION */
 
-if(totalTime<0) totalTime=0;
+let timeRemaining = Math.max(0,totalEventTime);
+let totalTime = EVENT_DURATION - timeRemaining;
+
+if(totalTime < 0) totalTime = 0;
+if(totalTime > EVENT_DURATION) totalTime = EVENT_DURATION;
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
