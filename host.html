@@ -133,7 +133,7 @@ font-size:14px;
 <th>Rank</th>
 <th>Team</th>
 <th>Score</th>
-<th>Time (sec)</th>
+<th>Time Used</th>
 </tr>
 
 </thead>
@@ -151,6 +151,15 @@ Live updating every 3 seconds
 const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTurGPFhvpCPsl96tbGW8S3IJ4ShqOax69sr-qTici25dGvF5v_scJbLm8HPHHD9BBWDmV1od5bj2LP/pub?gid=0&single=true&output=csv";
 
 const resetURL="https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec?action=reset";
+
+function formatTime(seconds){
+
+let minutes=Math.floor(seconds/60);
+let secs=seconds%60;
+
+return minutes + ":" + (secs<10 ? "0"+secs : secs);
+
+}
 
 function loadLeaderboard(){
 
@@ -184,15 +193,15 @@ time:parseInt(cols[3]) || 0
 
 }
 
-/* SORT */
+/* SORTING */
 
 teams.sort((a,b)=>{
 
-if(b.score===a.score){
-return a.time-b.time;
+if(b.score !== a.score){
+return b.score - a.score; // higher score first
 }
 
-return b.score-a.score;
+return a.time - b.time; // lower time wins
 
 });
 
@@ -216,7 +225,7 @@ let row=`
 <td>${medal}</td>
 <td>${t.team}</td>
 <td>${t.score}</td>
-<td>${t.time}</td>
+<td>${formatTime(t.time)}</td>
 </tr>
 
 `;
