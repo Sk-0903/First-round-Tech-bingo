@@ -106,28 +106,22 @@ async function checkCode(){
 let code=document.getElementById("startCode").value.trim().toLowerCase();
 
 if(code!==GAME_CODE){
-
 alert("Wrong start code");
 return;
-
 }
 
 let team=localStorage.getItem("team");
 
 if(!team){
-
 alert("Team name not found. Please register again.");
 return;
-
 }
 
 let exists=await checkTeamExists(team);
 
 if(exists){
-
 alert("Team name already used. Choose another team name.");
 return;
-
 }
 
 document.getElementById("startScreen").style.display="none";
@@ -158,7 +152,6 @@ startTime=Date.now();
 document.addEventListener("DOMContentLoaded",function(){
 
 let team=localStorage.getItem("team");
-
 document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
@@ -166,10 +159,8 @@ let board=document.getElementById("board");
 document.addEventListener("visibilitychange",function(){
 
 if(document.hidden){
-
 alert("You left the game tab. Game submitted.");
 finish();
-
 }
 
 });
@@ -177,10 +168,8 @@ finish();
 document.addEventListener("fullscreenchange",function(){
 
 if(!document.fullscreenElement){
-
 alert("Fullscreen exited. Game submitted.");
 finish();
-
 }
 
 });
@@ -188,7 +177,6 @@ finish();
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
-
 div.className="cell";
 div.innerText=i;
 div.id="cell"+i;
@@ -223,7 +211,6 @@ document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
 
 score++;
-
 answeredCorrect[current]=true;
 
 checkBingo();
@@ -240,7 +227,6 @@ function nextQuestion(){
 if(current<19){
 
 current++;
-
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
@@ -258,7 +244,6 @@ function prevQuestion(){
 if(current>0){
 
 current--;
-
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
@@ -276,9 +261,7 @@ function checkAllAnswered(){
 let done=answers.every(a=>a!=="");
 
 if(done){
-
 document.getElementById("submitGame").style.display="block";
-
 }
 
 }
@@ -304,9 +287,7 @@ rows.forEach(r=>{if(r.every(x=>active.includes(x)))bingo=true});
 cols.forEach(c=>{if(c.every(x=>active.includes(x)))bingo=true});
 
 if(bingo){
-
 document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
-
 }
 
 }
@@ -321,7 +302,6 @@ clearInterval(timerInterval);
 let team=localStorage.getItem("team");
 
 let endTime=Date.now();
-
 let totalTime=Math.floor((endTime-startTime)/1000);
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
@@ -338,7 +318,7 @@ document.getElementById("result").innerText=
 
 setTimeout(function(){
 
-window.location.href="about:blank";
+window.location.href="completed.html";
 
 },2000);
 
