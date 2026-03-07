@@ -12,14 +12,27 @@ let gameFinished = false;
 let answers = new Array(20).fill("");
 let answeredCorrect = new Array(20).fill(false);
 
-/* PREVENT BACK BUTTON */
+/* FULLSCREEN FUNCTION */
+
+function enterFullscreen(){
+
+if(!document.fullscreenElement){
+document.documentElement.requestFullscreen().catch(()=>{});
+}
+
+}
+
+/* BLOCK BACK BUTTON */
+
 history.pushState(null,null,location.href);
+
 window.onpopstate=function(){
 alert("Back navigation is disabled during the event.");
 history.pushState(null,null,location.href);
 };
 
-/* PREVENT TAB SWITCH */
+/* BLOCK TAB SWITCH */
+
 document.addEventListener("visibilitychange",function(){
 
 if(document.hidden && !gameFinished){
@@ -30,6 +43,8 @@ finish();
 }
 
 });
+
+/* QUESTIONS */
 
 const questions=[
 
@@ -59,6 +74,8 @@ const questions=[
 
 ];
 
+/* SHUFFLE QUESTIONS */
+
 function shuffle(array){
 
 for(let i=array.length-1;i>0;i--){
@@ -73,6 +90,8 @@ return array;
 }
 
 let shuffledQuestions = shuffle([...questions]);
+
+/* CHECK TEAM NAME DUPLICATE */
 
 async function checkTeamExists(team){
 
@@ -97,6 +116,8 @@ return false;
 
 }
 
+/* EVENT TIMER */
+
 function startEventTimer(){
 
 timerInterval=setInterval(function(){
@@ -119,6 +140,8 @@ finish();
 },1000);
 
 }
+
+/* START GAME */
 
 async function checkCode(){
 
@@ -146,8 +169,9 @@ return;
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
 
-/* FORCE FULLSCREEN */
-document.documentElement.requestFullscreen().catch(()=>{});
+enterFullscreen();
+
+/* ADD TEAM TO LEADERBOARD */
 
 fetch("https://script.google.com/macros/s/AKfycbyd0thWhb7M7X5b5_rCIyx8jV3okI1PhjRGlmFbUPc0pKyvLxeusjZXsfFI8Hk6XdqIng/exec",{
 method:"POST",
@@ -169,6 +193,8 @@ startTime=Date.now();
 
 }
 
+/* PAGE LOAD */
+
 document.addEventListener("DOMContentLoaded",function(){
 
 let team=localStorage.getItem("team");
@@ -176,7 +202,11 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-/* FULLSCREEN EXIT PROTECTION */
+/* FULLSCREEN ON FIRST CLICK */
+
+document.addEventListener("click",enterFullscreen,{once:true});
+
+/* DETECT FULLSCREEN EXIT */
 
 document.addEventListener("fullscreenchange",function(){
 
@@ -189,9 +219,12 @@ finish();
 
 });
 
+/* CREATE BINGO BOARD */
+
 for(let i=1;i<=20;i++){
 
 let div=document.createElement("div");
+
 div.className="cell";
 div.innerText=i;
 div.id="cell"+i;
@@ -201,6 +234,8 @@ board.appendChild(div);
 }
 
 });
+
+/* UPDATE PROGRESS */
 
 function updateProgress(){
 
@@ -213,6 +248,8 @@ document.getElementById("progress").innerText=
 "Answered "+answered+" / 20";
 
 }
+
+/* SAVE ANSWER */
 
 function saveAnswer(){
 
@@ -237,11 +274,14 @@ updateProgress();
 
 }
 
+/* NEXT QUESTION */
+
 function nextQuestion(){
 
 if(current<19){
 
 current++;
+
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
@@ -253,12 +293,15 @@ updateProgress();
 }
 
 }
+
+/* PREVIOUS QUESTION */
 
 function prevQuestion(){
 
 if(current>0){
 
 current--;
+
 document.getElementById("question").innerText=
 shuffledQuestions[current].q;
 
@@ -270,6 +313,8 @@ updateProgress();
 }
 
 }
+
+/* SHOW SUBMIT BUTTON */
 
 function checkAllAnswered(){
 
@@ -280,6 +325,8 @@ document.getElementById("submitGame").style.display="block";
 }
 
 }
+
+/* BINGO CHECK */
 
 function checkBingo(){
 
@@ -306,6 +353,8 @@ document.getElementById("result").innerText="🎉 BINGO ACHIEVED!";
 }
 
 }
+
+/* FINISH GAME */
 
 function finish(){
 
