@@ -22,23 +22,23 @@ appId: "1:614182283202:web:28679433283e05efb2585b"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* GAME VARIABLES */
+/* GAME SETTINGS */
 
-const GAME_CODE="keshav";
-const EVENT_DURATION=15*60;
+const GAME_CODE = "keshav";   // host code
+const EVENT_DURATION = 15 * 60;
 
-let totalEventTime=EVENT_DURATION;
+let totalEventTime = EVENT_DURATION;
 let timerInterval;
 
-let current=0;
-let score=0;
+let current = 0;
+let score = 0;
 
-let gameStarted=false;
-let gameFinished=false;
+let gameStarted = false;
+let gameFinished = false;
 
-let teamDocId=null;
+let teamDocId = null;
 
-let answers=new Array(20).fill("");
+let answers = new Array(20).fill("");
 
 /* QUESTIONS */
 
@@ -70,7 +70,7 @@ const questions=[
 
 ];
 
-/* SHUFFLE */
+/* SHUFFLE QUESTIONS */
 
 function shuffle(arr){
 for(let i=arr.length-1;i>0;i--){
@@ -80,17 +80,17 @@ let j=Math.floor(Math.random()*(i+1));
 return arr;
 }
 
-let shuffledQuestions=shuffle([...questions]);
+let shuffledQuestions = shuffle([...questions]);
 
 /* PAGE LOAD */
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-let team=localStorage.getItem("team");
+let team = localStorage.getItem("team");
 
 document.getElementById("teamName").innerText="Team: "+team;
 
-/* board */
+/* create bingo board */
 
 let board=document.getElementById("board");
 
@@ -116,11 +116,11 @@ document.getElementById("submitGame").addEventListener("click",finish);
 
 });
 
-/* CHECK DUPLICATE TEAM */
+/* CHECK TEAM ALREADY EXISTS */
 
 async function checkTeamExists(team){
 
-const snapshot=await getDocs(collection(db,"leaderboard"));
+const snapshot = await getDocs(collection(db,"leaderboard"));
 
 let exists=false;
 
@@ -140,10 +140,12 @@ return exists;
 
 async function checkCode(){
 
-let code=document.getElementById("startCode").value.trim().toLowerCase();
+let inputCode=document.getElementById("startCode").value.trim().toLowerCase();
 
-if(code!==GAME_CODE){
-alert("Wrong code");
+/* CASE INSENSITIVE CHECK */
+
+if(inputCode !== GAME_CODE.toLowerCase()){
+alert("Wrong start code");
 return;
 }
 
@@ -152,11 +154,11 @@ let team=localStorage.getItem("team");
 let exists=await checkTeamExists(team);
 
 if(exists){
-alert("Team already exists");
+alert("Team already used");
 return;
 }
 
-/* create record */
+/* CREATE TEAM ENTRY */
 
 const ref=await addDoc(collection(db,"leaderboard"),{
 teamName:team,
@@ -229,7 +231,7 @@ score++;
 
 }
 
-/* NAVIGATION */
+/* NEXT QUESTION */
 
 function nextQuestion(){
 
@@ -246,6 +248,8 @@ document.getElementById("submitGame").style.display="block";
 
 }
 
+/* PREVIOUS QUESTION */
+
 function prevQuestion(){
 
 if(current>0){
@@ -257,7 +261,7 @@ showQuestion();
 
 }
 
-/* FINISH */
+/* FINISH GAME */
 
 async function finish(){
 
