@@ -1,8 +1,10 @@
 body{
-font-family:Arial;
+font-family:Arial, Helvetica, sans-serif;
 text-align:center;
 background:#0f172a;
 color:white;
+margin:0;
+padding:0;
 }
 
 /* TIMER (TOP RIGHT CORNER) */
@@ -15,9 +17,9 @@ font-size:24px;
 font-weight:bold;
 background:#111827;
 color:#22c55e;
-padding:10px 15px;
-border-radius:8px;
-box-shadow:0 0 10px rgba(0,0,0,0.5);
+padding:12px 18px;
+border-radius:10px;
+box-shadow:0 0 12px rgba(0,0,0,0.6);
 }
 
 /* BINGO BOARD */
@@ -26,22 +28,22 @@ box-shadow:0 0 10px rgba(0,0,0,0.5);
 display:grid;
 grid-template-columns: repeat(5,110px);
 grid-template-rows: repeat(4,110px);
-gap:10px;
+gap:12px;
 justify-content:center;
-margin-top:30px;
+margin-top:40px;
 }
 
 /* CELL STYLE */
 
 .cell{
 background:#1e293b;
-padding:15px;
-border-radius:8px;
+border-radius:10px;
 display:flex;
 align-items:center;
 justify-content:center;
 font-size:20px;
 font-weight:bold;
+transition:0.25s;
 }
 
 /* ACTIVE CELL (CORRECT ANSWER) */
@@ -50,16 +52,23 @@ font-weight:bold;
 background:#22c55e;
 color:black;
 font-weight:bold;
+box-shadow:0 0 10px #22c55e;
 }
 
 /* INPUT FIELD */
 
 input{
-padding:10px;
+padding:12px;
 font-size:16px;
-border-radius:6px;
+border-radius:8px;
 border:none;
-margin-top:10px;
+margin-top:15px;
+width:220px;
+outline:none;
+}
+
+input:focus{
+box-shadow:0 0 6px #2563eb;
 }
 
 /* NORMAL BUTTONS */
@@ -69,14 +78,16 @@ padding:10px 20px;
 margin:8px;
 font-size:16px;
 border:none;
-border-radius:6px;
+border-radius:8px;
 background:#2563eb;
 color:white;
 cursor:pointer;
+transition:0.2s;
 }
 
 button:hover{
 background:#1d4ed8;
+transform:scale(1.05);
 }
 
 /* SUBMIT GAME BUTTON (CENTERED) */
@@ -84,16 +95,18 @@ background:#1d4ed8;
 #submitGame{
 display:block;
 margin:40px auto;
-padding:16px 40px;
+padding:16px 45px;
 font-size:20px;
 font-weight:bold;
 background:#22c55e;
 color:white;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
+transition:0.2s;
 }
 
 #submitGame:hover{
 background:#16a34a;
+transform:scale(1.05);
 }
