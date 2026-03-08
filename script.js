@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
 getFirestore,
 collection,
-addDoc,
 updateDoc,
 doc,
 getDocs
@@ -45,150 +44,90 @@ let questionLocked=new Array(20).fill(false);
 
 const questions=[
 
-{
-q:`What will be the output?
+{q:`What will be the output?
 int a = 5;
 int b = 10;
 printf("%d", a+++b);`,
 options:["15","16","Compilation Error","5"],
-a:btoa("15"),
-cell:1
-},
+a:btoa("15"),cell:1},
 
-{
-q:"Which programming language is mainly used for Android app development?",
+{q:"Which programming language is mainly used for Android app development?",
 options:["Swift","Kotlin","Ruby","Go"],
-a:btoa("kotlin"),
-cell:2
-},
+a:btoa("kotlin"),cell:2},
 
-{
-q:"Which company owns GitHub?",
+{q:"Which company owns GitHub?",
 options:["Google","Microsoft","Amazon","Meta"],
-a:btoa("microsoft"),
-cell:3
-},
+a:btoa("microsoft"),cell:3},
 
-{
-q:"Which programming language was named after a comedy show?",
+{q:"Which programming language was named after a comedy show?",
 options:["Ruby","Python","Java","Swift"],
-a:btoa("python"),
-cell:4
-},
+a:btoa("python"),cell:4},
 
-{
-q:"What is the full form of GPT in ChatGPT?",
+{q:"What is the full form of GPT in ChatGPT?",
 options:["General Processing Tool","Generative Pre-trained Transformer","Global Programming Tool","General Purpose Transformer"],
-a:btoa("generative pre-trained transformer"),
-cell:5
-},
+a:btoa("generative pre-trained transformer"),cell:5},
 
-{
-q:"Which company created TensorFlow?",
+{q:"Which company created TensorFlow?",
 options:["Meta","Google","Microsoft","Amazon"],
-a:btoa("google"),
-cell:6
-},
+a:btoa("google"),cell:6},
 
-{
-q:"Which database type is MongoDB?",
+{q:"Which database type is MongoDB?",
 options:["Relational","NoSQL","Graph","Distributed"],
-a:btoa("nosql"),
-cell:7
-},
+a:btoa("nosql"),cell:7},
 
-{
-q:"What was Java called before it was renamed Java?",
+{q:"What was Java called before it was renamed Java?",
 options:["Oak","Pine","Coffee","Maple"],
-a:btoa("oak"),
-cell:8
-},
+a:btoa("oak"),cell:8},
 
-{
-q:"Which AI tool is famous for text-to-image generation?",
+{q:"Which AI tool is famous for text-to-image generation?",
 options:["ChatGPT","DALL-E","GitHub","Docker"],
-a:btoa("dall-e"),
-cell:9
-},
+a:btoa("dall-e"),cell:9},
 
-{
-q:`Which programming language has the motto
+{q:`Which programming language has the motto
 "Write once, run anywhere"?`,
 options:["C++","Java","Python","Go"],
-a:btoa("java"),
-cell:10
-},
+a:btoa("java"),cell:10},
 
-{
-q:"How many bits are in an IPv4 address?",
+{q:"How many bits are in an IPv4 address?",
 options:["16","32","64","128"],
-a:btoa("32"),
-cell:11
-},
+a:btoa("32"),cell:11},
 
-{
-q:"Which Indian IT company started as a vegetable oil company?",
+{q:"Which Indian IT company started as a vegetable oil company?",
 options:["Infosys","Wipro","TCS","HCL"],
-a:btoa("wipro"),
-cell:12
-},
+a:btoa("wipro"),cell:12},
 
-{
-q:"What type of electromagnetic waves does WiFi use?",
+{q:"What type of electromagnetic waves does WiFi use?",
 options:["Infrared","Microwaves","Radio waves","Gamma rays"],
-a:btoa("radio waves"),
-cell:13
-},
+a:btoa("radio waves"),cell:13},
 
-{
-q:"What was the first computer virus?",
+{q:"What was the first computer virus?",
 options:["Creeper","Morris Worm","Melissa","Brain"],
-a:btoa("creeper"),
-cell:14
-},
+a:btoa("creeper"),cell:14},
 
-{
-q:"Maximum length of a single post on Twitter/X?",
+{q:"Maximum length of a single post on Twitter/X?",
 options:["140","200","280","500"],
-a:btoa("280"),
-cell:15
-},
+a:btoa("280"),cell:15},
 
-{
-q:"The Firefox logo actually represents which animal?",
+{q:"The Firefox logo actually represents which animal?",
 options:["Fox","Panda","Red Panda","Wolf"],
-a:btoa("red panda"),
-cell:16
-},
+a:btoa("red panda"),cell:16},
 
-{
-q:"Approximately how much data exists in the digital universe today?",
+{q:"Approximately how much data exists in the digital universe today?",
 options:["2.7 MB","2.7 GB","2.7 Zettabytes","2.7 TB"],
-a:btoa("2.7 zettabytes"),
-cell:17
-},
+a:btoa("2.7 zettabytes"),cell:17},
 
-{
-q:"Before being renamed Meta, what was the company originally known as?",
+{q:"Before being renamed Meta, what was the company originally known as?",
 options:["SocialNet","Facebook Inc","Meta Labs","Connect Inc"],
-a:btoa("facebook inc"),
-cell:18
-},
+a:btoa("facebook inc"),cell:18},
 
-{
-q:"Identify the logo shown below",
+{q:"Identify the logo shown below",
 image:"github.png",
 options:["GitHub","Source Forge","Bitbucket","Azure"],
-a:btoa("github"),
-cell:19
-},
+a:btoa("github"),cell:19},
 
-{
-q:"ChatGPT is based on which architecture?",
+{q:"ChatGPT is based on which architecture?",
 options:["CNN","RNN","Transformer","Decision Tree"],
-a:btoa("transformer"),
-cell:20
-}
+a:btoa("transformer"),cell:20}
 
 ];
 
@@ -243,6 +182,8 @@ finish();
 
 },1000);
 
+/* TAB SWITCH */
+
 document.addEventListener("visibilitychange",function(){
 if(document.hidden && !gameFinished){
 alert("Tab switch detected. Game submitted.");
@@ -250,30 +191,14 @@ finish();
 }
 });
 
+/* FULLSCREEN EXIT */
+
 document.addEventListener("fullscreenchange",function(){
 if(!document.fullscreenElement && !gameFinished && !showingBingo){
 alert("Fullscreen exited. Game submitted.");
 finish();
 }
 });
-
-/* CHECK DUPLICATE TEAM */
-
-async function checkTeamExists(team){
-
-const snapshot = await getDocs(collection(db,"leaderboard"));
-
-let exists=false;
-
-snapshot.forEach((docData)=>{
-if(docData.data().teamName.toLowerCase()===team.toLowerCase()){
-exists=true;
-}
-});
-
-return exists;
-
-}
 
 /* PAGE LOAD */
 
@@ -319,10 +244,22 @@ return;
 
 let team=localStorage.getItem("team");
 
-let exists = await checkTeamExists(team);
+/* FIND TEAM ENTRY CREATED IN index.html */
 
-if(exists){
-alert("Team name already used");
+const snapshot = await getDocs(collection(db,"leaderboard"));
+
+snapshot.forEach((docData)=>{
+
+if(docData.data().teamName.toLowerCase()===team.toLowerCase()){
+
+teamDocId = docData.id;
+
+}
+
+});
+
+if(teamDocId===null){
+alert("Team not registered correctly");
 return;
 }
 
@@ -333,14 +270,6 @@ document.getElementById("gameArea").style.display="block";
 
 showQuestion();
 startTimer();
-
-const ref=await addDoc(collection(db,"leaderboard"),{
-teamName:team,
-score:0,
-time:0
-});
-
-teamDocId=ref.id;
 
 }
 
@@ -402,7 +331,7 @@ finish();
 
 }
 
-/* TRIGGER BINGO */
+/* BINGO */
 
 function triggerBingo(cells){
 
@@ -535,11 +464,13 @@ clearInterval(timerInterval);
 
 let timeUsed=EVENT_DURATION-totalEventTime;
 
-if(teamDocId){
+if(teamDocId!==null){
+
 await updateDoc(doc(db,"leaderboard",teamDocId),{
 score:score,
 time:timeUsed
 });
+
 }
 
 document.getElementById("result").innerText="Submission successful";
