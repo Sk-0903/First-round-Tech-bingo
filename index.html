@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-
 <html>
+
 <head>
 <title>Tech Bingo</title>
 <link rel="stylesheet" href="style.css">
@@ -16,21 +16,77 @@
 
 <button onclick="start()">Start Game</button>
 
-<script>
-function start(){
-let name=document.getElementById("team").value;
+<script type="module">
 
-if(name==""){
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
+authDomain: "tech-bingo-leaderboard.firebaseapp.com",
+projectId: "tech-bingo-leaderboard",
+storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
+messagingSenderId: "614182283202",
+appId: "1:614182283202:web:28679433283e05efb2585b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* START GAME */
+
+window.start = async function(){
+
+let name=document.getElementById("team").value.trim();
+
+if(name===""){
 alert("Enter team name");
 return;
 }
 
+/* CHECK DUPLICATE TEAM */
+
+let snapshot = await getDocs(collection(db,"leaderboard"));
+
+let exists=false;
+
+snapshot.forEach((doc)=>{
+if(doc.data().teamName.toLowerCase()===name.toLowerCase()){
+exists=true;
+}
+});
+
+if(exists){
+alert("Team name already used. Choose another name.");
+return;
+}
+
+/* CREATE LEADERBOARD ENTRY */
+
+await addDoc(collection(db,"leaderboard"),{
+teamName:name,
+score:0,
+time:0
+});
+
+/* SAVE TEAM NAME */
+
 localStorage.setItem("team",name);
 
+/* GO TO GAME */
+
 window.location="game.html";
+
 }
+
 </script>
 
 </body>
 </html>
-
