@@ -27,7 +27,7 @@ const GAME_CODE="kesha";
 const EVENT_DURATION=10*60;
 
 let totalEventTime=EVENT_DURATION;
-let timerInterval;
+let timerInterval=null;
 
 let current=0;
 let score=0;
@@ -322,6 +322,8 @@ document.getElementById("optionsContainer").innerHTML=optionsHTML;
 
 function startTimer(){
 
+if(timerInterval) return;
+
 timerInterval=setInterval(()=>{
 
 let m=Math.floor(totalEventTime/60);
@@ -347,6 +349,13 @@ function triggerBingo(cells){
 showingBingo=true;
 bingoCount++;
 
+/* PAUSE TIMER */
+
+if(timerInterval){
+clearInterval(timerInterval);
+timerInterval=null;
+}
+
 cells.forEach(c=>{
 document.getElementById("cell"+c).classList.add("bingoGlow");
 });
@@ -359,8 +368,14 @@ msg.innerText="🎉 BINGO "+bingoCount;
 msg.style.display="block";
 
 setTimeout(()=>{
+
 msg.style.display="none";
 showingBingo=false;
+
+/* RESUME TIMER */
+
+startTimer();
+
 },3000);
 
 }
@@ -383,16 +398,32 @@ let diagonals=[[1,7,13,19],[5,9,13,17]];
 
 let allLines=[...rows,...cols,...diagonals];
 
+let newBingos=[];
+
 allLines.forEach((line,index)=>{
 
 if(line.every(x=>active.includes(x)) && !achievedBingos.has(index)){
 
 achievedBingos.add(index);
-triggerBingo(line);
+newBingos.push(line);
 
 }
 
 });
+
+function showNextBingo(){
+
+if(newBingos.length===0) return;
+
+let line=newBingos.shift();
+
+triggerBingo(line);
+
+setTimeout(showNextBingo,3500);
+
+}
+
+showNextBingo();
 
 }
 
