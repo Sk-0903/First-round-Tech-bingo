@@ -154,19 +154,8 @@ const end=Date.now()+duration;
 
 (function frame(){
 
-confetti({
-particleCount:4,
-angle:60,
-spread:55,
-origin:{x:0}
-});
-
-confetti({
-particleCount:4,
-angle:120,
-spread:55,
-origin:{x:1}
-});
+confetti({particleCount:4,angle:60,spread:55,origin:{x:0}});
+confetti({particleCount:4,angle:120,spread:55,origin:{x:1}});
 
 if(Date.now()<end){
 requestAnimationFrame(frame);
@@ -198,6 +187,12 @@ if(e.ctrlKey && e.key==="U") e.preventDefault();
 /* PAGE LOAD */
 
 document.addEventListener("DOMContentLoaded",()=>{
+
+if(sessionStorage.getItem("gameStarted")==="true"){
+alert("Page reload detected. Game submitted.");
+finish();
+return;
+}
 
 const team=localStorage.getItem("team");
 
@@ -256,6 +251,8 @@ enterFullscreen();
 
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
+
+sessionStorage.setItem("gameStarted","true");
 
 showQuestion();
 startTimer();
@@ -325,7 +322,9 @@ showingBingo=true;
 bingoCount++;
 
 cells.forEach(c=>{
-document.getElementById("cell"+c).classList.add("bingoGlow");
+let cell=document.getElementById("cell"+c);
+cell.classList.add("bingoGlow");
+cell.classList.add("bingoFlash");
 });
 
 launchConfetti();
@@ -337,8 +336,14 @@ msg.innerText="🎉 BINGO "+bingoCount;
 msg.style.display="block";
 
 setTimeout(()=>{
+
+cells.forEach(c=>{
+document.getElementById("cell"+c).classList.remove("bingoFlash");
+});
+
 msg.style.display="none";
 showingBingo=false;
+
 },3000);
 
 }
@@ -440,6 +445,8 @@ async function finish(){
 if(gameFinished) return;
 
 gameFinished=true;
+
+sessionStorage.removeItem("gameStarted");
 
 clearInterval(timerInterval);
 
