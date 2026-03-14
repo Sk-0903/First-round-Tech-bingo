@@ -139,8 +139,8 @@ podium.classList.add("show");
 },100);
 
 confetti({
-particleCount:200,
-spread:120,
+particleCount:250,
+spread:130,
 origin:{y:0.6}
 });
 
