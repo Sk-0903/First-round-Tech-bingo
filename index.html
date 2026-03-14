@@ -1,20 +1,38 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Tech Bingo</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<h1>💻 Tech Bingo</h1>
+<div class="container">
+
+<h1 class="mainTitle">TECH BINGO</h1>
+<h2 class="subTitle">TECHNO QUEST</h2>
+
+<div class="card">
+
+<h2>Enter Team Name</h2>
 
 <input type="text" id="team" placeholder="Enter Team Name">
 
 <br><br>
 
-<button onclick="start()">Start Game</button>
+<button onclick="start()" class="startBtn">Start Game</button>
+
+</div>
+
+</div>
 
 <script type="module">
 
@@ -44,14 +62,12 @@ const db = getFirestore(app);
 
 window.start = async function(){
 
-let name=document.getElementById("team").value.trim();
+let name = document.getElementById("team").value.trim();
 
 if(name===""){
 alert("Enter team name");
 return;
 }
-
-/* CHECK DUPLICATE TEAM */
 
 let snapshot = await getDocs(collection(db,"leaderboard"));
 
@@ -68,19 +84,13 @@ alert("Team name already used. Choose another name.");
 return;
 }
 
-/* CREATE LEADERBOARD ENTRY */
-
 await addDoc(collection(db,"leaderboard"),{
 teamName:name,
 score:0,
 time:0
 });
 
-/* SAVE TEAM NAME */
-
 localStorage.setItem("team",name);
-
-/* GO TO GAME */
 
 window.location="game.html";
 
