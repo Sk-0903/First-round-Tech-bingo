@@ -470,8 +470,6 @@ gameFinished=true;
 
 sessionStorage.removeItem("techBingoStarted");
 
-/* SAFE TIMER STOP */
-
 if(timerInterval){
 clearInterval(timerInterval);
 timerInterval=null;
