@@ -33,15 +33,19 @@ background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
 -webkit-text-fill-color:transparent;
 }
 
-/* COUNTDOWN */
+/* COUNTDOWN OVERLAY */
 
 #countdown{
-font-size:120px;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:150px;
 font-weight:bold;
 display:none;
-margin-top:20px;
+z-index:9999;
 color:#22c55e;
-text-shadow:0 0 20px #22c55e,0 0 60px #22c55e;
+text-shadow:0 0 30px #22c55e,0 0 80px #22c55e;
 }
 
 /* RESET BUTTON */
@@ -133,18 +137,19 @@ cursor:pointer;
 box-shadow:0 0 15px rgba(34,197,94,0.6);
 }
 
-/* SCREEN SHAKE */
+/* STRONG SCREEN SHAKE */
 
 .shake{
-animation:shakeScreen 0.3s;
+animation:shakeScreen 0.4s;
 }
 
 @keyframes shakeScreen{
-0%{transform:translate(2px,2px)}
-25%{transform:translate(-2px,3px)}
-50%{transform:translate(3px,-2px)}
-75%{transform:translate(-3px,2px)}
-100%{transform:translate(0,0)}
+0%{transform:translate(0px,0px)}
+20%{transform:translate(-6px,4px)}
+40%{transform:translate(6px,-4px)}
+60%{transform:translate(-6px,3px)}
+80%{transform:translate(6px,-3px)}
+100%{transform:translate(0px,0px)}
 }
 
 /* BACKGROUND FLASH */
@@ -155,7 +160,7 @@ animation:bgFlash 0.5s;
 
 @keyframes bgFlash{
 0%{background:#020617}
-50%{background:#0f172a}
+50%{background:#1e3a8a}
 100%{background:#020617}
 }
 
@@ -170,6 +175,8 @@ animation:bgFlash 0.5s;
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
 <div id="countdown">5</div>
+
+<!-- PODIUM -->
 
 <div class="podium" id="podium" style="display:none">
 
