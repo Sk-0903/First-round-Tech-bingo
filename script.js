@@ -398,35 +398,40 @@ let diagonals=[[1,7,13,19],[5,9,13,17]];
 
 let allLines=[...rows,...cols,...diagonals];
 
-let newBingos=[];
+/* queue for sequential bingos */
 
-allLines.forEach((line,index)=>{
+let bingoQueue=[];
+
+for(let index=0; index<allLines.length; index++){
+
+let line=allLines[index];
 
 if(line.every(x=>active.includes(x)) && !achievedBingos.has(index)){
 
 achievedBingos.add(index);
-newBingos.push(line);
+bingoQueue.push(line);
 
 }
 
-});
+}
 
-function showNextBingo(){
+/* sequential bingo display */
 
-if(newBingos.length===0) return;
+function processQueue(){
 
-let line=newBingos.shift();
+if(bingoQueue.length===0) return;
+
+let line=bingoQueue.shift();
 
 triggerBingo(line);
 
-setTimeout(showNextBingo,3500);
+setTimeout(processQueue,3500);
 
 }
 
-showNextBingo();
+processQueue();
 
 }
-
 /* SAVE ANSWER */
 
 function saveAnswer(){
