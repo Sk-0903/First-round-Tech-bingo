@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
@@ -10,14 +11,28 @@ body{
 font-family:"Segoe UI",Arial;
 text-align:center;
 margin:0;
+min-height:100vh;
 background:linear-gradient(135deg,#020617,#0f172a,#020617);
+background-size:400% 400%;
+animation:bgMove 12s ease infinite;
 color:white;
 }
 
+@keyframes bgMove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+/* TITLE */
+
 h1{
-margin-top:20px;
-font-size:50px;
-color:#22c55e;
+margin-top:25px;
+font-size:52px;
+letter-spacing:2px;
+background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 /* RESET BUTTON */
@@ -29,10 +44,16 @@ right:20px;
 background:#ef4444;
 color:white;
 border:none;
-padding:10px 20px;
+padding:12px 22px;
 font-size:16px;
-border-radius:8px;
+border-radius:10px;
 cursor:pointer;
+box-shadow:0 0 15px rgba(239,68,68,0.6);
+transition:0.3s;
+}
+
+.resetBtn:hover{
+transform:scale(1.08);
 }
 
 /* PODIUM */
@@ -41,63 +62,108 @@ cursor:pointer;
 display:flex;
 justify-content:center;
 align-items:flex-end;
-gap:40px;
-margin-top:30px;
+gap:50px;
+margin-top:40px;
 }
 
 .podiumBox{
-width:160px;
+width:180px;
 text-align:center;
-border-radius:12px;
-padding:15px;
-font-size:20px;
+border-radius:16px;
+padding:18px;
+font-size:22px;
 font-weight:bold;
+backdrop-filter:blur(12px);
+background:rgba(255,255,255,0.08);
+box-shadow:0 10px 40px rgba(0,0,0,0.7);
+transition:0.3s;
 }
+
+/* FIRST */
 
 .first{
+height:180px;
 background:linear-gradient(45deg,#facc15,#fde047);
 color:black;
-height:160px;
+box-shadow:0 0 30px rgba(250,204,21,0.9);
+animation:goldGlow 2s infinite alternate;
 }
+
+@keyframes goldGlow{
+0%{box-shadow:0 0 20px #facc15}
+100%{box-shadow:0 0 50px #facc15}
+}
+
+/* SECOND */
 
 .second{
+height:150px;
 background:linear-gradient(45deg,#d1d5db,#9ca3af);
 color:black;
-height:130px;
 }
+
+/* THIRD */
 
 .third{
+height:130px;
 background:linear-gradient(45deg,#fb923c,#ea580c);
-height:110px;
 }
 
-/* TABLE */
+/* TABLE CONTAINER */
 
 table{
 margin:auto;
 border-collapse:collapse;
 width:75%;
-margin-top:40px;
+margin-top:50px;
 background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 10px 40px rgba(0,0,0,0.7);
 }
 
-th,td{
+/* HEADER */
+
+th{
+padding:18px;
+font-size:22px;
+background:#111827;
+letter-spacing:1px;
+}
+
+/* CELLS */
+
+td{
 padding:16px;
 font-size:20px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-th{
-background:#111827;
-}
+/* ROW HOVER */
 
 tr{
 transition:0.3s;
 }
 
 tr:hover{
-background:rgba(59,130,246,0.2);
+background:rgba(59,130,246,0.25);
 transform:scale(1.02);
+}
+
+/* TOP 3 HIGHLIGHT */
+
+tbody tr:nth-child(1){
+color:#facc15;
+font-weight:bold;
+}
+
+tbody tr:nth-child(2){
+color:#d1d5db;
+}
+
+tbody tr:nth-child(3){
+color:#fb923c;
 }
 
 </style>
@@ -109,8 +175,6 @@ transform:scale(1.02);
 <button class="resetBtn" onclick="resetLeaderboard()">Reset</button>
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
-
-<!-- PODIUM -->
 
 <div class="podium">
 
@@ -131,8 +195,6 @@ transform:scale(1.02);
 
 </div>
 
-<!-- TABLE -->
-
 <table>
 
 <thead>
@@ -147,162 +209,6 @@ transform:scale(1.02);
 <tbody id="board"></tbody>
 
 </table>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-onSnapshot,
-getDocs,
-deleteDoc,
-doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-/* FIREBASE CONFIG */
-
-const firebaseConfig = {
-apiKey: "AIzaSyDHQCoj35MskNmRoZZAIfS6H8GXrdSs6JA",
-authDomain: "tech-bingo-leaderboard.firebaseapp.com",
-projectId: "tech-bingo-leaderboard",
-storageBucket: "tech-bingo-leaderboard.firebasestorage.app",
-messagingSenderId: "614182283202",
-appId: "1:614182283202:web:28679433283e05efb2585b"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* FORMAT TIME */
-
-function formatTime(sec){
-
-sec=parseInt(sec)||0;
-
-let m=Math.floor(sec/60);
-let s=sec%60;
-
-return m+":"+(s<10?"0"+s:s);
-
-}
-
-/* LISTEN REALTIME */
-
-function listenLeaderboard(){
-
-onSnapshot(collection(db,"leaderboard"),(snapshot)=>{
-
-let teams=[];
-
-snapshot.forEach((docData)=>{
-
-let data=docData.data();
-
-teams.push({
-id:docData.id,
-team:data.teamName,
-score:data.score||0,
-time:data.time||0
-});
-
-});
-
-/* SORT */
-
-teams.sort((a,b)=>{
-
-if(b.score!==a.score) return b.score-a.score;
-
-return a.time-b.time;
-
-});
-
-/* UPDATE PODIUM */
-
-document.getElementById("p1").innerText = teams[0]?.team || "---";
-document.getElementById("p2").innerText = teams[1]?.team || "---";
-document.getElementById("p3").innerText = teams[2]?.team || "---";
-
-/* UPDATE TABLE */
-
-updateBoard(teams);
-
-});
-
-}
-
-/* UPDATE TABLE */
-
-function updateBoard(teams){
-
-let table=document.getElementById("board");
-
-table.innerHTML="";
-
-teams.forEach((team,index)=>{
-
-let row=document.createElement("tr");
-
-row.innerHTML=`
-<td>${index+1}</td>
-<td>${team.team}</td>
-<td>${team.score}</td>
-<td>${formatTime(team.time)}</td>
-`;
-
-table.appendChild(row);
-
-});
-
-}
-
-/* RESET LEADERBOARD */
-
-async function resetLeaderboard(){
-
-if(!confirm("Reset leaderboard?")) return;
-
-try{
-
-let snapshot = await getDocs(collection(db,"leaderboard"));
-
-let deletes=[];
-
-snapshot.forEach((d)=>{
-deletes.push(deleteDoc(doc(db,"leaderboard",d.id)));
-});
-
-await Promise.all(deletes);
-
-/* CLEAR UI */
-
-document.getElementById("board").innerHTML="";
-document.getElementById("p1").innerText="---";
-document.getElementById("p2").innerText="---";
-document.getElementById("p3").innerText="---";
-
-alert("Leaderboard reset successful");
-
-}catch(err){
-
-console.error(err);
-alert("Error resetting leaderboard");
-
-}
-
-}
-
-/* MAKE BUTTON WORK */
-
-window.resetLeaderboard = resetLeaderboard;
-
-/* START LISTENER */
-
-listenLeaderboard();
-
-</script>
 
 </body>
 </html>
