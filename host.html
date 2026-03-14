@@ -47,21 +47,6 @@ border-radius:10px;
 cursor:pointer;
 }
 
-/* SHOW RESULT BUTTON */
-
-.showBtn{
-margin-top:40px;
-margin-bottom:40px;
-background:#22c55e;
-color:white;
-border:none;
-padding:16px 40px;
-font-size:18px;
-border-radius:12px;
-cursor:pointer;
-box-shadow:0 0 15px rgba(34,197,94,0.6);
-}
-
 /* PODIUM */
 
 .podium{
@@ -70,6 +55,15 @@ justify-content:center;
 align-items:flex-end;
 gap:50px;
 margin-top:40px;
+
+opacity:0;
+transform:translateY(120px);
+transition:all 0.8s ease;
+}
+
+.podium.show{
+opacity:1;
+transform:translateY(0);
 }
 
 .podiumBox{
@@ -114,6 +108,21 @@ font-size:20px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
+/* SHOW RESULT BUTTON */
+
+.showBtn{
+margin-top:50px;
+margin-bottom:60px;
+background:#22c55e;
+color:white;
+border:none;
+padding:16px 40px;
+font-size:18px;
+border-radius:12px;
+cursor:pointer;
+box-shadow:0 0 15px rgba(34,197,94,0.6);
+}
+
 </style>
 
 </head>
@@ -124,7 +133,7 @@ border-bottom:1px solid rgba(255,255,255,0.1);
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
-<!-- PODIUM HIDDEN INITIALLY -->
+<!-- PODIUM (hidden initially) -->
 
 <div class="podium" id="podium" style="display:none">
 
@@ -163,6 +172,10 @@ border-bottom:1px solid rgba(255,255,255,0.1);
 <!-- SHOW RESULT BUTTON AT BOTTOM -->
 
 <button class="showBtn" onclick="showResults()">Show Results</button>
+
+<!-- CONFETTI LIBRARY -->
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script type="module" src="host.js"></script>
 
