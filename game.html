@@ -1,74 +1,91 @@
-```html
 <!DOCTYPE html>
 <html>
 
 <head>
-<title>Tech Bingo Game</title>
 
-<link rel="stylesheet" href="style.css">
-<script type="module" src="script.js"></script>
+    <title>Tech Bingo Game</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js"></script>
 
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
+    <!-- MAIN TITLE -->
     <h1 class="mainTitle">TECH BINGO</h1>
     <h2 class="subTitle">TECHNO QUEST</h2>
-</div>
 
-<!-- TIMER -->
-<div id="eventTimer">10:00</div>
+    <!-- EVENT TIMER -->
+    <div id="eventTimer">10:00</div>
 
-<!-- START SCREEN -->
-<div id="startScreen">
 
-    <h2 class="startTitle">ACCESS THE GAME</h2>
+    <!-- START SCREEN -->
+    <div id="startScreen">
 
-    <p class="startSubtitle">Enter the event access code to begin</p>
+        <h2 class="startTitle">ACCESS THE GAME</h2>
 
-    <input type="text" id="startCode" placeholder="Enter access code">
+        <p class="startSubtitle">
+            Enter the event access code to begin
+        </p>
 
-    <br><br>
+        <input
+            type="text"
+            id="startCode"
+            placeholder="Enter access code"
+        >
 
-    <button id="startBtn" class="startBtn">Start Game</button>
+        <br><br>
 
-</div>
+        <button id="startBtn" class="startBtn">
+            Start Game
+        </button>
 
-<!-- GAME AREA -->
-<div id="gameArea" style="display:none;">
+    </div>
 
-    <h2 id="teamName"></h2>
 
-    <h3 id="questionNumber"></h3>
+    <!-- GAME AREA -->
+    <div id="gameArea" style="display:none;">
 
-    <h4 id="progress"></h4>
+        <h2 id="teamName"></h2>
+        <h3 id="questionNumber"></h3>
+        <h4 id="progress"></h4>
 
-    <h3 id="question"></h3>
+        <h3 id="question"></h3>
 
-    <div id="optionsContainer"></div>
+        <!-- OPTIONS -->
+        <div id="optionsContainer"></div>
 
-    <br><br>
+        <br><br>
 
-    <button id="prevBtn">⬅ Previous</button>
+        <!-- NAVIGATION BUTTONS -->
+        <button id="prevBtn">⬅ Previous</button>
+        <button id="saveBtn">Save</button>
+        <button id="nextBtn">Next ➡</button>
 
-    <button id="saveBtn">Save</button>
+        <br><br>
 
-    <button id="nextBtn">Next ➡</button>
+        <!-- SUBMIT -->
+        <button id="submitGame" style="display:none;">
+            Submit Game
+        </button>
 
-    <br><br>
 
-    <button id="submitGame" style="display:none;">Submit Game</button>
+        <!-- BINGO BOARD -->
+        <div class="board" id="board"></div>
 
-    <div class="board" id="board"></div>
 
-    <div id="bingoMessage">🎉 BINGO ACHIEVED!</div>
+        <!-- BINGO POPUP -->
+        <div id="bingoMessage">
+            🎉 BINGO ACHIEVED!
+        </div>
 
-    <h2 id="result"></h2>
 
-</div>
+        <!-- RESULT -->
+        <h2 id="result"></h2>
+
+    </div>
 
 </body>
+
 </html>
-```
