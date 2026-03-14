@@ -11,12 +11,10 @@ body{
     padding:0;
     min-height:100vh;
 
-    /* 3D ENVIRONMENT */
-    perspective:1400px;
-    perspective-origin:center top;
-    overflow-x:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 
-    /* TECH BACKGROUND */
     background:linear-gradient(135deg,#020617,#0f172a,#1e3a8a,#020617);
     background-size:400% 400%;
     animation:techBackground 15s ease infinite;
@@ -28,6 +26,35 @@ body{
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}
     100%{background-position:0% 50%;}
+}
+
+/* =================================
+   FUTURISTIC GRID BACKGROUND
+=================================*/
+
+body::before{
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+
+    background-image:
+        linear-gradient(rgba(59,130,246,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.15) 1px, transparent 1px);
+
+    background-size:60px 60px;
+
+    animation:gridMove 20s linear infinite;
+
+    pointer-events:none;
+    z-index:-1;
+}
+
+@keyframes gridMove{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(60px);}
 }
 
 /* ===============================
@@ -52,15 +79,12 @@ body{
         0 0 10px rgba(34,197,94,0.8),
         0 0 25px rgba(59,130,246,0.7),
         0 0 40px rgba(59,130,246,0.6);
-
-    transform:perspective(900px) rotateX(10deg);
 }
 
 .subTitle{
     font-size:24px;
     letter-spacing:4px;
     opacity:0.9;
-    margin-top:5px;
 }
 
 @keyframes titleGlow{
@@ -77,6 +101,7 @@ body{
 
     background:rgba(30,41,59,0.65);
     backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
 
     border-radius:18px;
 
@@ -87,12 +112,9 @@ body{
 
     margin:60px auto;
 
-    transform-style:preserve-3d;
-
     box-shadow:
         0 0 35px rgba(0,0,0,0.7),
-        0 0 20px rgba(59,130,246,0.3),
-        0 15px 40px rgba(0,0,0,0.45);
+        0 0 20px rgba(59,130,246,0.3);
 }
 
 /* ===============================
@@ -139,17 +161,44 @@ body{
 
 .board{
     display:grid;
-
     grid-template-columns: repeat(5,110px);
     grid-template-rows: repeat(4,110px);
-
     gap:14px;
-
     justify-content:center;
-
     margin-top:40px;
 
-    perspective:900px;
+    transition:transform 0.25s ease;
+    transform-style:preserve-3d;
+
+    padding:15px;
+    border-radius:16px;
+
+    /* NEON GLOW BORDER */
+
+    box-shadow:
+        0 0 10px #22c55e,
+        0 0 20px #3b82f6,
+        0 0 40px rgba(59,130,246,0.5);
+
+    animation:neonBoardGlow 3s infinite alternate;
+}
+
+@keyframes neonBoardGlow{
+
+    0%{
+        box-shadow:
+        0 0 10px #22c55e,
+        0 0 20px #3b82f6,
+        0 0 40px rgba(59,130,246,0.4);
+    }
+
+    100%{
+        box-shadow:
+        0 0 20px #22c55e,
+        0 0 40px #3b82f6,
+        0 0 60px rgba(59,130,246,0.7);
+    }
+
 }
 
 /* ===============================
@@ -170,8 +219,6 @@ body{
     font-weight:bold;
 
     transition:0.25s;
-
-    transform-style:preserve-3d;
 
     box-shadow:0 0 10px rgba(0,0,0,0.5);
 }
@@ -205,11 +252,9 @@ body{
 input{
 
     padding:12px;
-
     font-size:16px;
 
     border-radius:10px;
-
     border:none;
 
     margin-top:15px;
@@ -219,7 +264,6 @@ input{
     outline:none;
 
     background:#020617;
-
     color:white;
 
     transition:0.2s;
@@ -230,7 +274,6 @@ input::placeholder{
 }
 
 input:focus{
-    transform:translateY(-2px);
 
     box-shadow:
         0 0 10px #2563eb,
@@ -244,13 +287,11 @@ input:focus{
 button{
 
     padding:12px 24px;
-
     margin:8px;
 
     font-size:16px;
 
     border:none;
-
     border-radius:10px;
 
     background:#2563eb;
@@ -268,7 +309,7 @@ button:hover{
 
     background:#1d4ed8;
 
-    transform:translateY(-3px) scale(1.07);
+    transform:scale(1.07);
 }
 
 /* START BUTTON */
@@ -313,26 +354,20 @@ button:hover{
 
     background:#16a34a;
 
-    transform:translateY(-4px) scale(1.08);
+    transform:scale(1.08);
 }
 
 /* ===============================
-   QUESTION TEXT
+   QUESTION IMAGE
 ================================*/
 
-h2,h3{
-    text-shadow:
-        0 0 8px #3b82f6,
-        0 0 20px #2563eb;
-}
+.questionImage{
+    width:120px;
+    margin:10px auto;
+    display:block;
+    border-radius:10px;
 
-/* RESULT TEXT */
-
-#result{
-    margin-top:25px;
-    font-size:22px;
-    font-weight:bold;
-    color:#22c55e;
+    box-shadow:0 0 15px rgba(59,130,246,0.7);
 }
 
 /* ===============================
@@ -367,9 +402,8 @@ h2,h3{
     z-index:9999;
 
     box-shadow:
-        0 0 25px #22c55e,
-        0 0 60px #3b82f6,
-        0 25px 60px rgba(0,0,0,0.6);
+        0 0 20px #22c55e,
+        0 0 60px #3b82f6;
 
     animation:bingoAnimation 0.6s ease forwards;
 }
@@ -392,19 +426,6 @@ h2,h3{
 }
 
 /* ===============================
-   QUESTION IMAGE
-================================*/
-
-.questionImage{
-    width:120px;
-    margin:10px auto;
-    display:block;
-    border-radius:10px;
-
-    box-shadow:0 0 15px rgba(59,130,246,0.7);
-}
-
-/* ===============================
    BINGO WIN GLOW
 ================================*/
 
@@ -413,12 +434,10 @@ h2,h3{
 }
 
 @keyframes bingoGlow{
-
     0%{
         background:#22c55e;
         box-shadow:0 0 10px #22c55e;
     }
-
     100%{
         background:#16a34a;
         box-shadow:0 0 35px #22c55e;
