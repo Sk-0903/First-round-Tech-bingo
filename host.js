@@ -64,7 +64,7 @@ return a.time-b.time;
 
 });
 
-/* UPDATE PODIUM DATA */
+/* UPDATE PODIUM */
 
 document.getElementById("p1").innerText = teams[0]?.team || "---";
 document.getElementById("p2").innerText = teams[1]?.team || "---";
@@ -96,10 +96,33 @@ table.appendChild(row);
 /* SHOW RESULTS BUTTON */
 
 window.showResults=function(){
-document.getElementById("podium").style.display="flex";
+
+let podium=document.getElementById("podium");
+
+podium.style.display="flex";
+
+setTimeout(()=>{
+podium.classList.add("show");
+},100);
+
+/* SCROLL TO TOP */
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+/* CONFETTI */
+
+confetti({
+particleCount:200,
+spread:120,
+origin:{y:0.6}
+});
+
 }
 
-/* RESET */
+/* RESET LEADERBOARD */
 
 window.resetLeaderboard=async function(){
 
