@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html>
 
@@ -385,7 +385,10 @@ origin:{y:0.6}
 
 /* ================= VICTORY SOUND ================= */
 
-document.getElementById("victorySound").play();
+let sound=document.getElementById("victorySound");
+sound.pause();
+sound.currentTime=0;
+sound.play();
 
 }
 
