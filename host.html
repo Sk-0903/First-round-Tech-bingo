@@ -221,6 +221,52 @@ width:100%;
 height:100%;
 z-index:-1;
 }
+  /* ================= HOST LOCK ================= */
+
+#lockScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:999999;
+}
+
+.lockBox{
+background:rgba(255,255,255,0.08);
+padding:40px;
+border-radius:14px;
+text-align:center;
+backdrop-filter:blur(10px);
+}
+
+.lockBox input{
+padding:12px;
+width:220px;
+border:none;
+border-radius:8px;
+margin-top:15px;
+font-size:16px;
+}
+
+.lockBox button{
+margin-top:15px;
+padding:10px 20px;
+background:#22c55e;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+#wrongPass{
+color:#ef4444;
+margin-top:10px;
+}
 
 </style>
 
