@@ -460,6 +460,37 @@ sound.play();
 },1000);
 
 }
+  /* ================= HOST PASSWORD LOCK ================= */
+
+function unlockHost(){
+
+const password="techhost123";
+
+let entered=document.getElementById("hostPass").value;
+
+if(entered===password){
+
+document.getElementById("lockScreen").style.display="none";
+
+}else{
+
+document.getElementById("wrongPass").innerText="Wrong Password";
+
+}
+
+}
+
+/* ENTER KEY LOGIN */
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="Enter"){
+
+unlockHost();
+
+}
+
+});
 
 </script>
 
