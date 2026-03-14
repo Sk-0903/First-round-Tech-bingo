@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 
@@ -5,61 +6,69 @@
 <title>Tech Bingo Game</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script type="module" src="script.js"></script>
 
 </head>
 
 <body>
 
-<h1 class="mainTitle">TECH BINGO</h1>
-<h2 class="subTitle">TECHNO QUEST</h2>
+<!-- HEADER -->
+<div class="header">
+    <h1 class="mainTitle">TECH BINGO</h1>
+    <h2 class="subTitle">TECHNO QUEST</h2>
+</div>
 
+<!-- TIMER -->
 <div id="eventTimer">10:00</div>
 
+<!-- START SCREEN -->
 <div id="startScreen">
 
-<h2 class="startTitle">ACCESS THE GAME</h2>
+    <h2 class="startTitle">ACCESS THE GAME</h2>
 
-<p class="startSubtitle">Enter the event access code to begin</p>
+    <p class="startSubtitle">Enter the event access code to begin</p>
 
-<input type="text" id="startCode" placeholder="Enter access code">
+    <input type="text" id="startCode" placeholder="Enter access code">
 
-<br><br>
+    <br><br>
 
-<button id="startBtn" class="startBtn">Start Game</button>
+    <button id="startBtn" class="startBtn">Start Game</button>
 
 </div>
 
+<!-- GAME AREA -->
 <div id="gameArea" style="display:none;">
 
-<h2 id="teamName"></h2>
+    <h2 id="teamName"></h2>
 
-<h3 id="questionNumber"></h3>
+    <h3 id="questionNumber"></h3>
 
-<h4 id="progress"></h4>
+    <h4 id="progress"></h4>
 
-<h3 id="question"></h3>
+    <h3 id="question"></h3>
 
-<div id="optionsContainer"></div>
-<br><br>
+    <div id="optionsContainer"></div>
 
-<button id="prevBtn">⬅ Previous</button>
+    <br><br>
 
-<button id="saveBtn">Save</button>
+    <button id="prevBtn">⬅ Previous</button>
 
-<button id="nextBtn">Next ➡</button>
+    <button id="saveBtn">Save</button>
 
-<br><br>
+    <button id="nextBtn">Next ➡</button>
 
-<button id="submitGame" style="display:none;">Submit Game</button>
+    <br><br>
 
-<div class="board" id="board"></div>
-<div id="bingoMessage">🎉 BINGO ACHIEVED!</div>
+    <button id="submitGame" style="display:none;">Submit Game</button>
 
-<h2 id="result"></h2>
+    <div class="board" id="board"></div>
+
+    <div id="bingoMessage">🎉 BINGO ACHIEVED!</div>
+
+    <h2 id="result"></h2>
 
 </div>
 
 </body>
 </html>
+```
