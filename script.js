@@ -33,7 +33,9 @@ let current=0;
 let score=0;
 let gameFinished=false;
 let showingBingo=false;
-let bingoAchieved=false;
+
+let achievedBingos=new Set();
+let bingoCount=0;
 
 let teamDocId=null;
 
@@ -143,6 +145,37 @@ return arr;
 
 let shuffledQuestions=shuffle([...questions]);
 
+/* CONFETTI */
+
+function launchConfetti(){
+
+const duration=1500;
+const end=Date.now()+duration;
+
+(function frame(){
+
+confetti({
+particleCount:4,
+angle:60,
+spread:55,
+origin:{x:0}
+});
+
+confetti({
+particleCount:4,
+angle:120,
+spread:55,
+origin:{x:1}
+});
+
+if(Date.now()<end){
+requestAnimationFrame(frame);
+}
+
+})();
+
+}
+
 /* FULLSCREEN */
 
 function enterFullscreen(){
@@ -156,48 +189,10 @@ document.documentElement.requestFullscreen().catch(()=>{});
 document.addEventListener("contextmenu",e=>e.preventDefault());
 
 document.addEventListener("keydown",function(e){
-
 if(e.key==="F12") e.preventDefault();
 if(e.ctrlKey && e.shiftKey && e.key==="I") e.preventDefault();
 if(e.ctrlKey && e.shiftKey && e.key==="J") e.preventDefault();
 if(e.ctrlKey && e.key==="U") e.preventDefault();
-
-});
-
-/* DEVTOOLS DETECTION */
-
-setInterval(function(){
-
-const threshold = 160;
-
-if(
-window.outerWidth - window.innerWidth > threshold ||
-window.outerHeight - window.innerHeight > threshold
-){
-if(!gameFinished){
-alert("Developer tools detected. Game submitted.");
-finish();
-}
-}
-
-},1000);
-
-/* TAB SWITCH */
-
-document.addEventListener("visibilitychange",function(){
-if(document.hidden && !gameFinished){
-alert("Tab switch detected. Game submitted.");
-finish();
-}
-});
-
-/* FULLSCREEN EXIT */
-
-document.addEventListener("fullscreenchange",function(){
-if(!document.fullscreenElement && !gameFinished && !showingBingo){
-alert("Fullscreen exited. Game submitted.");
-finish();
-}
 });
 
 /* PAGE LOAD */
@@ -244,18 +239,12 @@ return;
 
 let team=localStorage.getItem("team");
 
-/* FIND TEAM ENTRY CREATED IN index.html */
-
 const snapshot = await getDocs(collection(db,"leaderboard"));
 
 snapshot.forEach((docData)=>{
-
 if(docData.data().teamName.toLowerCase()===team.toLowerCase()){
-
 teamDocId = docData.id;
-
 }
-
 });
 
 if(teamDocId===null){
@@ -296,12 +285,8 @@ q.options.forEach((opt,index)=>{
 
 let checked = answers[current] === opt ? "checked" : "";
 
-optionsHTML += `
-<label class="optionItem">
-<input type="radio" name="option" value="${opt}" ${checked} ${questionLocked[current]?"disabled":""}>
-${String.fromCharCode(65+index)}. ${opt}
-</label>
-`;
+optionsHTML += `<label class="optionItem"> <input type="radio" name="option" value="${opt}" ${checked} ${questionLocked[current]?"disabled":""}>
+${String.fromCharCode(65+index)}. ${opt} </label>`;
 
 });
 
@@ -335,14 +320,19 @@ finish();
 
 function triggerBingo(cells){
 
-bingoAchieved=true;
 showingBingo=true;
+
+bingoCount++;
 
 cells.forEach(c=>{
 document.getElementById("cell"+c).classList.add("bingoGlow");
 });
 
+launchConfetti();
+
 let msg=document.getElementById("bingoMessage");
+
+msg.innerText="🎉 BINGO "+bingoCount;
 
 msg.style.display="block";
 
@@ -357,8 +347,6 @@ showingBingo=false;
 
 function checkBingo(){
 
-if(bingoAchieved) return;
-
 let active=[];
 
 for(let i=1;i<=20;i++){
@@ -371,26 +359,19 @@ let rows=[[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]];
 let cols=[[1,6,11,16],[2,7,12,17],[3,8,13,18],[4,9,14,19],[5,10,15,20]];
 let diagonals=[[1,7,13,19],[5,9,13,17]];
 
-for(let r of rows){
-if(r.every(x=>active.includes(x))){
-triggerBingo(r);
-return;
-}
+let allLines=[...rows,...cols,...diagonals];
+
+allLines.forEach((line,index)=>{
+
+if(line.every(x=>active.includes(x)) && !achievedBingos.has(index)){
+
+achievedBingos.add(index);
+
+triggerBingo(line);
+
 }
 
-for(let c of cols){
-if(c.every(x=>active.includes(x))){
-triggerBingo(c);
-return;
-}
-}
-
-for(let d of diagonals){
-if(d.every(x=>active.includes(x))){
-triggerBingo(d);
-return;
-}
-}
+});
 
 }
 
@@ -473,7 +454,8 @@ time:timeUsed
 
 }
 
-document.getElementById("result").innerText="Submission successful";
+document.getElementById("result").innerText=
+"Submission successful | Bingos: "+bingoCount;
 
 setTimeout(()=>{
 window.location="completed.html";
