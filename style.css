@@ -1,15 +1,15 @@
-```css id="pj1c1x"
+```css
 /* ===============================
    GLOBAL PAGE
 ================================*/
 
 body{
     font-family: Arial, Helvetica, sans-serif;
-    text-align:center;
     color:white;
     margin:0;
     padding:0;
     min-height:100vh;
+    text-align:center;
 
     background:linear-gradient(135deg,#020617,#0f172a,#1e3a8a,#020617);
     background-size:400% 400%;
@@ -53,25 +53,14 @@ body::before{
 }
 
 /* ===============================
-   HEADER CONTAINER
-================================*/
-
-.header{
-    width:100%;
-    max-width:1200px;
-    margin:30px auto 0 auto;
-    text-align:center;
-}
-
-/* ===============================
-   TITLE
+   HEADER
 ================================*/
 
 .mainTitle{
     font-size:72px;
     font-weight:bold;
     letter-spacing:4px;
-    margin:0;
+    margin-top:30px;
 
     background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
     background-size:200% auto;
@@ -89,14 +78,37 @@ body::before{
 
 .subTitle{
     font-size:24px;
-    letter-spacing:4px;
-    opacity:0.9;
+    letter-spacing:6px;
     margin-top:10px;
 }
 
 @keyframes titleGlow{
     0%{background-position:0%;}
     100%{background-position:200%;}
+}
+
+/* ===============================
+   TIMER
+================================*/
+
+#eventTimer{
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    font-size:22px;
+    font-weight:bold;
+
+    background:#020617;
+    color:#22c55e;
+
+    padding:14px 22px;
+
+    border-radius:12px;
+
+    box-shadow:
+        0 0 10px rgba(0,0,0,0.6),
+        0 0 15px rgba(34,197,94,0.3);
 }
 
 /* ===============================
@@ -112,12 +124,12 @@ body::before{
 
     border-radius:18px;
 
-    padding:40px;
+    padding:50px;
 
     width:60%;
-    max-width:700px;
+    max-width:720px;
 
-    margin:50px auto;
+    margin:60px auto;
 
     box-shadow:
         0 0 35px rgba(0,0,0,0.7),
@@ -125,41 +137,142 @@ body::before{
 }
 
 /* ===============================
-   START TEXT
+   START SCREEN
 ================================*/
 
 .startTitle{
-    font-size:28px;
+    font-size:30px;
     margin-bottom:10px;
 }
 
 .startSubtitle{
-    opacity:0.7;
-    margin-bottom:20px;
+    opacity:0.8;
+    margin-bottom:30px;
 }
 
 /* ===============================
-   TIMER
+   INPUT FIELD
 ================================*/
 
-#eventTimer{
-    position:fixed;
-    top:20px;
-    right:20px;
+input{
+    padding:14px;
+    font-size:16px;
 
-    font-size:24px;
-    font-weight:bold;
+    border-radius:10px;
+    border:none;
+
+    width:260px;
+
+    outline:none;
 
     background:#020617;
-    color:#22c55e;
+    color:white;
 
-    padding:14px 20px;
+    transition:0.2s;
+}
 
-    border-radius:12px;
+input::placeholder{
+    color:#94a3b8;
+}
 
+input:focus{
     box-shadow:
-        0 0 10px rgba(0,0,0,0.6),
-        0 0 15px rgba(34,197,94,0.3);
+        0 0 10px #2563eb,
+        0 0 20px rgba(59,130,246,0.5);
+}
+
+/* ===============================
+   BUTTONS
+================================*/
+
+button{
+
+    padding:14px 28px;
+    margin:10px;
+
+    font-size:16px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#2563eb;
+    color:white;
+
+    cursor:pointer;
+
+    transition:0.25s;
+
+    box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:scale(1.07);
+}
+
+.startBtn{
+    font-size:18px;
+}
+
+/* ===============================
+   QUESTION AREA
+================================*/
+
+#teamName{
+    margin-bottom:10px;
+}
+
+#question{
+    margin:20px 0;
+}
+
+/* ===============================
+   OPTIONS
+================================*/
+
+#optionsContainer{
+    margin-top:20px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    gap:12px;
+}
+
+.optionItem{
+
+    width:90%;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    background:#1e293b;
+
+    transition:0.2s;
+}
+
+.optionItem:hover{
+    background:#334155;
+}
+
+.optionItem input{
+    margin-right:10px;
+}
+
+/* ===============================
+   NAV BUTTONS
+================================*/
+
+#prevBtn,
+#nextBtn,
+#saveBtn{
+    margin:10px;
 }
 
 /* ===============================
@@ -177,8 +290,6 @@ body::before{
 
     padding:15px;
     border-radius:16px;
-
-    transition:transform 0.25s ease;
 
     box-shadow:
         0 0 10px #22c55e,
@@ -203,175 +314,6 @@ body::before{
         0 0 40px #3b82f6,
         0 0 60px rgba(59,130,246,0.7);
     }
-
-}
-
-/* ===============================
-   BINGO CELLS
-================================*/
-
-.cell{
-
-    background:#1e293b;
-
-    border-radius:12px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:20px;
-    font-weight:bold;
-
-    transition:0.25s;
-
-    box-shadow:0 0 10px rgba(0,0,0,0.5);
-}
-
-/* CELL HOVER */
-
-.cell:hover{
-    transform:translateY(-6px) scale(1.08);
-    background:#334155;
-}
-
-/* ACTIVE CELL */
-
-.active{
-    background:#22c55e;
-    color:black;
-
-    font-weight:bold;
-
-    transform:translateY(-3px);
-
-    box-shadow:
-        0 0 10px #22c55e,
-        0 0 25px #22c55e;
-}
-
-/* ===============================
-   INPUT FIELD
-================================*/
-
-input{
-
-    padding:12px;
-    font-size:16px;
-
-    border-radius:10px;
-    border:none;
-
-    margin-top:15px;
-
-    width:240px;
-
-    outline:none;
-
-    background:#020617;
-    color:white;
-
-    transition:0.2s;
-}
-
-input::placeholder{
-    color:#94a3b8;
-}
-
-input:focus{
-
-    box-shadow:
-        0 0 10px #2563eb,
-        0 0 20px rgba(59,130,246,0.5);
-}
-
-/* ===============================
-   BUTTONS
-================================*/
-
-button{
-
-    padding:12px 24px;
-    margin:8px;
-
-    font-size:16px;
-
-    border:none;
-    border-radius:10px;
-
-    background:#2563eb;
-    color:white;
-
-    cursor:pointer;
-
-    transition:0.25s;
-
-    box-shadow:0 0 10px rgba(0,0,0,0.5);
-}
-
-button:hover{
-
-    background:#1d4ed8;
-
-    transform:scale(1.07);
-}
-
-/* START BUTTON */
-
-.startBtn{
-    font-size:18px;
-    padding:14px 32px;
-}
-
-/* ===============================
-   SUBMIT BUTTON
-================================*/
-
-#submitGame{
-
-    display:block;
-
-    margin:40px auto;
-
-    padding:18px 50px;
-
-    font-size:20px;
-
-    font-weight:bold;
-
-    background:#22c55e;
-
-    color:white;
-
-    border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    transition:0.25s;
-
-    box-shadow:0 0 15px rgba(34,197,94,0.5);
-}
-
-#submitGame:hover{
-
-    background:#16a34a;
-
-    transform:scale(1.08);
-}
-
-/* ===============================
-   QUESTION IMAGE
-================================*/
-
-.questionImage{
-    width:120px;
-    margin:10px auto;
-    display:block;
-    border-radius:10px;
-
-    box-shadow:0 0 15px rgba(59,130,246,0.7);
 }
 
 /* ===============================
@@ -427,41 +369,5 @@ button:hover{
         transform:translate(-50%,-50%) scale(1);
         opacity:1;
     }
-}
-
-/* ===============================
-   OPTIONS
-================================*/
-
-#optionsContainer{
-    margin-top:20px;
-    text-align:left;
-
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.optionItem{
-
-    font-size:18px;
-
-    cursor:pointer;
-
-    padding:10px 15px;
-
-    border-radius:8px;
-
-    background:#1e293b;
-
-    transition:0.2s;
-}
-
-.optionItem:hover{
-    background:#334155;
-}
-
-.optionItem input{
-    margin-right:10px;
 }
 ```
