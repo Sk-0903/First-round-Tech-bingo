@@ -1,22 +1,27 @@
+```html
 <!DOCTYPE html>
-
 <html>
 
 <head>
 <title>TECHNO QUEST Leaderboard</title>
+
 <h3 id="teamFinished">Teams Finished: 0</h3>
 
 <style>
+
+/* ================= BACKGROUND ================= */
 
 body{
 font-family:"Segoe UI",Arial;
 text-align:center;
 margin:0;
 min-height:100vh;
-background:linear-gradient(135deg,#020617,#0f172a,#020617);
-background-size:400% 400%;
-animation:bgMove 12s ease infinite;
 color:white;
+overflow:hidden;
+
+background:linear-gradient(270deg,#020617,#0f172a,#1e3a8a,#020617);
+background-size:600% 600%;
+animation:bgMove 14s ease infinite;
 }
 
 @keyframes bgMove{
@@ -24,6 +29,48 @@ color:white;
 50%{background-position:100% 50%}
 100%{background-position:0% 50%}
 }
+
+/* TECH GRID */
+
+body::before{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+top:0;
+left:0;
+
+background-image:
+linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+
+background-size:50px 50px;
+pointer-events:none;
+z-index:-2;
+}
+
+/* GLOW BLOB */
+
+body::after{
+content:"";
+position:fixed;
+top:-200px;
+left:-200px;
+width:700px;
+height:700px;
+background:radial-gradient(circle,#22c55e44,transparent 70%);
+filter:blur(120px);
+animation:blobMove 20s infinite alternate;
+z-index:-2;
+}
+
+@keyframes blobMove{
+0%{transform:translate(0,0)}
+50%{transform:translate(600px,200px)}
+100%{transform:translate(200px,500px)}
+}
+
+/* ================= TITLE ================= */
 
 h1{
 margin-top:25px;
@@ -34,7 +81,7 @@ background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
 -webkit-text-fill-color:transparent;
 }
 
-/* COUNTDOWN OVERLAY */
+/* ================= COUNTDOWN ================= */
 
 #countdown{
 position:fixed;
@@ -49,7 +96,7 @@ color:#22c55e;
 text-shadow:0 0 30px #22c55e,0 0 80px #22c55e;
 }
 
-/* RESET BUTTON */
+/* ================= BUTTON ================= */
 
 .resetBtn{
 position:fixed;
@@ -63,7 +110,7 @@ border-radius:10px;
 cursor:pointer;
 }
 
-/* PODIUM */
+/* ================= PODIUM ================= */
 
 .podium{
 display:flex;
@@ -73,7 +120,7 @@ gap:50px;
 margin-top:40px;
 opacity:0;
 transform:translateY(120px);
-transition:all 0.8s ease;
+transition:all 1s ease;
 }
 
 .podium.show{
@@ -107,7 +154,7 @@ height:130px;
 background:linear-gradient(45deg,#fb923c,#ea580c);
 }
 
-/* TABLE */
+/* ================= TABLE ================= */
 
 table{
 margin:auto;
@@ -115,6 +162,7 @@ border-collapse:collapse;
 width:75%;
 margin-top:50px;
 background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
 }
 
 th,td{
@@ -123,7 +171,7 @@ font-size:20px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-/* SHOW RESULT BUTTON */
+/* ================= BUTTON ================= */
 
 .showBtn{
 margin-top:50px;
@@ -138,25 +186,25 @@ cursor:pointer;
 box-shadow:0 0 15px rgba(34,197,94,0.6);
 }
 
-/* STRONG SCREEN SHAKE */
+/* ================= SHAKE ================= */
 
 .shake{
-animation:shakeScreen 0.4s;
+animation:shakeScreen 0.5s;
 }
 
 @keyframes shakeScreen{
 0%{transform:translate(0px,0px)}
-20%{transform:translate(-6px,4px)}
-40%{transform:translate(6px,-4px)}
+20%{transform:translate(-8px,5px)}
+40%{transform:translate(8px,-5px)}
 60%{transform:translate(-6px,3px)}
 80%{transform:translate(6px,-3px)}
 100%{transform:translate(0px,0px)}
 }
 
-/* BACKGROUND FLASH */
+/* ================= BG FLASH ================= */
 
 .bgGlow{
-animation:bgFlash 0.5s;
+animation:bgFlash 0.6s;
 }
 
 @keyframes bgFlash{
@@ -165,19 +213,30 @@ animation:bgFlash 0.5s;
 100%{background:#020617}
 }
 
+/* ================= NETWORK CANVAS ================= */
+
+#network{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
 </style>
 
 </head>
 
 <body>
 
+<canvas id="network"></canvas>
+
 <button class="resetBtn" onclick="resetLeaderboard()">Reset</button>
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
 <div id="countdown">5</div>
-
-<!-- PODIUM -->
 
 <div class="podium" id="podium" style="display:none">
 
@@ -219,5 +278,131 @@ animation:bgFlash 0.5s;
 
 <script type="module" src="host.js"></script>
 
+<script>
+
+/* ================= NETWORK PARTICLES ================= */
+
+const canvas=document.getElementById("network");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+for(let i=0;i<60;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5)*1,
+vy:(Math.random()-0.5)*1
+});
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+for(let p of particles){
+
+p.x+=p.vx;
+p.y+=p.vy;
+
+if(p.x<0||p.x>canvas.width)p.vx*=-1;
+if(p.y<0||p.y>canvas.height)p.vy*=-1;
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,2,0,Math.PI*2);
+ctx.fillStyle="white";
+ctx.fill();
+
+for(let p2 of particles){
+
+let dx=p.x-p2.x;
+let dy=p.y-p2.y;
+let dist=Math.sqrt(dx*dx+dy*dy);
+
+if(dist<120){
+ctx.beginPath();
+ctx.moveTo(p.x,p.y);
+ctx.lineTo(p2.x,p2.y);
+ctx.strokeStyle="rgba(255,255,255,0.05)";
+ctx.stroke();
+}
+
+}
+
+}
+
+requestAnimationFrame(draw);
+
+}
+
+draw();
+
+/* ================= WINNER REVEAL ================= */
+
+function showResults(){
+
+const countdown=document.getElementById("countdown");
+const podium=document.getElementById("podium");
+
+countdown.style.display="block";
+
+let num=5;
+
+let timer=setInterval(()=>{
+
+countdown.innerText=num;
+
+document.body.classList.add("shake");
+document.body.classList.add("bgGlow");
+
+setTimeout(()=>{
+document.body.classList.remove("shake");
+document.body.classList.remove("bgGlow");
+},300);
+
+num--;
+
+if(num<0){
+
+clearInterval(timer);
+
+countdown.style.display="none";
+
+podium.style.display="flex";
+
+setTimeout(()=>{
+podium.classList.add("show");
+},100);
+
+/* CONFETTI EXPLOSION */
+
+confetti({
+particleCount:300,
+spread:180,
+origin:{y:0.6}
+});
+
+/* ================= VICTORY SOUND ================= */
+
+document.getElementById("victorySound").play();
+
+}
+
+},1000);
+
+}
+
+</script>
+
+<!-- ================= VICTORY SOUND AUDIO ================= -->
+
+<audio id="victorySound" preload="auto">
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2a1b4b1a4a.mp3?filename=success-fanfare-trumpets-6185.mp3" type="audio/mpeg">
+</audio>
+
 </body>
 </html>
+```
