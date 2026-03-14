@@ -42,6 +42,8 @@ let teamDocId=null;
 let answers=new Array(20).fill("");
 let questionLocked=new Array(20).fill(false);
 
+let gameStarted=false;
+
 /* QUESTIONS */
 
 const questions=[
@@ -66,7 +68,12 @@ options:["Ruby","Python","Java","Swift"],
 a:btoa("python"),cell:4},
 
 {q:"What is the full form of GPT in ChatGPT?",
-options:["General Processing Tool","Generative Pre-trained Transformer","Global Programming Tool","General Purpose Transformer"],
+options:[
+"General Processing Tool",
+"Generative Pre-trained Transformer",
+"Global Programming Tool",
+"General Purpose Transformer"
+],
 a:btoa("generative pre-trained transformer"),cell:5},
 
 {q:"Which company created TensorFlow?",
@@ -184,12 +191,30 @@ if(e.ctrlKey && e.shiftKey && e.key==="J") e.preventDefault();
 if(e.ctrlKey && e.key==="U") e.preventDefault();
 });
 
+/* TAB SWITCH */
+
+document.addEventListener("visibilitychange",function(){
+if(document.hidden && !gameFinished){
+alert("Tab switch detected. Game submitted.");
+finish();
+}
+});
+
+/* FULLSCREEN EXIT */
+
+document.addEventListener("fullscreenchange",function(){
+if(!document.fullscreenElement && !gameFinished && !showingBingo){
+alert("Fullscreen exited. Game submitted.");
+finish();
+}
+});
+
 /* PAGE LOAD */
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-if(sessionStorage.getItem("gameStarted")==="true"){
-alert("Page reload detected. Game submitted.");
+if(sessionStorage.getItem("techBingoStarted")==="true"){
+alert("Page refresh detected. Game submitted.");
 finish();
 return;
 }
@@ -237,9 +262,11 @@ let team=localStorage.getItem("team");
 const snapshot = await getDocs(collection(db,"leaderboard"));
 
 snapshot.forEach((docData)=>{
-if(docData.data().teamName.toLowerCase()===team.toLowerCase()){
+
+if(!teamDocId && docData.data().teamName.toLowerCase()===team.toLowerCase()){
 teamDocId = docData.id;
 }
+
 });
 
 if(teamDocId===null){
@@ -249,10 +276,11 @@ return;
 
 enterFullscreen();
 
+gameStarted=true;
+sessionStorage.setItem("techBingoStarted","true");
+
 document.getElementById("startScreen").style.display="none";
 document.getElementById("gameArea").style.display="block";
-
-sessionStorage.setItem("gameStarted","true");
 
 showQuestion();
 startTimer();
@@ -263,31 +291,30 @@ startTimer();
 
 function showQuestion(){
 
-let q = shuffledQuestions[current];
+let q=shuffledQuestions[current];
 
-let questionHTML = `<div class="questionText">${q.q}</div>`;
+let questionHTML=`<div class="questionText">${q.q}</div>`;
 
 if(q.image){
-questionHTML += `<img src="${q.image}" class="questionImage">`;
+questionHTML+=`<img src="${q.image}" class="questionImage">`;
 }
 
-document.getElementById("question").innerHTML = questionHTML;
+document.getElementById("question").innerHTML=questionHTML;
 
-document.getElementById("questionNumber").innerText =
-"Question "+(current+1)+" / 20";
+document.getElementById("questionNumber").innerText="Question "+(current+1)+" / 20";
 
 let optionsHTML="";
 
 q.options.forEach((opt,index)=>{
 
-let checked = answers[current] === opt ? "checked" : "";
+let checked=answers[current]===opt?"checked":"";
 
-optionsHTML += `<label class="optionItem"> <input type="radio" name="option" value="${opt}" ${checked} ${questionLocked[current]?"disabled":""}>
+optionsHTML+=`<label class="optionItem"> <input type="radio" name="option" value="${opt}" ${checked} ${questionLocked[current]?"disabled":""}>
 ${String.fromCharCode(65+index)}. ${opt} </label>`;
 
 });
 
-document.getElementById("optionsContainer").innerHTML = optionsHTML;
+document.getElementById("optionsContainer").innerHTML=optionsHTML;
 
 }
 
@@ -318,13 +345,10 @@ finish();
 function triggerBingo(cells){
 
 showingBingo=true;
-
 bingoCount++;
 
 cells.forEach(c=>{
-let cell=document.getElementById("cell"+c);
-cell.classList.add("bingoGlow");
-cell.classList.add("bingoFlash");
+document.getElementById("cell"+c).classList.add("bingoGlow");
 });
 
 launchConfetti();
@@ -332,18 +356,11 @@ launchConfetti();
 let msg=document.getElementById("bingoMessage");
 
 msg.innerText="🎉 BINGO "+bingoCount;
-
 msg.style.display="block";
 
 setTimeout(()=>{
-
-cells.forEach(c=>{
-document.getElementById("cell"+c).classList.remove("bingoFlash");
-});
-
 msg.style.display="none";
 showingBingo=false;
-
 },3000);
 
 }
@@ -371,7 +388,6 @@ allLines.forEach((line,index)=>{
 if(line.every(x=>active.includes(x)) && !achievedBingos.has(index)){
 
 achievedBingos.add(index);
-
 triggerBingo(line);
 
 }
@@ -386,14 +402,14 @@ function saveAnswer(){
 
 if(questionLocked[current]) return;
 
-let selected = document.querySelector('input[name="option"]:checked');
+let selected=document.querySelector('input[name="option"]:checked');
 
 if(!selected){
 alert("Select an option");
 return;
 }
 
-let ans = selected.value.toLowerCase();
+let ans=selected.value.toLowerCase();
 
 answers[current]=ans;
 questionLocked[current]=true;
@@ -402,15 +418,14 @@ document.querySelectorAll('input[name="option"]').forEach(o=>{
 o.disabled=true;
 });
 
-let correctAnswer = atob(shuffledQuestions[current].a);
+let correctAnswer=atob(shuffledQuestions[current].a);
 
-if(ans === correctAnswer){
+if(ans===correctAnswer){
 
 document.getElementById("cell"+shuffledQuestions[current].cell)
 .classList.add("active");
 
 score++;
-
 checkBingo();
 
 }
@@ -420,22 +435,27 @@ checkBingo();
 /* NEXT */
 
 function nextQuestion(){
+
 if(current<19){
 current++;
 showQuestion();
 }
+
 if(current===19){
 document.getElementById("submitGame").style.display="block";
 }
+
 }
 
 /* PREV */
 
 function prevQuestion(){
+
 if(current>0){
 current--;
 showQuestion();
 }
+
 }
 
 /* FINISH */
@@ -444,11 +464,18 @@ async function finish(){
 
 if(gameFinished) return;
 
+document.getElementById("submitGame").disabled=true;
+
 gameFinished=true;
 
-sessionStorage.removeItem("gameStarted");
+sessionStorage.removeItem("techBingoStarted");
 
+/* SAFE TIMER STOP */
+
+if(timerInterval){
 clearInterval(timerInterval);
+timerInterval=null;
+}
 
 let timeUsed=EVENT_DURATION-totalEventTime;
 
