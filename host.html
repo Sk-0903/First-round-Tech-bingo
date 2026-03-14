@@ -33,6 +33,17 @@ background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
 -webkit-text-fill-color:transparent;
 }
 
+/* COUNTDOWN */
+
+#countdown{
+font-size:120px;
+font-weight:bold;
+display:none;
+margin-top:20px;
+color:#22c55e;
+text-shadow:0 0 20px #22c55e,0 0 60px #22c55e;
+}
+
 /* RESET BUTTON */
 
 .resetBtn{
@@ -55,7 +66,6 @@ justify-content:center;
 align-items:flex-end;
 gap:50px;
 margin-top:40px;
-
 opacity:0;
 transform:translateY(120px);
 transition:all 0.8s ease;
@@ -123,6 +133,32 @@ cursor:pointer;
 box-shadow:0 0 15px rgba(34,197,94,0.6);
 }
 
+/* SCREEN SHAKE */
+
+.shake{
+animation:shakeScreen 0.3s;
+}
+
+@keyframes shakeScreen{
+0%{transform:translate(2px,2px)}
+25%{transform:translate(-2px,3px)}
+50%{transform:translate(3px,-2px)}
+75%{transform:translate(-3px,2px)}
+100%{transform:translate(0,0)}
+}
+
+/* BACKGROUND FLASH */
+
+.bgGlow{
+animation:bgFlash 0.5s;
+}
+
+@keyframes bgFlash{
+0%{background:#020617}
+50%{background:#0f172a}
+100%{background:#020617}
+}
+
 </style>
 
 </head>
@@ -133,7 +169,7 @@ box-shadow:0 0 15px rgba(34,197,94,0.6);
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
-<!-- PODIUM (hidden initially) -->
+<div id="countdown">5</div>
 
 <div class="podium" id="podium" style="display:none">
 
@@ -169,11 +205,7 @@ box-shadow:0 0 15px rgba(34,197,94,0.6);
 
 </table>
 
-<!-- SHOW RESULT BUTTON AT BOTTOM -->
-
 <button class="showBtn" onclick="showResults()">Show Results</button>
-
-<!-- CONFETTI LIBRARY -->
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
