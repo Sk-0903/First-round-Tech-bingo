@@ -33,13 +33,7 @@ background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
 -webkit-text-fill-color:transparent;
 }
 
-#teamCounter{
-margin-top:10px;
-font-size:22px;
-opacity:0.8;
-}
-
-/* BUTTONS */
+/* RESET BUTTON */
 
 .resetBtn{
 position:fixed;
@@ -49,22 +43,21 @@ background:#ef4444;
 color:white;
 border:none;
 padding:12px 22px;
-font-size:16px;
 border-radius:10px;
 cursor:pointer;
-box-shadow:0 0 15px rgba(239,68,68,0.6);
 }
 
+/* SHOW RESULT BUTTON */
+
 .showBtn{
-position:fixed;
-top:20px;
-right:140px;
+margin-top:40px;
+margin-bottom:40px;
 background:#22c55e;
 color:white;
 border:none;
-padding:12px 22px;
-font-size:16px;
-border-radius:10px;
+padding:16px 40px;
+font-size:18px;
+border-radius:12px;
 cursor:pointer;
 box-shadow:0 0 15px rgba(34,197,94,0.6);
 }
@@ -81,14 +74,11 @@ margin-top:40px;
 
 .podiumBox{
 width:180px;
-text-align:center;
 border-radius:16px;
 padding:18px;
 font-size:22px;
 font-weight:bold;
-backdrop-filter:blur(12px);
 background:rgba(255,255,255,0.08);
-box-shadow:0 10px 40px rgba(0,0,0,0.7);
 }
 
 .first{
@@ -116,19 +106,9 @@ border-collapse:collapse;
 width:75%;
 margin-top:50px;
 background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 10px 40px rgba(0,0,0,0.7);
 }
 
-th{
-padding:18px;
-font-size:22px;
-background:#111827;
-}
-
-td{
+th,td{
 padding:16px;
 font-size:20px;
 border-bottom:1px solid rgba(255,255,255,0.1);
@@ -140,15 +120,13 @@ border-bottom:1px solid rgba(255,255,255,0.1);
 
 <body>
 
-<button class="resetBtn" onclick="resetLeaderboard()">Reset</button> <button class="showBtn" onclick="showResults()">Show Results</button>
+<button class="resetBtn" onclick="resetLeaderboard()">Reset</button>
 
 <h1>🏆 TECHNO QUEST LEADERBOARD</h1>
 
-<h3 id="teamCounter">Teams Finished: 0</h3>
+<!-- PODIUM HIDDEN INITIALLY -->
 
-<!-- PODIUM (HIDDEN INITIALLY) -->
-
-<div class="podium" id="podium" style="display:none;">
+<div class="podium" id="podium" style="display:none">
 
 <div class="podiumBox second">
 🥈
@@ -181,6 +159,10 @@ border-bottom:1px solid rgba(255,255,255,0.1);
 <tbody id="board"></tbody>
 
 </table>
+
+<!-- SHOW RESULT BUTTON AT BOTTOM -->
+
+<button class="showBtn" onclick="showResults()">Show Results</button>
 
 <script type="module" src="host.js"></script>
 
