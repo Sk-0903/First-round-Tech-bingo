@@ -39,9 +39,8 @@ let bingoCount=0;
 
 let teamDocId=null;
 
-let answers=new Array(20).fill("");
-let questionLocked=new Array(20).fill(false);
-
+let answers=new Array(TOTAL_QUESTIONS).fill("");
+let questionLocked=new Array(TOTAL_QUESTIONS).fill(false);
 let gameStarted=false;
 
 /* QUESTIONS */
@@ -137,6 +136,7 @@ options:["CNN","RNN","Transformer","Decision Tree"],
 a:btoa("transformer"),cell:20}
 
 ];
+const TOTAL_QUESTIONS = questions.length;
 
 /* SHUFFLE */
 
@@ -225,7 +225,7 @@ document.getElementById("teamName").innerText="Team: "+team;
 
 let board=document.getElementById("board");
 
-for(let i=1;i<=20;i++){
+for(let i=1;i<=TOTAL_QUESTIONS;i++){
 
 let div=document.createElement("div");
 div.className="cell";
@@ -299,7 +299,7 @@ questionHTML+=`<img src="${q.image}" class="questionImage">`;
 
 document.getElementById("question").innerHTML=questionHTML;
 
-document.getElementById("questionNumber").innerText="Question "+(current+1)+" / 20";
+document.getElementById("questionNumber").innerText="Question "+(current+1)+" / "+TOTAL_QUESTIONS;
 
 let optionsHTML="";
 
