@@ -48,11 +48,9 @@ let gameStarted=false;
 
 const questions=[
 
-{q:`What will be the output?
-int a = 5;
-int b = 10;
-printf("%d", a+++b);`,
-options:["15","16","Compilation Error","5"],
+{q:"Which statement is most correct?",
+  options:["AI will fully replace humans", "Blockchain is completely unhackable", "Quantum computers will break some encryption", "5G works without infrastructure"],
+  a:btoa("quantum computers will break some encryption")],
 a:btoa("15"),cell:1},
 
 {q:"Which programming language is mainly used for Android app development?",
@@ -92,10 +90,11 @@ a:btoa("oak"),cell:8},
 options:["ChatGPT","DALL-E","GitHub","Docker"],
 a:btoa("dall-e"),cell:9},
 
-{q:`Which programming language has the motto
-"Write once, run anywhere"?`,
-options:["C++","Java","Python","Go"],
-a:btoa("java"),cell:10},
+{q:"Which TCP flag combination is used during connection termination?",
+  options: ["SYN, ACK", "FIN, ACK", "RST, SYN", "PSH, URG"],
+  a: btoa("fin, ack"),
+  cell: 10},
+
 
 {q:"How many bits are in an IPv4 address?",
 options:["16","32","64","128"],
@@ -105,9 +104,9 @@ a:btoa("32"),cell:11},
 options:["Infosys","Wipro","TCS","HCL"],
 a:btoa("wipro"),cell:12},
 
-{q:"What type of electromagnetic waves does WiFi use?",
-options:["Infrared","Microwaves","Radio waves","Gamma rays"],
-a:btoa("radio waves"),cell:13},
+{q:"What percentage of smartphones are expected to be AI-enabled in 2026?",
+  options:["10%", "25%", "37%", "60%"],
+  a: btoa("37%"),cell:13},
 
 {q:"What was the first computer virus?",
 options:["Creeper","Morris Worm","Melissa","Brain"],
@@ -117,9 +116,9 @@ a:btoa("creeper"),cell:14},
 options:["140","200","280","500"],
 a:btoa("280"),cell:15},
 
-{q:"The Firefox logo actually represents which animal?",
-options:["Fox","Panda","Red Panda","Wolf"],
-a:btoa("red panda"),cell:16},
+{q:"Which protocol translates IP to MAC address?",
+  options:["DNS", "ARP", "DHCP", "ICMP"],
+  a:btoa("arp"),cell:16},
 
 {q:"Approximately how much data exists in the digital universe today?",
 options:["2.7 MB","2.7 GB","2.7 Zettabytes","2.7 TB"],
