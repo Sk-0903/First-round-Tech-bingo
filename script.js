@@ -405,7 +405,7 @@ for(let index=0; index<allLines.length; index++){
 
 let line=allLines[index];
 
-if(line.every(x=>active.includes(x)) && !achievedBingos.has(index)){
+if(!gameFinished && line.every(x=>active.includes(x)) && !achievedBingos.has(index)){
 
 achievedBingos.add(index);
 bingoQueue.push(line);
@@ -418,7 +418,7 @@ bingoQueue.push(line);
 
 function processQueue(){
 
-if(bingoQueue.length===0) return;
+if(bingoQueue.length===0 || gameFinished) return;
 
 let line=bingoQueue.shift();
 
