@@ -39,7 +39,7 @@ let bingoCount=0;
 
 let teamDocId=null;
 
-const TOTAL_QUESTIONS = questions.length;
+const TOTAL_QUESTIONS = 20;
 let answers=new Array(TOTAL_QUESTIONS).fill("");
 let questionLocked=new Array(TOTAL_QUESTIONS).fill(false);
 let gameStarted=false;
