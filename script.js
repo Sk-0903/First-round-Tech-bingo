@@ -39,6 +39,7 @@ let bingoCount=0;
 
 let teamDocId=null;
 
+const TOTAL_QUESTIONS = questions.length;
 let answers=new Array(TOTAL_QUESTIONS).fill("");
 let questionLocked=new Array(TOTAL_QUESTIONS).fill(false);
 let gameStarted=false;
@@ -136,7 +137,7 @@ options:["CNN","RNN","Transformer","Decision Tree"],
 a:btoa("transformer"),cell:20}
 
 ];
-const TOTAL_QUESTIONS = questions.length;
+
 
 /* SHUFFLE */
 
