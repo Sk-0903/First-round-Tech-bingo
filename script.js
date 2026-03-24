@@ -50,8 +50,7 @@ const questions=[
 
 {q:"Which statement is most correct?",
   options:["AI will fully replace humans", "Blockchain is completely unhackable", "Quantum computers will break some encryption", "5G works without infrastructure"],
-  a:btoa("quantum computers will break some encryption")],
-a:btoa("15"),cell:1},
+  a:btoa("quantum computers will break some encryption"),cell:1},
 
 {q:"Which programming language is mainly used for Android app development?",
 options:["Swift","Kotlin","Ruby","Go"],
