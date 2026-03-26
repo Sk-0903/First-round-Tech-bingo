@@ -23,7 +23,7 @@ const db = getFirestore(app);
 
 /* SETTINGS */
 
-const GAME_CODE="kesha";
+const GAME_CODE="bingo@123";
 const EVENT_DURATION=10*60;
 
 let totalEventTime=EVENT_DURATION;
